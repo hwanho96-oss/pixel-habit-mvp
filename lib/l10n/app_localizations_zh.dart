@@ -167,4 +167,19 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get emptyTodosHint => '点按 + 创建第一个待办';
+
+  @override
+  String praiseChecked(int gold, int points) {
+    return '今天也好好照顾自己了 · +$gold 金币 · +$points 点数';
+  }
+
+  @override
+  String praiseWelcomeBack(int gold, int points) {
+    return '欢迎回来 · +$gold 金币 · +$points 点数';
+  }
+
+  @override
+  String adventureDaysCount(int days) {
+    return '冒险天数 $days天';
+  }
 }

@@ -74,5 +74,35 @@
     }
   },
   "emptyRoutinesHint": "+ 버튼으로 첫 루틴을 만들어 보세요",
-  "emptyTodosHint": "+ 버튼으로 첫 투두를 만들어 보세요"
+  "emptyTodosHint": "+ 버튼으로 첫 투두를 만들어 보세요",
+  "praiseChecked": "오늘도 나를 챙겼어요 · +{gold} 골드 · +{points} 포인트",
+  "@praiseChecked": {
+    "placeholders": {
+      "gold": {
+        "type": "int"
+      },
+      "points": {
+        "type": "int"
+      }
+    }
+  },
+  "praiseWelcomeBack": "다시 와 줘서 반가워요 · +{gold} 골드 · +{points} 포인트",
+  "@praiseWelcomeBack": {
+    "placeholders": {
+      "gold": {
+        "type": "int"
+      },
+      "points": {
+        "type": "int"
+      }
+    }
+  },
+  "adventureDaysCount": "모험한 날 {days}일",
+  "@adventureDaysCount": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  }
 }

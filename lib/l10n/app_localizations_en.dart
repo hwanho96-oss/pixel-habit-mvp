@@ -167,4 +167,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get emptyTodosHint => 'Tap + to create your first todo';
+
+  @override
+  String praiseChecked(int gold, int points) {
+    return 'You took care of yourself today · +$gold gold · +$points pt';
+  }
+
+  @override
+  String praiseWelcomeBack(int gold, int points) {
+    return 'Welcome back · +$gold gold · +$points pt';
+  }
+
+  @override
+  String adventureDaysCount(int days) {
+    return '$days adventure days';
+  }
 }

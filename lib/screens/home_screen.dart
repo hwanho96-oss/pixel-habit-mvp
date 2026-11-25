@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../data/day_clock.dart';
 import '../data/economy.dart';
 import '../l10n/app_localizations.dart';
 import '../models/routine.dart';
@@ -61,10 +62,24 @@ class _HomeScreenState extends State<HomeScreen> {
     context.push('/item/form', extra: ItemFormArgs(type: type));
   }
 
-  void _showGoldSnackBar(int amount) {
+  bool _isAwayTwoOrMoreDays(String? lastCheckDateKey) {
+    if (lastCheckDateKey == null) return false;
+    final last = DateTime.tryParse(lastCheckDateKey);
+    if (last == null) return false;
+    final now = DayClock.logicalNow();
+    final today = DateTime(now.year, now.month, now.day);
+    final lastDay = DateTime(last.year, last.month, last.day);
+    return today.difference(lastDay).inDays >= 2;
+  }
+
+  void _showPraiseSnackBar({required bool welcomeBack, required int gold}) {
     final l10n = AppLocalizations.of(context)!;
+    final points = Economy.completePoint;
+    final message = welcomeBack
+        ? l10n.praiseWelcomeBack(gold, points)
+        : l10n.praiseChecked(gold, points);
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(l10n.goldEarned(amount))),
+      SnackBar(content: Text(message)),
     );
   }
 
@@ -81,11 +96,25 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
               child: Align(
                 alignment: Alignment.centerRight,
-                child: Text(
-                  l10n.goldAmount(state.gold),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.end,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      l10n.goldAmount(state.gold),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.end,
+                    ),
+                    Text(
+                      l10n.adventureDaysCount(state.adventureDays),
+                      style: Theme.of(context).textTheme.bodySmall,
+                      softWrap: true,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.end,
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -148,9 +177,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         );
                       },
                       onToggle: (routine, checked) async {
+                        final welcomeBack =
+                            _isAwayTwoOrMoreDays(state.lastCheckDateKey);
                         await state.toggleRoutineDone(routine.id);
                         if (checked) {
-                          _showGoldSnackBar(Economy.routineCompleteGold);
+                          _showPraiseSnackBar(
+                            welcomeBack: welcomeBack,
+                            gold: Economy.routineCompleteGold,
+                          );
                         }
                       },
                       onLongPress: (routine) {
@@ -175,9 +209,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         );
                       },
                       onToggle: (todo, checked) async {
+                        final welcomeBack =
+                            _isAwayTwoOrMoreDays(state.lastCheckDateKey);
                         await state.toggleTodoDone(todo.id);
                         if (checked) {
-                          _showGoldSnackBar(Economy.todoCompleteGold);
+                          _showPraiseSnackBar(
+                            welcomeBack: welcomeBack,
+                            gold: Economy.todoCompleteGold,
+                          );
                         }
                       },
                       onLongPress: (todo) {

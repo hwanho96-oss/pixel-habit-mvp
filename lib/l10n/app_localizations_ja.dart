@@ -167,4 +167,19 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get emptyTodosHint => '+ ボタンで最初のToDoを作成しましょう';
+
+  @override
+  String praiseChecked(int gold, int points) {
+    return '今日も自分を大切にしました · +$gold ゴールド · +$points ポイント';
+  }
+
+  @override
+  String praiseWelcomeBack(int gold, int points) {
+    return 'また来てくれて嬉しいです · +$gold ゴールド · +$points ポイント';
+  }
+
+  @override
+  String adventureDaysCount(int days) {
+    return '冒険した日 $days日';
+  }
 }

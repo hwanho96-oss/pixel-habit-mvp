@@ -74,5 +74,35 @@
     }
   },
   "emptyRoutinesHint": "+ ボタンで最初のルーティンを作成しましょう",
-  "emptyTodosHint": "+ ボタンで最初のToDoを作成しましょう"
+  "emptyTodosHint": "+ ボタンで最初のToDoを作成しましょう",
+  "praiseChecked": "今日も自分を大切にしました · +{gold} ゴールド · +{points} ポイント",
+  "@praiseChecked": {
+    "placeholders": {
+      "gold": {
+        "type": "int"
+      },
+      "points": {
+        "type": "int"
+      }
+    }
+  },
+  "praiseWelcomeBack": "また来てくれて嬉しいです · +{gold} ゴールド · +{points} ポイント",
+  "@praiseWelcomeBack": {
+    "placeholders": {
+      "gold": {
+        "type": "int"
+      },
+      "points": {
+        "type": "int"
+      }
+    }
+  },
+  "adventureDaysCount": "冒険した日 {days}日",
+  "@adventureDaysCount": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  }
 }

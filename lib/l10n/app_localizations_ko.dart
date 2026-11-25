@@ -167,4 +167,19 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get emptyTodosHint => '+ 버튼으로 첫 투두를 만들어 보세요';
+
+  @override
+  String praiseChecked(int gold, int points) {
+    return '오늘도 나를 챙겼어요 · +$gold 골드 · +$points 포인트';
+  }
+
+  @override
+  String praiseWelcomeBack(int gold, int points) {
+    return '다시 와 줘서 반가워요 · +$gold 골드 · +$points 포인트';
+  }
+
+  @override
+  String adventureDaysCount(int days) {
+    return '모험한 날 $days일';
+  }
 }

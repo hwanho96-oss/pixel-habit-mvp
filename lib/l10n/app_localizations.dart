@@ -407,6 +407,24 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'+ 버튼으로 첫 투두를 만들어 보세요'**
   String get emptyTodosHint;
+
+  /// No description provided for @praiseChecked.
+  ///
+  /// In ko, this message translates to:
+  /// **'오늘도 나를 챙겼어요 · +{gold} 골드 · +{points} 포인트'**
+  String praiseChecked(int gold, int points);
+
+  /// No description provided for @praiseWelcomeBack.
+  ///
+  /// In ko, this message translates to:
+  /// **'다시 와 줘서 반가워요 · +{gold} 골드 · +{points} 포인트'**
+  String praiseWelcomeBack(int gold, int points);
+
+  /// No description provided for @adventureDaysCount.
+  ///
+  /// In ko, this message translates to:
+  /// **'모험한 날 {days}일'**
+  String adventureDaysCount(int days);
 }
 
 class _AppLocalizationsDelegate

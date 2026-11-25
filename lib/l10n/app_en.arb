@@ -74,5 +74,35 @@
     }
   },
   "emptyRoutinesHint": "Tap + to create your first routine",
-  "emptyTodosHint": "Tap + to create your first todo"
+  "emptyTodosHint": "Tap + to create your first todo",
+  "praiseChecked": "You took care of yourself today · +{gold} gold · +{points} pt",
+  "@praiseChecked": {
+    "placeholders": {
+      "gold": {
+        "type": "int"
+      },
+      "points": {
+        "type": "int"
+      }
+    }
+  },
+  "praiseWelcomeBack": "Welcome back · +{gold} gold · +{points} pt",
+  "@praiseWelcomeBack": {
+    "placeholders": {
+      "gold": {
+        "type": "int"
+      },
+      "points": {
+        "type": "int"
+      }
+    }
+  },
+  "adventureDaysCount": "{days} adventure days",
+  "@adventureDaysCount": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  }
 }

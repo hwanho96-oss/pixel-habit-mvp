@@ -74,5 +74,35 @@
     }
   },
   "emptyRoutinesHint": "点按 + 创建第一个习惯",
-  "emptyTodosHint": "点按 + 创建第一个待办"
+  "emptyTodosHint": "点按 + 创建第一个待办",
+  "praiseChecked": "今天也好好照顾自己了 · +{gold} 金币 · +{points} 点数",
+  "@praiseChecked": {
+    "placeholders": {
+      "gold": {
+        "type": "int"
+      },
+      "points": {
+        "type": "int"
+      }
+    }
+  },
+  "praiseWelcomeBack": "欢迎回来 · +{gold} 金币 · +{points} 点数",
+  "@praiseWelcomeBack": {
+    "placeholders": {
+      "gold": {
+        "type": "int"
+      },
+      "points": {
+        "type": "int"
+      }
+    }
+  },
+  "adventureDaysCount": "冒险天数 {days}天",
+  "@adventureDaysCount": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  }
 }

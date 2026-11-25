@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../models/completion_record.dart';
 import '../models/routine.dart';
 import '../models/todo.dart';
 
@@ -10,6 +11,8 @@ class AppStorage {
   static const _todosKey = 'todos_v1';
   static const _goldKey = 'gold_v1';
   static const _customTagsKey = 'custom_tags_v1';
+  static const _completionLogKey = 'completion_log_v1';
+  static const _pointsKey = 'points_v1';
 
   Future<List<Routine>> loadRoutines() async {
     final prefs = await SharedPreferences.getInstance();
@@ -62,5 +65,31 @@ class AppStorage {
   Future<void> saveCustomTags(List<String> tags) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_customTagsKey, jsonEncode(tags));
+  }
+
+  Future<List<CompletionRecord>> loadCompletionLog() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_completionLogKey);
+    if (raw == null) return [];
+    final list = jsonDecode(raw) as List<dynamic>;
+    return list
+        .map((e) => CompletionRecord.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<void> saveCompletionLog(List<CompletionRecord> records) async {
+    final prefs = await SharedPreferences.getInstance();
+    final encoded = jsonEncode(records.map((e) => e.toJson()).toList());
+    await prefs.setString(_completionLogKey, encoded);
+  }
+
+  Future<int> loadPoints() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt(_pointsKey) ?? 0;
+  }
+
+  Future<void> savePoints(int points) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_pointsKey, points);
   }
 }

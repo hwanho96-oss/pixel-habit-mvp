@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import '../data/day_clock.dart';
 import '../data/economy.dart';
 import '../data/storage.dart';
+import '../models/completion_record.dart';
 import '../models/routine.dart';
 import '../models/todo.dart';
 
@@ -14,13 +15,17 @@ class AppState extends ChangeNotifier {
   List<Routine> routines = [];
   List<Todo> todos = [];
   List<String> customTags = [];
+  List<CompletionRecord> completionLog = [];
   int gold = 0;
+  int unspentPoints = 0;
 
   Future<void> load() async {
     routines = await _storage.loadRoutines();
     todos = await _storage.loadTodos();
     gold = await _storage.loadGold();
     customTags = await _storage.loadCustomTags();
+    completionLog = await _storage.loadCompletionLog();
+    unspentPoints = await _storage.loadPoints();
     notifyListeners();
   }
 
@@ -47,8 +52,67 @@ class AppState extends ChangeNotifier {
   bool isRoutineDoneToday(Routine routine) =>
       routine.lastDoneDate == DayClock.todayKey();
 
+  int get totalCompletions => completionLog.length;
+
+  int get adventureDays =>
+      completionLog.map((r) => r.dateKey).toSet().length;
+
+  /// Latest dateKey in the log, or null if empty.
+  String? get lastCheckDateKey {
+    if (completionLog.isEmpty) return null;
+    return completionLog
+        .map((r) => r.dateKey)
+        .reduce((a, b) => a.compareTo(b) >= 0 ? a : b);
+  }
+
+  List<CompletionRecord> recordsInMonth(int year, int month) {
+    final mm = month.toString().padLeft(2, '0');
+    final prefix = '$year-$mm';
+    return completionLog.where((r) => r.dateKey.startsWith(prefix)).toList();
+  }
+
+  List<CompletionRecord> recordsOnDay(String dateKey) {
+    return completionLog.where((r) => r.dateKey == dateKey).toList();
+  }
+
   void _clampGold() {
     if (gold < 0) gold = 0;
+  }
+
+  void _clampPoints() {
+    if (unspentPoints < 0) unspentPoints = 0;
+  }
+
+  bool _hasRecordFor(String itemId, String dateKey) {
+    return completionLog
+        .any((r) => r.itemId == itemId && r.dateKey == dateKey);
+  }
+
+  void _addCompletionRecord({
+    required String type,
+    required String itemId,
+    required String title,
+    required List<String> tags,
+  }) {
+    final dateKey = DayClock.todayKey();
+    if (_hasRecordFor(itemId, dateKey)) return;
+    completionLog = [
+      ...completionLog,
+      CompletionRecord(
+        id: DateTime.now().microsecondsSinceEpoch.toString(),
+        type: type,
+        itemId: itemId,
+        title: title,
+        dateKey: dateKey,
+        tags: List<String>.from(tags),
+      ),
+    ];
+  }
+
+  void _removeCompletionRecord(String itemId, String dateKey) {
+    completionLog = completionLog
+        .where((r) => !(r.itemId == itemId && r.dateKey == dateKey))
+        .toList();
   }
 
   Future<void> _persist() async {
@@ -56,6 +120,8 @@ class AppState extends ChangeNotifier {
       _storage.saveRoutines(routines),
       _storage.saveTodos(todos),
       _storage.saveGold(gold),
+      _storage.saveCompletionLog(completionLog),
+      _storage.savePoints(unspentPoints),
     ]);
   }
 
@@ -65,15 +131,26 @@ class AppState extends ChangeNotifier {
 
     final routine = routines[index];
     final done = isRoutineDoneToday(routine);
+    final today = DayClock.todayKey();
 
     if (done) {
       gold -= Economy.routineCompleteGold;
       _clampGold();
+      unspentPoints -= Economy.completePoint;
+      _clampPoints();
+      _removeCompletionRecord(routine.id, today);
       routines[index] = routine.copyWith(clearLastDoneDate: true);
     } else {
       gold += Economy.routineCompleteGold;
+      unspentPoints += Economy.completePoint;
+      _addCompletionRecord(
+        type: 'routine',
+        itemId: routine.id,
+        title: routine.title,
+        tags: routine.tags,
+      );
       routines[index] =
-          routine.copyWith(lastDoneDate: DayClock.todayKey());
+          routine.copyWith(lastDoneDate: today);
     }
 
     notifyListeners();
@@ -85,15 +162,27 @@ class AppState extends ChangeNotifier {
     if (index < 0) return;
 
     final todo = todos[index];
+    final today = DayClock.todayKey();
+
     if (todo.done) {
       gold -= Economy.todoCompleteGold;
       _clampGold();
+      unspentPoints -= Economy.completePoint;
+      _clampPoints();
+      _removeCompletionRecord(todo.id, today);
       todos[index] = todo.copyWith(done: false, clearDoneDate: true);
     } else {
       gold += Economy.todoCompleteGold;
+      unspentPoints += Economy.completePoint;
+      _addCompletionRecord(
+        type: 'todo',
+        itemId: todo.id,
+        title: todo.title,
+        tags: todo.tags,
+      );
       todos[index] = todo.copyWith(
         done: true,
-        doneDate: DayClock.todayKey(),
+        doneDate: today,
       );
     }
 
