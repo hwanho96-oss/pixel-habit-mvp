@@ -1,0 +1,32 @@
+{
+  "@@locale": "en",
+  "tabHome": "Home",
+  "tabCharacter": "Character",
+  "tabAnalysis": "Analytics",
+  "tabSettings": "Settings",
+  "goldAmount": "{amount} gold",
+  "@goldAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "int"
+      }
+    }
+  },
+  "goldEarned": "+{amount} gold",
+  "@goldEarned": {
+    "placeholders": {
+      "amount": {
+        "type": "int"
+      }
+    }
+  },
+  "segmentRoutine": "Routine",
+  "segmentTodo": "Todo",
+  "deleteConfirmTitle": "Delete",
+  "deleteConfirmMessage": "Delete this item?",
+  "cancel": "Cancel",
+  "confirm": "OK",
+  "addDialogTitle": "Add",
+  "addDialogHint": "Title",
+  "add": "Add"
+}

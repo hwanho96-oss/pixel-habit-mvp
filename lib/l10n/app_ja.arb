@@ -1,0 +1,32 @@
+{
+  "@@locale": "ja",
+  "tabHome": "ホーム",
+  "tabCharacter": "キャラクター",
+  "tabAnalysis": "分析",
+  "tabSettings": "設定",
+  "goldAmount": "{amount} ゴールド",
+  "@goldAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "int"
+      }
+    }
+  },
+  "goldEarned": "+{amount} ゴールド",
+  "@goldEarned": {
+    "placeholders": {
+      "amount": {
+        "type": "int"
+      }
+    }
+  },
+  "segmentRoutine": "ルーティン",
+  "segmentTodo": "ToDo",
+  "deleteConfirmTitle": "削除",
+  "deleteConfirmMessage": "この項目を削除しますか？",
+  "cancel": "キャンセル",
+  "confirm": "確認",
+  "addDialogTitle": "追加",
+  "addDialogHint": "タイトル",
+  "add": "追加"
+}

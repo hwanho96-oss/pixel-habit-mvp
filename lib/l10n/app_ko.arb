@@ -1,0 +1,32 @@
+{
+  "@@locale": "ko",
+  "tabHome": "홈",
+  "tabCharacter": "캐릭터",
+  "tabAnalysis": "분석",
+  "tabSettings": "설정",
+  "goldAmount": "{amount} 골드",
+  "@goldAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "int"
+      }
+    }
+  },
+  "goldEarned": "+{amount} 골드",
+  "@goldEarned": {
+    "placeholders": {
+      "amount": {
+        "type": "int"
+      }
+    }
+  },
+  "segmentRoutine": "루틴",
+  "segmentTodo": "투두",
+  "deleteConfirmTitle": "삭제",
+  "deleteConfirmMessage": "이 항목을 삭제할까요?",
+  "cancel": "취소",
+  "confirm": "확인",
+  "addDialogTitle": "추가",
+  "addDialogHint": "제목",
+  "add": "추가"
+}

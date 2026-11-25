@@ -1,0 +1,32 @@
+{
+  "@@locale": "zh",
+  "tabHome": "首页",
+  "tabCharacter": "角色",
+  "tabAnalysis": "分析",
+  "tabSettings": "设置",
+  "goldAmount": "{amount} 金币",
+  "@goldAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "int"
+      }
+    }
+  },
+  "goldEarned": "+{amount} 金币",
+  "@goldEarned": {
+    "placeholders": {
+      "amount": {
+        "type": "int"
+      }
+    }
+  },
+  "segmentRoutine": "习惯",
+  "segmentTodo": "待办",
+  "deleteConfirmTitle": "删除",
+  "deleteConfirmMessage": "要删除此项吗？",
+  "cancel": "取消",
+  "confirm": "确定",
+  "addDialogTitle": "添加",
+  "addDialogHint": "标题",
+  "add": "添加"
+}
