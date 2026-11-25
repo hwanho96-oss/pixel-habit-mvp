@@ -52,6 +52,128 @@ class AppState extends ChangeNotifier {
   bool isRoutineDoneToday(Routine routine) =>
       routine.lastDoneDate == DayClock.todayKey();
 
+  /// Routine checklist resets each logical day via [Routine.checklistDateKey].
+  List<int> effectiveRoutineChecklistDone(Routine routine) {
+    if (routine.checklistDateKey != DayClock.todayKey()) return const [];
+    return _validChecklistDone(routine.checklistDone, routine.checklist.length);
+  }
+
+  List<int> effectiveTodoChecklistDone(Todo todo) =>
+      _validChecklistDone(todo.checklistDone, todo.checklist.length);
+
+  List<int> _validChecklistDone(List<int> done, int length) {
+    return done.where((i) => i >= 0 && i < length).toList()..sort();
+  }
+
+  bool _isAllChecklistChecked(List<String> checklist, List<int> done) {
+    if (checklist.isEmpty) return false;
+    final set = done.toSet();
+    return checklist.length == set.length &&
+        List.generate(checklist.length, (i) => i).every(set.contains);
+  }
+
+  /// Keeps done indices aligned after checklist items are removed/added in the form.
+  static List<int> remapChecklistDone({
+    required List<int> previousDone,
+    required List<String> previousChecklist,
+    required List<String> nextChecklist,
+  }) {
+    if (previousChecklist.length == nextChecklist.length &&
+        listEquals(previousChecklist, nextChecklist)) {
+      return _clampDone(previousDone, nextChecklist.length);
+    }
+
+    // Prefer content-based remap when possible; fall back to index clamp.
+    final nextDone = <int>[];
+    for (final oldIndex in previousDone) {
+      if (oldIndex < 0 || oldIndex >= previousChecklist.length) continue;
+      final text = previousChecklist[oldIndex];
+      final newIndex = nextChecklist.indexOf(text);
+      if (newIndex >= 0 && !nextDone.contains(newIndex)) {
+        nextDone.add(newIndex);
+      }
+    }
+    nextDone.sort();
+    return nextDone;
+  }
+
+  static List<int> _clampDone(List<int> done, int length) {
+    return done.where((i) => i >= 0 && i < length).toList()..sort();
+  }
+
+  /// Returns true when the item just became complete (for praise SnackBar).
+  Future<bool> toggleRoutineChecklistItem(String id, int itemIndex) async {
+    final index = routines.indexWhere((r) => r.id == id);
+    if (index < 0) return false;
+
+    final routine = routines[index];
+    if (itemIndex < 0 || itemIndex >= routine.checklist.length) return false;
+
+    final today = DayClock.todayKey();
+    final doneSet = effectiveRoutineChecklistDone(routine).toSet();
+    if (doneSet.contains(itemIndex)) {
+      doneSet.remove(itemIndex);
+    } else {
+      doneSet.add(itemIndex);
+    }
+    final nextDone = doneSet.toList()..sort();
+    final wasComplete = isRoutineDoneToday(routine);
+    final allChecked =
+        _isAllChecklistChecked(routine.checklist, nextDone);
+
+    routines[index] = routine.copyWith(
+      checklistDone: nextDone,
+      checklistDateKey: today,
+    );
+
+    if (allChecked && !wasComplete) {
+      await toggleRoutineDone(id);
+      return true;
+    }
+    if (!allChecked && wasComplete) {
+      await toggleRoutineDone(id);
+      return false;
+    }
+
+    notifyListeners();
+    await _persist();
+    return false;
+  }
+
+  /// Returns true when the item just became complete (for praise SnackBar).
+  Future<bool> toggleTodoChecklistItem(String id, int itemIndex) async {
+    final index = todos.indexWhere((t) => t.id == id);
+    if (index < 0) return false;
+
+    final todo = todos[index];
+    if (itemIndex < 0 || itemIndex >= todo.checklist.length) return false;
+
+    final doneSet = effectiveTodoChecklistDone(todo).toSet();
+    if (doneSet.contains(itemIndex)) {
+      doneSet.remove(itemIndex);
+    } else {
+      doneSet.add(itemIndex);
+    }
+    final nextDone = doneSet.toList()..sort();
+    final wasComplete = todo.done;
+    final allChecked = _isAllChecklistChecked(todo.checklist, nextDone);
+
+    todos[index] = todo.copyWith(checklistDone: nextDone);
+
+    if (allChecked && !wasComplete) {
+      await toggleTodoDone(id);
+      return true;
+    }
+    if (!allChecked && wasComplete) {
+      await toggleTodoDone(id);
+      return false;
+    }
+
+    notifyListeners();
+    await _persist();
+    return false;
+  }
+
   int get totalCompletions => completionLog.length;
 
   int get adventureDays =>
@@ -199,8 +321,14 @@ class AppState extends ChangeNotifier {
   Future<void> updateRoutine(Routine routine) async {
     final index = routines.indexWhere((r) => r.id == routine.id);
     if (index < 0) return;
+    final previous = routines[index];
+    final remapped = remapChecklistDone(
+      previousDone: previous.checklistDone,
+      previousChecklist: previous.checklist,
+      nextChecklist: routine.checklist,
+    );
     routines = [...routines];
-    routines[index] = routine;
+    routines[index] = routine.copyWith(checklistDone: remapped);
     notifyListeners();
     await _persist();
   }
@@ -214,8 +342,14 @@ class AppState extends ChangeNotifier {
   Future<void> updateTodo(Todo todo) async {
     final index = todos.indexWhere((t) => t.id == todo.id);
     if (index < 0) return;
+    final previous = todos[index];
+    final remapped = remapChecklistDone(
+      previousDone: previous.checklistDone,
+      previousChecklist: previous.checklist,
+      nextChecklist: todo.checklist,
+    );
     todos = [...todos];
-    todos[index] = todo;
+    todos[index] = todo.copyWith(checklistDone: remapped);
     notifyListeners();
     await _persist();
   }

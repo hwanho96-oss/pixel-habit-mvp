@@ -2,6 +2,7 @@ class Todo {
   final String id;
   final String title;
   final List<String> checklist;
+  final List<int> checklistDone;
   final DateTime date;
   final int? hour;
   final int? minute;
@@ -13,6 +14,7 @@ class Todo {
     required this.id,
     required this.title,
     required this.checklist,
+    this.checklistDone = const [],
     required this.date,
     this.hour,
     this.minute,
@@ -25,6 +27,7 @@ class Todo {
     String? id,
     String? title,
     List<String>? checklist,
+    List<int>? checklistDone,
     DateTime? date,
     int? hour,
     int? minute,
@@ -39,6 +42,7 @@ class Todo {
       id: id ?? this.id,
       title: title ?? this.title,
       checklist: checklist ?? this.checklist,
+      checklistDone: checklistDone ?? this.checklistDone,
       date: date ?? this.date,
       hour: clearHour ? null : (hour ?? this.hour),
       minute: clearMinute ? null : (minute ?? this.minute),
@@ -52,6 +56,7 @@ class Todo {
         'id': id,
         'title': title,
         'checklist': checklist,
+        'checklistDone': checklistDone,
         'date': date.toIso8601String(),
         'hour': hour,
         'minute': minute,
@@ -66,6 +71,9 @@ class Todo {
       title: json['title'] as String,
       checklist: (json['checklist'] as List<dynamic>? ?? [])
           .map((e) => e as String)
+          .toList(),
+      checklistDone: (json['checklistDone'] as List<dynamic>? ?? [])
+          .map((e) => e as int)
           .toList(),
       date: DateTime.parse(json['date'] as String),
       hour: json['hour'] as int?,

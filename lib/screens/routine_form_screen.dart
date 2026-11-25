@@ -203,10 +203,19 @@ class _ItemFormScreenState extends State<ItemFormScreen> {
 
     if (_isRoutine) {
       final existing = widget.initialRoutine;
+      final remappedDone = existing == null
+          ? const <int>[]
+          : AppState.remapChecklistDone(
+              previousDone: existing.checklistDone,
+              previousChecklist: existing.checklist,
+              nextChecklist: _checklist,
+            );
       final routine = Routine(
         id: existing?.id ?? DateTime.now().microsecondsSinceEpoch.toString(),
         title: title,
         checklist: _checklist,
+        checklistDone: remappedDone,
+        checklistDateKey: existing?.checklistDateKey,
         date: _date,
         hour: _hour,
         minute: _minute,
@@ -221,11 +230,19 @@ class _ItemFormScreenState extends State<ItemFormScreen> {
       }
     } else {
       final existing = widget.initialTodo;
+      final remappedDone = existing == null
+          ? const <int>[]
+          : AppState.remapChecklistDone(
+              previousDone: existing.checklistDone,
+              previousChecklist: existing.checklist,
+              nextChecklist: _checklist,
+            );
       final todo = Todo(
         id: existing?.id ??
             '${DateTime.now().microsecondsSinceEpoch}_t',
         title: title,
         checklist: _checklist,
+        checklistDone: remappedDone,
         date: _date,
         hour: _hour,
         minute: _minute,
