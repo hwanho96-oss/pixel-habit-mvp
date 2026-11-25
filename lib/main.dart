@@ -6,6 +6,7 @@ import 'data/storage.dart';
 import 'l10n/app_localizations.dart';
 import 'providers/app_state.dart';
 import 'router/app_router.dart';
+import 'widgets/mobile_frame.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,6 +29,7 @@ class PixelHabitApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       routerConfig: appRouter,
+      builder: (context, child) => MobileFrame(child: child!),
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,

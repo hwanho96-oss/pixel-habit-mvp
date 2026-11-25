@@ -5,18 +5,48 @@ import '../data/day_clock.dart';
 import '../data/default_tags.dart';
 import '../l10n/app_localizations.dart';
 import '../models/routine.dart';
+import '../models/todo.dart';
 import '../providers/app_state.dart';
 
-class RoutineFormScreen extends StatefulWidget {
-  const RoutineFormScreen({super.key, this.initial});
+enum FormItemType { routine, todo }
 
-  final Routine? initial;
+class ItemFormArgs {
+  const ItemFormArgs({
+    required this.type,
+    this.routine,
+    this.todo,
+  });
 
-  @override
-  State<RoutineFormScreen> createState() => _RoutineFormScreenState();
+  final FormItemType type;
+  final Routine? routine;
+  final Todo? todo;
 }
 
-class _RoutineFormScreenState extends State<RoutineFormScreen> {
+class ItemFormScreen extends StatefulWidget {
+  const ItemFormScreen({
+    super.key,
+    required this.type,
+    this.initialRoutine,
+    this.initialTodo,
+  });
+
+  final FormItemType type;
+  final Routine? initialRoutine;
+  final Todo? initialTodo;
+
+  factory ItemFormScreen.fromArgs(ItemFormArgs args) {
+    return ItemFormScreen(
+      type: args.type,
+      initialRoutine: args.routine,
+      initialTodo: args.todo,
+    );
+  }
+
+  @override
+  State<ItemFormScreen> createState() => _ItemFormScreenState();
+}
+
+class _ItemFormScreenState extends State<ItemFormScreen> {
   late final TextEditingController _titleController;
   late final TextEditingController _checklistController;
   late DateTime _date;
@@ -26,21 +56,31 @@ class _RoutineFormScreenState extends State<RoutineFormScreen> {
   late Set<String> _selectedTags;
   late List<String> _checklist;
 
-  bool get _isEdit => widget.initial != null;
+  bool get _isRoutine => widget.type == FormItemType.routine;
+
+  bool get _isEdit => _isRoutine
+      ? widget.initialRoutine != null
+      : widget.initialTodo != null;
 
   @override
   void initState() {
     super.initState();
-    final initial = widget.initial;
     final now = DayClock.logicalNow();
-    _titleController = TextEditingController(text: initial?.title ?? '');
+    final routine = widget.initialRoutine;
+    final todo = widget.initialTodo;
+
+    _titleController = TextEditingController(
+      text: routine?.title ?? todo?.title ?? '',
+    );
     _checklistController = TextEditingController();
-    _date = initial?.date ?? DateTime(now.year, now.month, now.day);
-    _hour = initial?.hour;
-    _minute = initial?.minute;
-    _weekdays = {...?initial?.repeatWeekdays};
-    _selectedTags = {...?initial?.tags};
-    _checklist = [...?initial?.checklist];
+    _date = routine?.date ??
+        todo?.date ??
+        DateTime(now.year, now.month, now.day);
+    _hour = routine?.hour ?? todo?.hour;
+    _minute = routine?.minute ?? todo?.minute;
+    _weekdays = {...?routine?.repeatWeekdays};
+    _selectedTags = {...?(routine?.tags ?? todo?.tags)};
+    _checklist = [...?(routine?.checklist ?? todo?.checklist)];
     _titleController.addListener(() => setState(() {}));
   }
 
@@ -75,6 +115,13 @@ class _RoutineFormScreenState extends State<RoutineFormScreen> {
         l10n.weekdaySat,
         l10n.weekdaySun,
       ];
+
+  String _formTitle(AppLocalizations l10n) {
+    if (_isRoutine) {
+      return _isEdit ? l10n.routineFormTitleEdit : l10n.routineFormTitle;
+    }
+    return _isEdit ? l10n.todoFormTitleEdit : l10n.todoFormTitle;
+  }
 
   Future<void> _pickDate() async {
     final picked = await showDatePicker(
@@ -153,24 +200,46 @@ class _RoutineFormScreenState extends State<RoutineFormScreen> {
     if (title.isEmpty) return;
 
     final state = context.read<AppState>();
-    final existing = widget.initial;
-    final routine = Routine(
-      id: existing?.id ?? DateTime.now().microsecondsSinceEpoch.toString(),
-      title: title,
-      checklist: _checklist,
-      date: _date,
-      hour: _hour,
-      minute: _minute,
-      repeatWeekdays: _weekdays.toList()..sort(),
-      tags: _selectedTags.toList(),
-      lastDoneDate: existing?.lastDoneDate,
-    );
 
-    if (_isEdit) {
-      await state.updateRoutine(routine);
+    if (_isRoutine) {
+      final existing = widget.initialRoutine;
+      final routine = Routine(
+        id: existing?.id ?? DateTime.now().microsecondsSinceEpoch.toString(),
+        title: title,
+        checklist: _checklist,
+        date: _date,
+        hour: _hour,
+        minute: _minute,
+        repeatWeekdays: _weekdays.toList()..sort(),
+        tags: _selectedTags.toList(),
+        lastDoneDate: existing?.lastDoneDate,
+      );
+      if (_isEdit) {
+        await state.updateRoutine(routine);
+      } else {
+        await state.addRoutine(routine);
+      }
     } else {
-      await state.addRoutine(routine);
+      final existing = widget.initialTodo;
+      final todo = Todo(
+        id: existing?.id ??
+            '${DateTime.now().microsecondsSinceEpoch}_t',
+        title: title,
+        checklist: _checklist,
+        date: _date,
+        hour: _hour,
+        minute: _minute,
+        tags: _selectedTags.toList(),
+        done: existing?.done ?? false,
+        doneDate: existing?.doneDate,
+      );
+      if (_isEdit) {
+        await state.updateTodo(todo);
+      } else {
+        await state.addTodo(todo);
+      }
     }
+
     if (mounted) Navigator.of(context).pop();
   }
 
@@ -183,11 +252,13 @@ class _RoutineFormScreenState extends State<RoutineFormScreen> {
         ? '${_hour!.toString().padLeft(2, '0')}:${_minute!.toString().padLeft(2, '0')}'
         : l10n.routineTimeUnset;
     final weekdayLabels = _weekdayLabels(l10n);
+    final titleHint =
+        _isRoutine ? l10n.routineTitleHint : l10n.todoTitleHint;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          _isEdit ? l10n.routineFormTitleEdit : l10n.routineFormTitle,
+          _formTitle(l10n),
           softWrap: true,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
@@ -213,7 +284,7 @@ class _RoutineFormScreenState extends State<RoutineFormScreen> {
                 TextField(
                   controller: _titleController,
                   decoration: InputDecoration(
-                    hintText: l10n.routineTitleHint,
+                    hintText: titleHint,
                     border: const OutlineInputBorder(),
                   ),
                 ),
@@ -305,57 +376,58 @@ class _RoutineFormScreenState extends State<RoutineFormScreen> {
               ],
             ),
           ),
-          _FormCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        l10n.routineSectionRepeat,
-                        softWrap: true,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Flexible(
-                      child: Text(
-                        l10n.routineRepeatEverydayHint,
-                        softWrap: true,
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    for (var i = 0; i < 7; i++)
-                      FilterChip(
-                        label: Text(
-                          weekdayLabels[i],
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+          if (_isRoutine)
+            _FormCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          l10n.routineSectionRepeat,
+                          softWrap: true,
                         ),
-                        selected: _weekdays.contains(i + 1),
-                        onSelected: (selected) {
-                          setState(() {
-                            if (selected) {
-                              _weekdays = {..._weekdays, i + 1};
-                            } else {
-                              _weekdays = {..._weekdays}..remove(i + 1);
-                            }
-                          });
-                        },
                       ),
-                  ],
-                ),
-              ],
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: Text(
+                          l10n.routineRepeatEverydayHint,
+                          softWrap: true,
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      for (var i = 0; i < 7; i++)
+                        FilterChip(
+                          label: Text(
+                            weekdayLabels[i],
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          selected: _weekdays.contains(i + 1),
+                          onSelected: (selected) {
+                            setState(() {
+                              if (selected) {
+                                _weekdays = {..._weekdays, i + 1};
+                              } else {
+                                _weekdays = {..._weekdays}..remove(i + 1);
+                              }
+                            });
+                          },
+                        ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
           _FormCard(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,

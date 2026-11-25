@@ -65,10 +65,19 @@ class AppLocalizationsJa extends AppLocalizations {
   String get routineFormTitleEdit => 'ルーティンを編集';
 
   @override
+  String get todoFormTitle => 'ToDoを作成';
+
+  @override
+  String get todoFormTitleEdit => 'ToDoを編集';
+
+  @override
   String get routineSectionTitle => 'タイトル';
 
   @override
   String get routineTitleHint => '例: 朝の運動';
+
+  @override
+  String get todoTitleHint => '例: 報告書を提出';
 
   @override
   String get routineSectionChecklist => 'チェックリスト';
@@ -147,4 +156,15 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get close => '閉じる';
+
+  @override
+  String checklistProgress(int done, int total) {
+    return '$done/$total';
+  }
+
+  @override
+  String get emptyRoutinesHint => '+ ボタンで最初のルーティンを作成しましょう';
+
+  @override
+  String get emptyTodosHint => '+ ボタンで最初のToDoを作成しましょう';
 }

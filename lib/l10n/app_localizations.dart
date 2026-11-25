@@ -204,6 +204,18 @@ abstract class AppLocalizations {
   /// **'루틴 수정하기'**
   String get routineFormTitleEdit;
 
+  /// No description provided for @todoFormTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'투두 작성하기'**
+  String get todoFormTitle;
+
+  /// No description provided for @todoFormTitleEdit.
+  ///
+  /// In ko, this message translates to:
+  /// **'투두 수정하기'**
+  String get todoFormTitleEdit;
+
   /// No description provided for @routineSectionTitle.
   ///
   /// In ko, this message translates to:
@@ -215,6 +227,12 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'예: 아침 운동'**
   String get routineTitleHint;
+
+  /// No description provided for @todoTitleHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'예: 보고서 제출'**
+  String get todoTitleHint;
 
   /// No description provided for @routineSectionChecklist.
   ///
@@ -371,6 +389,24 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'닫기'**
   String get close;
+
+  /// No description provided for @checklistProgress.
+  ///
+  /// In ko, this message translates to:
+  /// **'{done}/{total}'**
+  String checklistProgress(int done, int total);
+
+  /// No description provided for @emptyRoutinesHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'+ 버튼으로 첫 루틴을 만들어 보세요'**
+  String get emptyRoutinesHint;
+
+  /// No description provided for @emptyTodosHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'+ 버튼으로 첫 투두를 만들어 보세요'**
+  String get emptyTodosHint;
 }
 
 class _AppLocalizationsDelegate

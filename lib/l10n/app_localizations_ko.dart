@@ -65,10 +65,19 @@ class AppLocalizationsKo extends AppLocalizations {
   String get routineFormTitleEdit => '루틴 수정하기';
 
   @override
+  String get todoFormTitle => '투두 작성하기';
+
+  @override
+  String get todoFormTitleEdit => '투두 수정하기';
+
+  @override
   String get routineSectionTitle => '제목';
 
   @override
   String get routineTitleHint => '예: 아침 운동';
+
+  @override
+  String get todoTitleHint => '예: 보고서 제출';
 
   @override
   String get routineSectionChecklist => '세부 체크리스트';
@@ -147,4 +156,15 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get close => '닫기';
+
+  @override
+  String checklistProgress(int done, int total) {
+    return '$done/$total';
+  }
+
+  @override
+  String get emptyRoutinesHint => '+ 버튼으로 첫 루틴을 만들어 보세요';
+
+  @override
+  String get emptyTodosHint => '+ 버튼으로 첫 투두를 만들어 보세요';
 }

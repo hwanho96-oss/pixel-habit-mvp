@@ -65,10 +65,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get routineFormTitleEdit => 'Edit routine';
 
   @override
+  String get todoFormTitle => 'Create todo';
+
+  @override
+  String get todoFormTitleEdit => 'Edit todo';
+
+  @override
   String get routineSectionTitle => 'Title';
 
   @override
   String get routineTitleHint => 'e.g. Morning workout';
+
+  @override
+  String get todoTitleHint => 'e.g. Submit report';
 
   @override
   String get routineSectionChecklist => 'Checklist';
@@ -147,4 +156,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get close => 'Close';
+
+  @override
+  String checklistProgress(int done, int total) {
+    return '$done/$total';
+  }
+
+  @override
+  String get emptyRoutinesHint => 'Tap + to create your first routine';
+
+  @override
+  String get emptyTodosHint => 'Tap + to create your first todo';
 }

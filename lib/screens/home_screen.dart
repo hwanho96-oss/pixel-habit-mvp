@@ -7,6 +7,7 @@ import '../l10n/app_localizations.dart';
 import '../models/routine.dart';
 import '../models/todo.dart';
 import '../providers/app_state.dart';
+import 'routine_form_screen.dart';
 
 enum _HomeSegment { routine, todo }
 
@@ -53,44 +54,11 @@ class _HomeScreenState extends State<HomeScreen> {
     if (ok == true) onConfirm();
   }
 
-  Future<void> _showAddTodoDialog(AppState state) async {
-    final l10n = AppLocalizations.of(context)!;
-    final controller = TextEditingController();
-    final title = await showDialog<String>(
-      context: context,
-      builder: (ctx) {
-        return AlertDialog(
-          title: Text(l10n.addDialogTitle),
-          content: TextField(
-            controller: controller,
-            autofocus: true,
-            decoration: InputDecoration(hintText: l10n.addDialogHint),
-            onSubmitted: (value) => Navigator.pop(ctx, value.trim()),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: Text(l10n.cancel),
-            ),
-            TextButton(
-              onPressed: () => Navigator.pop(ctx, controller.text.trim()),
-              child: Text(l10n.add),
-            ),
-          ],
-        );
-      },
-    );
-    controller.dispose();
-    if (title == null || title.isEmpty) return;
-    await state.addTodo(title);
-  }
-
-  void _onFabPressed(AppState state) {
-    if (_segment == _HomeSegment.routine) {
-      context.push('/routine/form');
-    } else {
-      _showAddTodoDialog(state);
-    }
+  void _onFabPressed() {
+    final type = _segment == _HomeSegment.routine
+        ? FormItemType.routine
+        : FormItemType.todo;
+    context.push('/item/form', extra: ItemFormArgs(type: type));
   }
 
   void _showGoldSnackBar(int amount) {
@@ -165,10 +133,19 @@ class _HomeScreenState extends State<HomeScreen> {
               child: _segment == _HomeSegment.routine
                   ? _RoutineList(
                       routines: state.todaysRoutines,
+                      emptyHint: l10n.emptyRoutinesHint,
                       isDone: state.isRoutineDoneToday,
                       formatTime: _formatTime,
+                      checklistProgress: (total) =>
+                          l10n.checklistProgress(0, total),
                       onOpen: (routine) {
-                        context.push('/routine/form', extra: routine);
+                        context.push(
+                          '/item/form',
+                          extra: ItemFormArgs(
+                            type: FormItemType.routine,
+                            routine: routine,
+                          ),
+                        );
                       },
                       onToggle: (routine, checked) async {
                         await state.toggleRoutineDone(routine.id);
@@ -184,7 +161,19 @@ class _HomeScreenState extends State<HomeScreen> {
                     )
                   : _TodoList(
                       todos: state.todaysTodos,
+                      emptyHint: l10n.emptyTodosHint,
                       formatTime: _formatTime,
+                      checklistProgress: (total) =>
+                          l10n.checklistProgress(0, total),
+                      onOpen: (todo) {
+                        context.push(
+                          '/item/form',
+                          extra: ItemFormArgs(
+                            type: FormItemType.todo,
+                            todo: todo,
+                          ),
+                        );
+                      },
                       onToggle: (todo, checked) async {
                         await state.toggleTodoDone(todo.id);
                         if (checked) {
@@ -202,7 +191,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _onFabPressed(state),
+        onPressed: _onFabPressed,
         child: const Icon(Icons.add),
       ),
     );
@@ -212,22 +201,30 @@ class _HomeScreenState extends State<HomeScreen> {
 class _RoutineList extends StatelessWidget {
   const _RoutineList({
     required this.routines,
+    required this.emptyHint,
     required this.isDone,
     required this.formatTime,
+    required this.checklistProgress,
     required this.onOpen,
     required this.onToggle,
     required this.onLongPress,
   });
 
   final List<Routine> routines;
+  final String emptyHint;
   final bool Function(Routine) isDone;
   final String? Function(int?, int?) formatTime;
+  final String Function(int total) checklistProgress;
   final void Function(Routine routine) onOpen;
   final void Function(Routine routine, bool checked) onToggle;
   final void Function(Routine routine) onLongPress;
 
   @override
   Widget build(BuildContext context) {
+    if (routines.isEmpty) {
+      return _EmptyHint(text: emptyHint);
+    }
+
     return ListView.builder(
       padding: const EdgeInsets.only(bottom: 88),
       itemCount: routines.length,
@@ -259,6 +256,13 @@ class _RoutineList extends StatelessWidget {
                           maxLines: 3,
                           overflow: TextOverflow.ellipsis,
                         ),
+                        if (routine.checklist.isNotEmpty)
+                          Text(
+                            checklistProgress(routine.checklist.length),
+                            style: Theme.of(context).textTheme.bodySmall,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         if (time != null)
                           Text(
                             time,
@@ -281,59 +285,100 @@ class _RoutineList extends StatelessWidget {
 class _TodoList extends StatelessWidget {
   const _TodoList({
     required this.todos,
+    required this.emptyHint,
     required this.formatTime,
+    required this.checklistProgress,
+    required this.onOpen,
     required this.onToggle,
     required this.onLongPress,
   });
 
   final List<Todo> todos;
+  final String emptyHint;
   final String? Function(int?, int?) formatTime;
+  final String Function(int total) checklistProgress;
+  final void Function(Todo todo) onOpen;
   final void Function(Todo todo, bool checked) onToggle;
   final void Function(Todo todo) onLongPress;
 
   @override
   Widget build(BuildContext context) {
+    if (todos.isEmpty) {
+      return _EmptyHint(text: emptyHint);
+    }
+
     return ListView.builder(
       padding: const EdgeInsets.only(bottom: 88),
       itemCount: todos.length,
       itemBuilder: (context, index) {
         final todo = todos[index];
         final time = formatTime(todo.hour, todo.minute);
-        return InkWell(
-          onLongPress: () => onLongPress(todo),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Checkbox(
-                  value: todo.done,
-                  onChanged: (value) => onToggle(todo, value ?? false),
-                ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        todo.title,
-                        softWrap: true,
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      if (time != null)
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Checkbox(
+                value: todo.done,
+                onChanged: (value) => onToggle(todo, value ?? false),
+              ),
+              Expanded(
+                child: InkWell(
+                  onTap: () => onOpen(todo),
+                  onLongPress: () => onLongPress(todo),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
                         Text(
-                          time,
-                          maxLines: 1,
+                          todo.title,
+                          softWrap: true,
+                          maxLines: 3,
                           overflow: TextOverflow.ellipsis,
                         ),
-                    ],
+                        if (todo.checklist.isNotEmpty)
+                          Text(
+                            checklistProgress(todo.checklist.length),
+                            style: Theme.of(context).textTheme.bodySmall,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        if (time != null)
+                          Text(
+                            time,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                      ],
+                    ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         );
       },
+    );
+  }
+}
+
+class _EmptyHint extends StatelessWidget {
+  const _EmptyHint({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Text(
+          text,
+          textAlign: TextAlign.center,
+          softWrap: true,
+        ),
+      ),
     );
   }
 }

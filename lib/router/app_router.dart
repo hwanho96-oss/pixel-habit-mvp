@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../models/routine.dart';
 import '../screens/home_screen.dart';
 import '../screens/placeholder_screen.dart';
 import '../screens/routine_form_screen.dart';
@@ -60,10 +59,11 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       parentNavigatorKey: rootNavigatorKey,
-      path: '/routine/form',
+      path: '/item/form',
       builder: (context, state) {
-        final initial = state.extra as Routine?;
-        return RoutineFormScreen(initial: initial);
+        final args = state.extra as ItemFormArgs? ??
+            const ItemFormArgs(type: FormItemType.routine);
+        return ItemFormScreen.fromArgs(args);
       },
     ),
   ],

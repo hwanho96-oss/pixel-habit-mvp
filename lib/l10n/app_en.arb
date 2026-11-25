@@ -31,8 +31,11 @@
   "add": "Add",
   "routineFormTitle": "Create routine",
   "routineFormTitleEdit": "Edit routine",
+  "todoFormTitle": "Create todo",
+  "todoFormTitleEdit": "Edit todo",
   "routineSectionTitle": "Title",
   "routineTitleHint": "e.g. Morning workout",
+  "todoTitleHint": "e.g. Submit report",
   "routineSectionChecklist": "Checklist",
   "routineChecklistHint": "Add an item",
   "routineSectionSchedule": "Date & time",
@@ -58,5 +61,18 @@
   "addCustomTagHint": "Tag name",
   "routineSubmit": "Register",
   "routineSave": "Save",
-  "close": "Close"
+  "close": "Close",
+  "checklistProgress": "{done}/{total}",
+  "@checklistProgress": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "emptyRoutinesHint": "Tap + to create your first routine",
+  "emptyTodosHint": "Tap + to create your first todo"
 }

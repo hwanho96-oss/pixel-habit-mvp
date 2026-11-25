@@ -31,8 +31,11 @@
   "add": "追加",
   "routineFormTitle": "ルーティンを作成",
   "routineFormTitleEdit": "ルーティンを編集",
+  "todoFormTitle": "ToDoを作成",
+  "todoFormTitleEdit": "ToDoを編集",
   "routineSectionTitle": "タイトル",
   "routineTitleHint": "例: 朝の運動",
+  "todoTitleHint": "例: 報告書を提出",
   "routineSectionChecklist": "チェックリスト",
   "routineChecklistHint": "項目を入力",
   "routineSectionSchedule": "日付・時間",
@@ -58,5 +61,18 @@
   "addCustomTagHint": "タグ名",
   "routineSubmit": "登録",
   "routineSave": "保存",
-  "close": "閉じる"
+  "close": "閉じる",
+  "checklistProgress": "{done}/{total}",
+  "@checklistProgress": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "emptyRoutinesHint": "+ ボタンで最初のルーティンを作成しましょう",
+  "emptyTodosHint": "+ ボタンで最初のToDoを作成しましょう"
 }

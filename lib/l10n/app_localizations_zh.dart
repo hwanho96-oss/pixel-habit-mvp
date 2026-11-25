@@ -65,10 +65,19 @@ class AppLocalizationsZh extends AppLocalizations {
   String get routineFormTitleEdit => '编辑习惯';
 
   @override
+  String get todoFormTitle => '创建待办';
+
+  @override
+  String get todoFormTitleEdit => '编辑待办';
+
+  @override
   String get routineSectionTitle => '标题';
 
   @override
   String get routineTitleHint => '例如：晨练';
+
+  @override
+  String get todoTitleHint => '例如：提交报告';
 
   @override
   String get routineSectionChecklist => '详细清单';
@@ -147,4 +156,15 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get close => '关闭';
+
+  @override
+  String checklistProgress(int done, int total) {
+    return '$done/$total';
+  }
+
+  @override
+  String get emptyRoutinesHint => '点按 + 创建第一个习惯';
+
+  @override
+  String get emptyTodosHint => '点按 + 创建第一个待办';
 }

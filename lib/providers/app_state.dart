@@ -116,19 +116,17 @@ class AppState extends ChangeNotifier {
     await _persist();
   }
 
-  Future<void> addTodo(String title) async {
-    final now = DayClock.logicalNow();
-    todos = [
-      ...todos,
-      Todo(
-        id: '${DateTime.now().microsecondsSinceEpoch}_t',
-        title: title,
-        checklist: const [],
-        date: DateTime(now.year, now.month, now.day),
-        tags: const [],
-        done: false,
-      ),
-    ];
+  Future<void> addTodo(Todo todo) async {
+    todos = [...todos, todo];
+    notifyListeners();
+    await _persist();
+  }
+
+  Future<void> updateTodo(Todo todo) async {
+    final index = todos.indexWhere((t) => t.id == todo.id);
+    if (index < 0) return;
+    todos = [...todos];
+    todos[index] = todo;
     notifyListeners();
     await _persist();
   }
