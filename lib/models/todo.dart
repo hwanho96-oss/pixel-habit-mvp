@@ -7,6 +7,7 @@ class Todo {
   final int? minute;
   final List<String> tags;
   final bool done;
+  final String? doneDate;
 
   const Todo({
     required this.id,
@@ -17,6 +18,7 @@ class Todo {
     this.minute,
     required this.tags,
     required this.done,
+    this.doneDate,
   });
 
   Todo copyWith({
@@ -28,8 +30,10 @@ class Todo {
     int? minute,
     List<String>? tags,
     bool? done,
+    String? doneDate,
     bool clearHour = false,
     bool clearMinute = false,
+    bool clearDoneDate = false,
   }) {
     return Todo(
       id: id ?? this.id,
@@ -40,6 +44,7 @@ class Todo {
       minute: clearMinute ? null : (minute ?? this.minute),
       tags: tags ?? this.tags,
       done: done ?? this.done,
+      doneDate: clearDoneDate ? null : (doneDate ?? this.doneDate),
     );
   }
 
@@ -52,6 +57,7 @@ class Todo {
         'minute': minute,
         'tags': tags,
         'done': done,
+        'doneDate': doneDate,
       };
 
   factory Todo.fromJson(Map<String, dynamic> json) {
@@ -68,6 +74,7 @@ class Todo {
           .map((e) => e as String)
           .toList(),
       done: json['done'] as bool? ?? false,
+      doneDate: json['doneDate'] as String?,
     );
   }
 }

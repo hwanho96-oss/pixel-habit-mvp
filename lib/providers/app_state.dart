@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import '../data/day_clock.dart';
 import '../data/economy.dart';
 import '../data/storage.dart';
 import '../models/routine.dart';
@@ -12,42 +13,39 @@ class AppState extends ChangeNotifier {
 
   List<Routine> routines = [];
   List<Todo> todos = [];
+  List<String> customTags = [];
   int gold = 0;
 
   Future<void> load() async {
     routines = await _storage.loadRoutines();
     todos = await _storage.loadTodos();
     gold = await _storage.loadGold();
+    customTags = await _storage.loadCustomTags();
     notifyListeners();
   }
 
-  String _todayKey([DateTime? now]) {
-    final d = now ?? DateTime.now();
-    final mm = d.month.toString().padLeft(2, '0');
-    final dd = d.day.toString().padLeft(2, '0');
-    return '${d.year}-$mm-$dd';
-  }
-
-  bool _isSameDay(DateTime a, DateTime b) =>
-      a.year == b.year && a.month == b.month && a.day == b.day;
-
-  /// Empty [repeatWeekdays] means every day.
+  /// Empty [repeatWeekdays] means every day. Future start dates are excluded.
   List<Routine> get todaysRoutines {
-    final today = DateTime.now();
-    final weekday = today.weekday; // Mon=1 … Sun=7
+    final weekday = DayClock.logicalNow().weekday;
     return routines.where((r) {
+      if (DayClock.isAfterToday(r.date)) return false;
       if (r.repeatWeekdays.isEmpty) return true;
       return r.repeatWeekdays.contains(weekday);
     }).toList();
   }
 
+  /// Incomplete on/before today (carry-over), or completed today.
   List<Todo> get todaysTodos {
-    final today = DateTime.now();
-    return todos.where((t) => _isSameDay(t.date, today)).toList();
+    final today = DayClock.todayKey();
+    return todos.where((t) {
+      if (t.doneDate == today) return true;
+      if (!t.done && DayClock.isOnOrBeforeToday(t.date)) return true;
+      return false;
+    }).toList();
   }
 
   bool isRoutineDoneToday(Routine routine) =>
-      routine.lastDoneDate == _todayKey();
+      routine.lastDoneDate == DayClock.todayKey();
 
   void _clampGold() {
     if (gold < 0) gold = 0;
@@ -74,7 +72,8 @@ class AppState extends ChangeNotifier {
       routines[index] = routine.copyWith(clearLastDoneDate: true);
     } else {
       gold += Economy.routineCompleteGold;
-      routines[index] = routine.copyWith(lastDoneDate: _todayKey());
+      routines[index] =
+          routine.copyWith(lastDoneDate: DayClock.todayKey());
     }
 
     notifyListeners();
@@ -89,39 +88,40 @@ class AppState extends ChangeNotifier {
     if (todo.done) {
       gold -= Economy.todoCompleteGold;
       _clampGold();
-      todos[index] = todo.copyWith(done: false);
+      todos[index] = todo.copyWith(done: false, clearDoneDate: true);
     } else {
       gold += Economy.todoCompleteGold;
-      todos[index] = todo.copyWith(done: true);
+      todos[index] = todo.copyWith(
+        done: true,
+        doneDate: DayClock.todayKey(),
+      );
     }
 
     notifyListeners();
     await _persist();
   }
 
-  Future<void> addRoutine(String title) async {
-    final now = DateTime.now();
-    routines = [
-      ...routines,
-      Routine(
-        id: now.microsecondsSinceEpoch.toString(),
-        title: title,
-        checklist: const [],
-        date: DateTime(now.year, now.month, now.day),
-        repeatWeekdays: const [],
-        tags: const [],
-      ),
-    ];
+  Future<void> addRoutine(Routine routine) async {
+    routines = [...routines, routine];
+    notifyListeners();
+    await _persist();
+  }
+
+  Future<void> updateRoutine(Routine routine) async {
+    final index = routines.indexWhere((r) => r.id == routine.id);
+    if (index < 0) return;
+    routines = [...routines];
+    routines[index] = routine;
     notifyListeners();
     await _persist();
   }
 
   Future<void> addTodo(String title) async {
-    final now = DateTime.now();
+    final now = DayClock.logicalNow();
     todos = [
       ...todos,
       Todo(
-        id: '${now.microsecondsSinceEpoch}_t',
+        id: '${DateTime.now().microsecondsSinceEpoch}_t',
         title: title,
         checklist: const [],
         date: DateTime(now.year, now.month, now.day),
@@ -143,5 +143,13 @@ class AppState extends ChangeNotifier {
     todos = todos.where((t) => t.id != id).toList();
     notifyListeners();
     await _persist();
+  }
+
+  Future<void> addCustomTag(String tag) async {
+    final trimmed = tag.trim();
+    if (trimmed.isEmpty || customTags.contains(trimmed)) return;
+    customTags = [...customTags, trimmed];
+    notifyListeners();
+    await _storage.saveCustomTags(customTags);
   }
 }

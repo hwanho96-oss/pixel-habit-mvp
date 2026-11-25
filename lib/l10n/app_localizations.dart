@@ -191,6 +191,186 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'추가'**
   String get add;
+
+  /// No description provided for @routineFormTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'루틴 작성하기'**
+  String get routineFormTitle;
+
+  /// No description provided for @routineFormTitleEdit.
+  ///
+  /// In ko, this message translates to:
+  /// **'루틴 수정하기'**
+  String get routineFormTitleEdit;
+
+  /// No description provided for @routineSectionTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'제목'**
+  String get routineSectionTitle;
+
+  /// No description provided for @routineTitleHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'예: 아침 운동'**
+  String get routineTitleHint;
+
+  /// No description provided for @routineSectionChecklist.
+  ///
+  /// In ko, this message translates to:
+  /// **'세부 체크리스트'**
+  String get routineSectionChecklist;
+
+  /// No description provided for @routineChecklistHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'항목 입력'**
+  String get routineChecklistHint;
+
+  /// No description provided for @routineSectionSchedule.
+  ///
+  /// In ko, this message translates to:
+  /// **'날짜 · 시간'**
+  String get routineSectionSchedule;
+
+  /// No description provided for @routineDateLabel.
+  ///
+  /// In ko, this message translates to:
+  /// **'날짜'**
+  String get routineDateLabel;
+
+  /// No description provided for @routineTimeLabel.
+  ///
+  /// In ko, this message translates to:
+  /// **'시간'**
+  String get routineTimeLabel;
+
+  /// No description provided for @routineTimeUnset.
+  ///
+  /// In ko, this message translates to:
+  /// **'선택 안 함'**
+  String get routineTimeUnset;
+
+  /// No description provided for @routineTimeClear.
+  ///
+  /// In ko, this message translates to:
+  /// **'지우기'**
+  String get routineTimeClear;
+
+  /// No description provided for @routineSectionRepeat.
+  ///
+  /// In ko, this message translates to:
+  /// **'반복 요일'**
+  String get routineSectionRepeat;
+
+  /// No description provided for @routineRepeatEverydayHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'미선택 시 매일 반복'**
+  String get routineRepeatEverydayHint;
+
+  /// No description provided for @weekdayMon.
+  ///
+  /// In ko, this message translates to:
+  /// **'월'**
+  String get weekdayMon;
+
+  /// No description provided for @weekdayTue.
+  ///
+  /// In ko, this message translates to:
+  /// **'화'**
+  String get weekdayTue;
+
+  /// No description provided for @weekdayWed.
+  ///
+  /// In ko, this message translates to:
+  /// **'수'**
+  String get weekdayWed;
+
+  /// No description provided for @weekdayThu.
+  ///
+  /// In ko, this message translates to:
+  /// **'목'**
+  String get weekdayThu;
+
+  /// No description provided for @weekdayFri.
+  ///
+  /// In ko, this message translates to:
+  /// **'금'**
+  String get weekdayFri;
+
+  /// No description provided for @weekdaySat.
+  ///
+  /// In ko, this message translates to:
+  /// **'토'**
+  String get weekdaySat;
+
+  /// No description provided for @weekdaySun.
+  ///
+  /// In ko, this message translates to:
+  /// **'일'**
+  String get weekdaySun;
+
+  /// No description provided for @routineSectionTags.
+  ///
+  /// In ko, this message translates to:
+  /// **'태그'**
+  String get routineSectionTags;
+
+  /// No description provided for @tagHealth.
+  ///
+  /// In ko, this message translates to:
+  /// **'건강'**
+  String get tagHealth;
+
+  /// No description provided for @tagStudy.
+  ///
+  /// In ko, this message translates to:
+  /// **'공부'**
+  String get tagStudy;
+
+  /// No description provided for @tagSelfGrowth.
+  ///
+  /// In ko, this message translates to:
+  /// **'자기계발'**
+  String get tagSelfGrowth;
+
+  /// No description provided for @tagRelationship.
+  ///
+  /// In ko, this message translates to:
+  /// **'관계'**
+  String get tagRelationship;
+
+  /// No description provided for @addCustomTagTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'태그 추가'**
+  String get addCustomTagTitle;
+
+  /// No description provided for @addCustomTagHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'태그 이름'**
+  String get addCustomTagHint;
+
+  /// No description provided for @routineSubmit.
+  ///
+  /// In ko, this message translates to:
+  /// **'등록'**
+  String get routineSubmit;
+
+  /// No description provided for @routineSave.
+  ///
+  /// In ko, this message translates to:
+  /// **'저장'**
+  String get routineSave;
+
+  /// No description provided for @close.
+  ///
+  /// In ko, this message translates to:
+  /// **'닫기'**
+  String get close;
 }
 
 class _AppLocalizationsDelegate

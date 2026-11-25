@@ -9,6 +9,7 @@ class AppStorage {
   static const _routinesKey = 'routines_v1';
   static const _todosKey = 'todos_v1';
   static const _goldKey = 'gold_v1';
+  static const _customTagsKey = 'custom_tags_v1';
 
   Future<List<Routine>> loadRoutines() async {
     final prefs = await SharedPreferences.getInstance();
@@ -48,5 +49,18 @@ class AppStorage {
   Future<void> saveGold(int gold) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(_goldKey, gold);
+  }
+
+  Future<List<String>> loadCustomTags() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_customTagsKey);
+    if (raw == null) return [];
+    final list = jsonDecode(raw) as List<dynamic>;
+    return list.map((e) => e as String).toList();
+  }
+
+  Future<void> saveCustomTags(List<String> tags) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_customTagsKey, jsonEncode(tags));
   }
 }

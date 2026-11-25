@@ -1,10 +1,16 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../models/routine.dart';
 import '../screens/home_screen.dart';
 import '../screens/placeholder_screen.dart';
+import '../screens/routine_form_screen.dart';
 import '../screens/shell_scaffold.dart';
 
+final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
+
 final GoRouter appRouter = GoRouter(
+  navigatorKey: rootNavigatorKey,
   initialLocation: '/home',
   routes: [
     StatefulShellRoute.indexedStack(
@@ -51,6 +57,14 @@ final GoRouter appRouter = GoRouter(
           ],
         ),
       ],
+    ),
+    GoRoute(
+      parentNavigatorKey: rootNavigatorKey,
+      path: '/routine/form',
+      builder: (context, state) {
+        final initial = state.extra as Routine?;
+        return RoutineFormScreen(initial: initial);
+      },
     ),
   ],
 );

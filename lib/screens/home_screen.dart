@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../data/economy.dart';
@@ -52,7 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (ok == true) onConfirm();
   }
 
-  Future<void> _showAddDialog(AppState state) async {
+  Future<void> _showAddTodoDialog(AppState state) async {
     final l10n = AppLocalizations.of(context)!;
     final controller = TextEditingController();
     final title = await showDialog<String>(
@@ -81,11 +82,14 @@ class _HomeScreenState extends State<HomeScreen> {
     );
     controller.dispose();
     if (title == null || title.isEmpty) return;
+    await state.addTodo(title);
+  }
 
+  void _onFabPressed(AppState state) {
     if (_segment == _HomeSegment.routine) {
-      await state.addRoutine(title);
+      context.push('/routine/form');
     } else {
-      await state.addTodo(title);
+      _showAddTodoDialog(state);
     }
   }
 
@@ -107,18 +111,14 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-              child: Row(
-                children: [
-                  const Spacer(),
-                  Flexible(
-                    child: Text(
-                      l10n.goldAmount(state.gold),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.end,
-                    ),
-                  ),
-                ],
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: Text(
+                  l10n.goldAmount(state.gold),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.end,
+                ),
               ),
             ),
             const SizedBox(height: 16),
@@ -167,6 +167,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       routines: state.todaysRoutines,
                       isDone: state.isRoutineDoneToday,
                       formatTime: _formatTime,
+                      onOpen: (routine) {
+                        context.push('/routine/form', extra: routine);
+                      },
                       onToggle: (routine, checked) async {
                         await state.toggleRoutineDone(routine.id);
                         if (checked) {
@@ -199,7 +202,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _showAddDialog(state),
+        onPressed: () => _onFabPressed(state),
         child: const Icon(Icons.add),
       ),
     );
@@ -211,6 +214,7 @@ class _RoutineList extends StatelessWidget {
     required this.routines,
     required this.isDone,
     required this.formatTime,
+    required this.onOpen,
     required this.onToggle,
     required this.onLongPress,
   });
@@ -218,6 +222,7 @@ class _RoutineList extends StatelessWidget {
   final List<Routine> routines;
   final bool Function(Routine) isDone;
   final String? Function(int?, int?) formatTime;
+  final void Function(Routine routine) onOpen;
   final void Function(Routine routine, bool checked) onToggle;
   final void Function(Routine routine) onLongPress;
 
@@ -230,38 +235,42 @@ class _RoutineList extends StatelessWidget {
         final routine = routines[index];
         final done = isDone(routine);
         final time = formatTime(routine.hour, routine.minute);
-        return InkWell(
-          onLongPress: () => onLongPress(routine),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Checkbox(
-                  value: done,
-                  onChanged: (value) => onToggle(routine, value ?? false),
-                ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        routine.title,
-                        softWrap: true,
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      if (time != null)
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Checkbox(
+                value: done,
+                onChanged: (value) => onToggle(routine, value ?? false),
+              ),
+              Expanded(
+                child: InkWell(
+                  onTap: () => onOpen(routine),
+                  onLongPress: () => onLongPress(routine),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
                         Text(
-                          time,
-                          maxLines: 1,
+                          routine.title,
+                          softWrap: true,
+                          maxLines: 3,
                           overflow: TextOverflow.ellipsis,
                         ),
-                    ],
+                        if (time != null)
+                          Text(
+                            time,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                      ],
+                    ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         );
       },
