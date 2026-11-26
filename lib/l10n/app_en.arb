@@ -412,5 +412,59 @@
   "goalTimerStop": "Finish",
   "goalDailyReached": "You've reached today's time goal",
   "goalEdit": "Edit",
-  "goalDelete": "Delete"
+  "goalDelete": "Delete",
+  "analysisSelectTask": "Select task",
+  "analysisPickTaskHint": "Pick a task to begin",
+  "analysisNoTasks": "No tasks to select",
+  "analysisYearMonth": "{year}-{month}",
+  "@analysisYearMonth": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      },
+      "month": {
+        "type": "int"
+      }
+    }
+  },
+  "analysisPrevMonth": "Previous month",
+  "analysisNextMonth": "Next month",
+  "analysisResultsTitle": "Results",
+  "analysisEmptyGoals": "Goals you create on Home will show up here",
+  "analysisProgressToday": "Today",
+  "analysisRecent7Days": "Last 7 days",
+  "goalDailyAchieved": "Today's {name} goal done! +{gold}",
+  "@goalDailyAchieved": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "gold": {
+        "type": "int"
+      }
+    }
+  },
+  "goalWeeklyBonus": "{name} weekly goal done! +{gold}",
+  "@goalWeeklyBonus": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "gold": {
+        "type": "int"
+      }
+    }
+  },
+  "goalMonthlyBonus": "{name} monthly goal done! +{gold}",
+  "@goalMonthlyBonus": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "gold": {
+        "type": "int"
+      }
+    }
+  },
+  "dailyGoldCapReached": "You've earned all the gold available today"
 }

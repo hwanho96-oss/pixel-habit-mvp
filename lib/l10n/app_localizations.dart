@@ -1295,6 +1295,90 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'삭제'**
   String get goalDelete;
+
+  /// No description provided for @analysisSelectTask.
+  ///
+  /// In ko, this message translates to:
+  /// **'할 일 선택'**
+  String get analysisSelectTask;
+
+  /// No description provided for @analysisPickTaskHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'할 일을 골라 보세요'**
+  String get analysisPickTaskHint;
+
+  /// No description provided for @analysisNoTasks.
+  ///
+  /// In ko, this message translates to:
+  /// **'선택할 할 일이 없어요'**
+  String get analysisNoTasks;
+
+  /// No description provided for @analysisYearMonth.
+  ///
+  /// In ko, this message translates to:
+  /// **'{year}년 {month}월'**
+  String analysisYearMonth(int year, int month);
+
+  /// No description provided for @analysisPrevMonth.
+  ///
+  /// In ko, this message translates to:
+  /// **'이전 달'**
+  String get analysisPrevMonth;
+
+  /// No description provided for @analysisNextMonth.
+  ///
+  /// In ko, this message translates to:
+  /// **'다음 달'**
+  String get analysisNextMonth;
+
+  /// No description provided for @analysisResultsTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'결과표'**
+  String get analysisResultsTitle;
+
+  /// No description provided for @analysisEmptyGoals.
+  ///
+  /// In ko, this message translates to:
+  /// **'홈에서 만든 목표가 여기에 표시됩니다'**
+  String get analysisEmptyGoals;
+
+  /// No description provided for @analysisProgressToday.
+  ///
+  /// In ko, this message translates to:
+  /// **'오늘'**
+  String get analysisProgressToday;
+
+  /// No description provided for @analysisRecent7Days.
+  ///
+  /// In ko, this message translates to:
+  /// **'최근 7일'**
+  String get analysisRecent7Days;
+
+  /// No description provided for @goalDailyAchieved.
+  ///
+  /// In ko, this message translates to:
+  /// **'오늘 {name} 목표 달성! +{gold}'**
+  String goalDailyAchieved(String name, int gold);
+
+  /// No description provided for @goalWeeklyBonus.
+  ///
+  /// In ko, this message translates to:
+  /// **'{name} 주간 목표 달성! +{gold}'**
+  String goalWeeklyBonus(String name, int gold);
+
+  /// No description provided for @goalMonthlyBonus.
+  ///
+  /// In ko, this message translates to:
+  /// **'{name} 월간 목표 달성! +{gold}'**
+  String goalMonthlyBonus(String name, int gold);
+
+  /// No description provided for @dailyGoldCapReached.
+  ///
+  /// In ko, this message translates to:
+  /// **'오늘 받을 수 있는 골드를 다 받았어요'**
+  String get dailyGoldCapReached;
 }
 
 class _AppLocalizationsDelegate

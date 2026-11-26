@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../data/goal_math.dart';
 import '../l10n/app_localizations.dart';
 import '../models/goal.dart';
+import '../models/goal_reward_event.dart';
 import '../models/measure_kind.dart';
 import '../providers/app_state.dart';
 import 'tag_chips.dart';
@@ -154,6 +155,24 @@ class _GoalCardState extends State<GoalCard> {
     if (action == 'delete') widget.onDelete();
   }
 
+  void _showRewardEvents(List<GoalRewardEvent> events) {
+    if (events.isEmpty || !mounted) return;
+    final l10n = AppLocalizations.of(context)!;
+    final messenger = ScaffoldMessenger.of(context);
+    for (final event in events) {
+      final text = switch (event.kind) {
+        GoalRewardKind.daily =>
+          l10n.goalDailyAchieved(event.goalName, event.gold),
+        GoalRewardKind.weekly =>
+          l10n.goalWeeklyBonus(event.goalName, event.gold),
+        GoalRewardKind.monthly =>
+          l10n.goalMonthlyBonus(event.goalName, event.gold),
+        GoalRewardKind.goldCapped => l10n.dailyGoldCapReached,
+      };
+      messenger.showSnackBar(SnackBar(content: Text(text)));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -208,17 +227,27 @@ class _GoalCardState extends State<GoalCard> {
                 Row(
                   children: [
                     IconButton.filledTonal(
-                      onPressed: () {
+                      onPressed: () async {
                         final step = widget.goal.step ?? 1;
-                        state.adjustGoalAmount(widget.goal.id, -step);
+                        final events = await state.adjustGoalAmount(
+                          widget.goal.id,
+                          -step,
+                        );
+                        if (!mounted) return;
+                        _showRewardEvents(events);
                       },
                       icon: const Icon(Icons.remove),
                     ),
                     const SizedBox(width: 8),
                     IconButton.filledTonal(
-                      onPressed: () {
+                      onPressed: () async {
                         final step = widget.goal.step ?? 1;
-                        state.adjustGoalAmount(widget.goal.id, step);
+                        final events = await state.adjustGoalAmount(
+                          widget.goal.id,
+                          step,
+                        );
+                        if (!mounted) return;
+                        _showRewardEvents(events);
                       },
                       icon: const Icon(Icons.add),
                     ),
@@ -263,11 +292,13 @@ class _GoalCardState extends State<GoalCard> {
                       onPressed: timer == null
                           ? null
                           : () async {
-                              await state.stopGoalTimer(widget.goal.id);
+                              final result =
+                                  await state.stopGoalTimer(widget.goal.id);
                               if (!mounted) return;
                               _notifiedDaily = false;
                               setState(() {});
                               _syncTicker();
+                              _showRewardEvents(result.rewards);
                             },
                       child: Text(l10n.goalTimerStop),
                     ),

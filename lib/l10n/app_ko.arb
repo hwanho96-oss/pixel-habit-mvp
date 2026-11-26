@@ -412,5 +412,59 @@
   "goalTimerStop": "종료",
   "goalDailyReached": "오늘 목표 시간에 도달했어요",
   "goalEdit": "수정",
-  "goalDelete": "삭제"
+  "goalDelete": "삭제",
+  "analysisSelectTask": "할 일 선택",
+  "analysisPickTaskHint": "할 일을 골라 보세요",
+  "analysisNoTasks": "선택할 할 일이 없어요",
+  "analysisYearMonth": "{year}년 {month}월",
+  "@analysisYearMonth": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      },
+      "month": {
+        "type": "int"
+      }
+    }
+  },
+  "analysisPrevMonth": "이전 달",
+  "analysisNextMonth": "다음 달",
+  "analysisResultsTitle": "결과표",
+  "analysisEmptyGoals": "홈에서 만든 목표가 여기에 표시됩니다",
+  "analysisProgressToday": "오늘",
+  "analysisRecent7Days": "최근 7일",
+  "goalDailyAchieved": "오늘 {name} 목표 달성! +{gold}",
+  "@goalDailyAchieved": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "gold": {
+        "type": "int"
+      }
+    }
+  },
+  "goalWeeklyBonus": "{name} 주간 목표 달성! +{gold}",
+  "@goalWeeklyBonus": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "gold": {
+        "type": "int"
+      }
+    }
+  },
+  "goalMonthlyBonus": "{name} 월간 목표 달성! +{gold}",
+  "@goalMonthlyBonus": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "gold": {
+        "type": "int"
+      }
+    }
+  },
+  "dailyGoldCapReached": "오늘 받을 수 있는 골드를 다 받았어요"
 }

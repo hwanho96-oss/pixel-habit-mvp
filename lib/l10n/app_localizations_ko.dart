@@ -655,4 +655,54 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get goalDelete => '삭제';
+
+  @override
+  String get analysisSelectTask => '할 일 선택';
+
+  @override
+  String get analysisPickTaskHint => '할 일을 골라 보세요';
+
+  @override
+  String get analysisNoTasks => '선택할 할 일이 없어요';
+
+  @override
+  String analysisYearMonth(int year, int month) {
+    return '$year년 $month월';
+  }
+
+  @override
+  String get analysisPrevMonth => '이전 달';
+
+  @override
+  String get analysisNextMonth => '다음 달';
+
+  @override
+  String get analysisResultsTitle => '결과표';
+
+  @override
+  String get analysisEmptyGoals => '홈에서 만든 목표가 여기에 표시됩니다';
+
+  @override
+  String get analysisProgressToday => '오늘';
+
+  @override
+  String get analysisRecent7Days => '최근 7일';
+
+  @override
+  String goalDailyAchieved(String name, int gold) {
+    return '오늘 $name 목표 달성! +$gold';
+  }
+
+  @override
+  String goalWeeklyBonus(String name, int gold) {
+    return '$name 주간 목표 달성! +$gold';
+  }
+
+  @override
+  String goalMonthlyBonus(String name, int gold) {
+    return '$name 월간 목표 달성! +$gold';
+  }
+
+  @override
+  String get dailyGoldCapReached => '오늘 받을 수 있는 골드를 다 받았어요';
 }

@@ -655,4 +655,54 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get goalDelete => '删除';
+
+  @override
+  String get analysisSelectTask => '选择待办';
+
+  @override
+  String get analysisPickTaskHint => '请先选择一个待办';
+
+  @override
+  String get analysisNoTasks => '没有可选的待办';
+
+  @override
+  String analysisYearMonth(int year, int month) {
+    return '$year年$month月';
+  }
+
+  @override
+  String get analysisPrevMonth => '上个月';
+
+  @override
+  String get analysisNextMonth => '下个月';
+
+  @override
+  String get analysisResultsTitle => '结果表';
+
+  @override
+  String get analysisEmptyGoals => '在首页创建的目标会显示在这里';
+
+  @override
+  String get analysisProgressToday => '今天';
+
+  @override
+  String get analysisRecent7Days => '近7天';
+
+  @override
+  String goalDailyAchieved(String name, int gold) {
+    return '今天$name目标完成！+$gold';
+  }
+
+  @override
+  String goalWeeklyBonus(String name, int gold) {
+    return '$name周目标完成！+$gold';
+  }
+
+  @override
+  String goalMonthlyBonus(String name, int gold) {
+    return '$name月目标完成！+$gold';
+  }
+
+  @override
+  String get dailyGoldCapReached => '今天可领取的金币已全部领完';
 }

@@ -62,3 +62,13 @@ List<String> periodDateKeysFor(GoalPeriod period, [DateTime? now]) {
       ? currentWeekDateKeys(now)
       : currentMonthDateKeysThroughToday(now);
 }
+
+/// Most recent [count] logical days ending today (oldest → newest).
+List<String> lastNDateKeys(int count, [DateTime? now]) {
+  final d = DayClock.logicalNow(now);
+  final today = DateTime(d.year, d.month, d.day);
+  return List.generate(count, (i) {
+    final x = today.subtract(Duration(days: count - 1 - i));
+    return DayClock.keyFromDate(x);
+  });
+}

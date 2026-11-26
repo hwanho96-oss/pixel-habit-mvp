@@ -656,4 +656,55 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get goalDelete => 'Delete';
+
+  @override
+  String get analysisSelectTask => 'Select task';
+
+  @override
+  String get analysisPickTaskHint => 'Pick a task to begin';
+
+  @override
+  String get analysisNoTasks => 'No tasks to select';
+
+  @override
+  String analysisYearMonth(int year, int month) {
+    return '$year-$month';
+  }
+
+  @override
+  String get analysisPrevMonth => 'Previous month';
+
+  @override
+  String get analysisNextMonth => 'Next month';
+
+  @override
+  String get analysisResultsTitle => 'Results';
+
+  @override
+  String get analysisEmptyGoals => 'Goals you create on Home will show up here';
+
+  @override
+  String get analysisProgressToday => 'Today';
+
+  @override
+  String get analysisRecent7Days => 'Last 7 days';
+
+  @override
+  String goalDailyAchieved(String name, int gold) {
+    return 'Today\'s $name goal done! +$gold';
+  }
+
+  @override
+  String goalWeeklyBonus(String name, int gold) {
+    return '$name weekly goal done! +$gold';
+  }
+
+  @override
+  String goalMonthlyBonus(String name, int gold) {
+    return '$name monthly goal done! +$gold';
+  }
+
+  @override
+  String get dailyGoldCapReached =>
+      'You\'ve earned all the gold available today';
 }

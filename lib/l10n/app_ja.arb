@@ -412,5 +412,59 @@
   "goalTimerStop": "終了",
   "goalDailyReached": "今日の時間目標に到達しました",
   "goalEdit": "編集",
-  "goalDelete": "削除"
+  "goalDelete": "削除",
+  "analysisSelectTask": "タスクを選択",
+  "analysisPickTaskHint": "タスクを選んでください",
+  "analysisNoTasks": "選べるタスクがありません",
+  "analysisYearMonth": "{year}年{month}月",
+  "@analysisYearMonth": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      },
+      "month": {
+        "type": "int"
+      }
+    }
+  },
+  "analysisPrevMonth": "前の月",
+  "analysisNextMonth": "次の月",
+  "analysisResultsTitle": "結果表",
+  "analysisEmptyGoals": "ホームで作った目標がここに表示されます",
+  "analysisProgressToday": "今日",
+  "analysisRecent7Days": "直近7日",
+  "goalDailyAchieved": "今日の{name}目標達成！ +{gold}",
+  "@goalDailyAchieved": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "gold": {
+        "type": "int"
+      }
+    }
+  },
+  "goalWeeklyBonus": "{name}の週間目標達成！ +{gold}",
+  "@goalWeeklyBonus": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "gold": {
+        "type": "int"
+      }
+    }
+  },
+  "goalMonthlyBonus": "{name}の月間目標達成！ +{gold}",
+  "@goalMonthlyBonus": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "gold": {
+        "type": "int"
+      }
+    }
+  },
+  "dailyGoldCapReached": "今日受け取れるゴールドをすべて受け取りました"
 }

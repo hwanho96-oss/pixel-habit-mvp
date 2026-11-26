@@ -116,6 +116,12 @@ class _HomeScreenState extends State<HomeScreen> {
       );
       return;
     }
+    if (outcome == CompleteOutcome.goldCapped) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.dailyGoldCapReached)),
+      );
+      return;
+    }
     _showPraiseSnackBar(welcomeBack: welcomeBack, gold: gold);
   }
 

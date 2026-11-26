@@ -9,6 +9,7 @@ import '../data/tag_palette.dart';
 import '../data/title_repository.dart';
 import '../models/completion_record.dart';
 import '../models/goal.dart';
+import '../models/goal_reward_event.dart';
 import '../models/measure_kind.dart';
 import '../models/reward_record.dart';
 import '../models/tag.dart';
@@ -20,6 +21,19 @@ enum CompleteOutcome {
   none,
   rewarded,
   alreadyRewarded,
+  /// First completion today but daily gold cap blocked the gold.
+  goldCapped,
+}
+
+/// Result of stopping a goal timer.
+class GoalTimerStopResult {
+  const GoalTimerStopResult({
+    required this.minutesAdded,
+    this.rewards = const [],
+  });
+
+  final int minutesAdded;
+  final List<GoalRewardEvent> rewards;
 }
 
 class AppState extends ChangeNotifier {
@@ -501,6 +515,96 @@ class AppState extends ChangeNotifier {
     ];
   }
 
+  /// Gold already granted today that counts toward [Economy.dailyGoldCap].
+  int goldTowardDailyCap([String? dateKey]) {
+    final key = dateKey ?? DayClock.todayKey();
+    var sum = 0;
+    for (final r in rewardLog) {
+      if (r.dateKey != key) continue;
+      if (!RewardIds.countsTowardDailyCap(r.itemId)) continue;
+      if (RewardIds.isDailyGoal(r.itemId)) {
+        sum += Economy.dailyGoalGold;
+      } else {
+        sum += Economy.taskCompleteGold;
+      }
+    }
+    return sum;
+  }
+
+  int remainingDailyGold([String? dateKey]) {
+    final left = Economy.dailyGoldCap - goldTowardDailyCap(dateKey);
+    return left < 0 ? 0 : left;
+  }
+
+  /// Awards [amount] only when the full amount fits under the daily cap.
+  bool _tryAwardCappedGold(int amount) {
+    if (amount <= 0) return false;
+    if (remainingDailyGold() < amount) return false;
+    gold += amount;
+    _clampGold();
+    return true;
+  }
+
+  /// Grants daily / period bonuses when targets are met. Idempotent via rewardLog.
+  List<GoalRewardEvent> _applyGoalRewards(Goal goal) {
+    final events = <GoalRewardEvent>[];
+    final today = DayClock.todayKey();
+    final dailyTarget = dailyGoalTargetFor(goal);
+    final todayValue = goalValueToday(goal.id);
+
+    if (dailyTarget > 0 && todayValue >= dailyTarget) {
+      final rewardId = RewardIds.dailyGoal(goal.id);
+      if (!_hasRewardFor(rewardId, today)) {
+        if (_tryAwardCappedGold(Economy.dailyGoalGold)) {
+          _addReward(rewardId, today);
+          events.add(
+            GoalRewardEvent.daily(goal.name, Economy.dailyGoalGold),
+          );
+        } else {
+          // Record claim so we don't spam; gold was blocked by the daily cap.
+          _addReward(rewardId, today);
+          events.add(GoalRewardEvent.goldCapped());
+        }
+      }
+    }
+
+    if (goal.periodTarget > 0 && goalPeriodSum(goal) >= goal.periodTarget) {
+      if (goal.period == GoalPeriod.week) {
+        final weekKey = DayClock.weekKey();
+        final rewardId = RewardIds.weeklyGoal(goal.id);
+        if (!_hasRewardFor(rewardId, weekKey)) {
+          gold += Economy.weeklyBonusGold;
+          _clampGold();
+          _addReward(rewardId, weekKey);
+          events.add(
+            GoalRewardEvent.weekly(goal.name, Economy.weeklyBonusGold),
+          );
+        }
+      } else {
+        final monthKey = DayClock.monthKey();
+        final rewardId = RewardIds.monthlyGoal(goal.id);
+        if (!_hasRewardFor(rewardId, monthKey)) {
+          gold += Economy.monthlyBonusGold;
+          _clampGold();
+          _addReward(rewardId, monthKey);
+          events.add(
+            GoalRewardEvent.monthly(goal.name, Economy.monthlyBonusGold),
+          );
+        }
+      }
+    }
+
+    return events;
+  }
+
+  /// Date keys (day_clock) where [taskId] has a completion record.
+  Set<String> completionDateKeysForTask(String taskId) {
+    return completionLog
+        .where((r) => r.itemId == taskId)
+        .map((r) => r.dateKey)
+        .toSet();
+  }
+
   void _addCompletionRecord({
     required String itemId,
     required String title,
@@ -606,7 +710,10 @@ class AppState extends ChangeNotifier {
     await _persist();
   }
 
-  Future<void> _setGoalValueToday(String goalId, int value) async {
+  Future<List<GoalRewardEvent>> _setGoalValueToday(
+    String goalId,
+    int value,
+  ) async {
     final today = DayClock.todayKey();
     final next = value < 0 ? 0 : value;
     final index =
@@ -624,16 +731,24 @@ class AppState extends ChangeNotifier {
         GoalLog(goalId: goalId, dateKey: today, value: next),
       ];
     }
+    final goal = goalById(goalId);
+    final events = goal == null ? <GoalRewardEvent>[] : _applyGoalRewards(goal);
     notifyListeners();
     await _persist();
+    return events;
   }
 
   /// Adjust today's amount log by [delta] (clamped at 0).
-  Future<void> adjustGoalAmount(String goalId, int delta) async {
+  Future<List<GoalRewardEvent>> adjustGoalAmount(
+    String goalId,
+    int delta,
+  ) async {
     final goal = goalById(goalId);
-    if (goal == null || goal.kind != MeasureKind.amount) return;
+    if (goal == null || goal.kind != MeasureKind.amount) {
+      return const [];
+    }
     final current = goalValueToday(goalId);
-    await _setGoalValueToday(goalId, current + delta);
+    return _setGoalValueToday(goalId, current + delta);
   }
 
   Future<void> startGoalTimer(String goalId) async {
@@ -669,22 +784,25 @@ class AppState extends ChangeNotifier {
   }
 
   /// Stops timer, adds elapsed minutes to today's log, resets timer.
-  /// Returns minutes added (0 if none).
-  Future<int> stopGoalTimer(String goalId) async {
+  Future<GoalTimerStopResult> stopGoalTimer(String goalId) async {
     final goal = goalById(goalId);
-    if (goal == null || goal.kind != MeasureKind.time) return 0;
+    if (goal == null || goal.kind != MeasureKind.time) {
+      return const GoalTimerStopResult(minutesAdded: 0);
+    }
     final existing = goalTimers[goalId];
-    if (existing == null) return 0;
+    if (existing == null) {
+      return const GoalTimerStopResult(minutesAdded: 0);
+    }
     final minutes = existing.elapsedMs() ~/ 60000;
     goalTimers = Map<String, GoalTimerState>.from(goalTimers)..remove(goalId);
     if (minutes > 0) {
       final current = goalValueToday(goalId);
-      await _setGoalValueToday(goalId, current + minutes);
-    } else {
-      notifyListeners();
-      await _persist();
+      final rewards = await _setGoalValueToday(goalId, current + minutes);
+      return GoalTimerStopResult(minutesAdded: minutes, rewards: rewards);
     }
-    return minutes;
+    notifyListeners();
+    await _persist();
+    return const GoalTimerStopResult(minutesAdded: 0);
   }
 
   Future<CompleteOutcome> toggleTaskDone(String id) async {
@@ -709,10 +827,14 @@ class AppState extends ChangeNotifier {
     }
 
     final alreadyRewarded = _hasRewardFor(task.id, today);
+    var outcome = CompleteOutcome.alreadyRewarded;
     if (!alreadyRewarded) {
-      gold += Economy.taskCompleteGold;
+      // Personality points always; gold only within the daily cap.
       unspentPoints += Economy.completePoint;
+      _clampPoints();
+      final awarded = _tryAwardCappedGold(Economy.taskCompleteGold);
       _addReward(task.id, today);
+      outcome = awarded ? CompleteOutcome.rewarded : CompleteOutcome.goldCapped;
     }
     _addCompletionRecord(
       itemId: task.id,
@@ -726,9 +848,7 @@ class AppState extends ChangeNotifier {
     }
     notifyListeners();
     await _persist();
-    return alreadyRewarded
-        ? CompleteOutcome.alreadyRewarded
-        : CompleteOutcome.rewarded;
+    return outcome;
   }
 
   Future<void> addTask(Task task) async {

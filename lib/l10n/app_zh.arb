@@ -412,5 +412,59 @@
   "goalTimerStop": "结束",
   "goalDailyReached": "已达到今日时间目标",
   "goalEdit": "编辑",
-  "goalDelete": "删除"
+  "goalDelete": "删除",
+  "analysisSelectTask": "选择待办",
+  "analysisPickTaskHint": "请先选择一个待办",
+  "analysisNoTasks": "没有可选的待办",
+  "analysisYearMonth": "{year}年{month}月",
+  "@analysisYearMonth": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      },
+      "month": {
+        "type": "int"
+      }
+    }
+  },
+  "analysisPrevMonth": "上个月",
+  "analysisNextMonth": "下个月",
+  "analysisResultsTitle": "结果表",
+  "analysisEmptyGoals": "在首页创建的目标会显示在这里",
+  "analysisProgressToday": "今天",
+  "analysisRecent7Days": "近7天",
+  "goalDailyAchieved": "今天{name}目标完成！+{gold}",
+  "@goalDailyAchieved": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "gold": {
+        "type": "int"
+      }
+    }
+  },
+  "goalWeeklyBonus": "{name}周目标完成！+{gold}",
+  "@goalWeeklyBonus": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "gold": {
+        "type": "int"
+      }
+    }
+  },
+  "goalMonthlyBonus": "{name}月目标完成！+{gold}",
+  "@goalMonthlyBonus": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "gold": {
+        "type": "int"
+      }
+    }
+  },
+  "dailyGoldCapReached": "今天可领取的金币已全部领完"
 }

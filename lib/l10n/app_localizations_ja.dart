@@ -655,4 +655,54 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get goalDelete => '削除';
+
+  @override
+  String get analysisSelectTask => 'タスクを選択';
+
+  @override
+  String get analysisPickTaskHint => 'タスクを選んでください';
+
+  @override
+  String get analysisNoTasks => '選べるタスクがありません';
+
+  @override
+  String analysisYearMonth(int year, int month) {
+    return '$year年$month月';
+  }
+
+  @override
+  String get analysisPrevMonth => '前の月';
+
+  @override
+  String get analysisNextMonth => '次の月';
+
+  @override
+  String get analysisResultsTitle => '結果表';
+
+  @override
+  String get analysisEmptyGoals => 'ホームで作った目標がここに表示されます';
+
+  @override
+  String get analysisProgressToday => '今日';
+
+  @override
+  String get analysisRecent7Days => '直近7日';
+
+  @override
+  String goalDailyAchieved(String name, int gold) {
+    return '今日の$name目標達成！ +$gold';
+  }
+
+  @override
+  String goalWeeklyBonus(String name, int gold) {
+    return '$nameの週間目標達成！ +$gold';
+  }
+
+  @override
+  String goalMonthlyBonus(String name, int gold) {
+    return '$nameの月間目標達成！ +$gold';
+  }
+
+  @override
+  String get dailyGoldCapReached => '今日受け取れるゴールドをすべて受け取りました';
 }
