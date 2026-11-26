@@ -214,5 +214,90 @@
   "titleComboNorth": "Butterfly of Expression",
   "titleComboEast": "Bridge of Persuasion",
   "titleComboSouth": "Well of Analysis",
-  "titleComboWest": "Moon of Daydream"
+  "titleComboWest": "Moon of Daydream",
+  "measureSectionTitle": "Per completion amount",
+  "measureSectionHint": "Leave empty to count each check as 1",
+  "measureKindLabel": "Type",
+  "measureKindAmount": "Amount",
+  "measureKindTime": "Time",
+  "measureAmountLabel": "Number",
+  "measureAmountHint": "e.g. 250",
+  "measureAmountMinutesLabel": "Minutes",
+  "measureAmountMinutesHint": "e.g. 25",
+  "measureUnitLabel": "Unit",
+  "measureUnitHint": "e.g. ml",
+  "measureAmountInvalid": "Please enter a valid number",
+  "resultTableCreateTitle": "Create result table",
+  "resultTableEditTitle": "Edit result table",
+  "resultTableNameLabel": "Name",
+  "resultTableNameHint": "e.g. Study time",
+  "resultTableEdit": "Edit",
+  "resultTableDelete": "Delete",
+  "resultTableDeleteConfirm": "Delete this result table?",
+  "resultTableEmptyHint": "No records yet. Complete tagged tasks to get started",
+  "resultTableLimitReached": "You can create up to {count} result tables",
+  "@resultTableLimitReached": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "resultGoalLabel": "Goal (optional)",
+  "resultGoalHint": "e.g. 300",
+  "resultGoalInvalid": "Please enter a valid goal number",
+  "resultPeriodLabel": "Period",
+  "resultPeriodWeek": "This week",
+  "resultPeriodMonth": "This month",
+  "resultTotalOnly": "Total {total}",
+  "@resultTotalOnly": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "resultTotalGoal": "Total {total} / Goal {goal}",
+  "@resultTotalGoal": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      },
+      "goal": {
+        "type": "String"
+      }
+    }
+  },
+  "resultTagLine": "{tag} {value}",
+  "@resultTagLine": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      },
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "resultSumLabel": "Total",
+  "resultValueMinutes": "{value} min",
+  "@resultValueMinutes": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "resultValueWithUnit": "{value} {unit}",
+  "@resultValueWithUnit": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "resultNoRecordsYet": "No matching records for this table yet"
 }

@@ -857,6 +857,210 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'몽상의 달'**
   String get titleComboWest;
+
+  /// No description provided for @measureSectionTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'1회 기록량'**
+  String get measureSectionTitle;
+
+  /// No description provided for @measureSectionHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'비우면 체크 1회 = 1회로 계산됩니다'**
+  String get measureSectionHint;
+
+  /// No description provided for @measureKindLabel.
+  ///
+  /// In ko, this message translates to:
+  /// **'종류'**
+  String get measureKindLabel;
+
+  /// No description provided for @measureKindAmount.
+  ///
+  /// In ko, this message translates to:
+  /// **'양'**
+  String get measureKindAmount;
+
+  /// No description provided for @measureKindTime.
+  ///
+  /// In ko, this message translates to:
+  /// **'시간'**
+  String get measureKindTime;
+
+  /// No description provided for @measureAmountLabel.
+  ///
+  /// In ko, this message translates to:
+  /// **'숫자'**
+  String get measureAmountLabel;
+
+  /// No description provided for @measureAmountHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'예: 250'**
+  String get measureAmountHint;
+
+  /// No description provided for @measureAmountMinutesLabel.
+  ///
+  /// In ko, this message translates to:
+  /// **'분'**
+  String get measureAmountMinutesLabel;
+
+  /// No description provided for @measureAmountMinutesHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'예: 25'**
+  String get measureAmountMinutesHint;
+
+  /// No description provided for @measureUnitLabel.
+  ///
+  /// In ko, this message translates to:
+  /// **'단위'**
+  String get measureUnitLabel;
+
+  /// No description provided for @measureUnitHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'예: ml'**
+  String get measureUnitHint;
+
+  /// No description provided for @measureAmountInvalid.
+  ///
+  /// In ko, this message translates to:
+  /// **'숫자를 올바르게 입력해 주세요'**
+  String get measureAmountInvalid;
+
+  /// No description provided for @resultTableCreateTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'결과표 만들기'**
+  String get resultTableCreateTitle;
+
+  /// No description provided for @resultTableEditTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'결과표 수정'**
+  String get resultTableEditTitle;
+
+  /// No description provided for @resultTableNameLabel.
+  ///
+  /// In ko, this message translates to:
+  /// **'이름'**
+  String get resultTableNameLabel;
+
+  /// No description provided for @resultTableNameHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'예: 공부 시간'**
+  String get resultTableNameHint;
+
+  /// No description provided for @resultTableEdit.
+  ///
+  /// In ko, this message translates to:
+  /// **'수정'**
+  String get resultTableEdit;
+
+  /// No description provided for @resultTableDelete.
+  ///
+  /// In ko, this message translates to:
+  /// **'삭제'**
+  String get resultTableDelete;
+
+  /// No description provided for @resultTableDeleteConfirm.
+  ///
+  /// In ko, this message translates to:
+  /// **'이 결과표를 삭제할까요?'**
+  String get resultTableDeleteConfirm;
+
+  /// No description provided for @resultTableEmptyHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'아직 기록이 없어요. 태그를 단 할 일을 완료해 보세요'**
+  String get resultTableEmptyHint;
+
+  /// No description provided for @resultTableLimitReached.
+  ///
+  /// In ko, this message translates to:
+  /// **'결과표는 최대 {count}개까지 만들 수 있어요'**
+  String resultTableLimitReached(int count);
+
+  /// No description provided for @resultGoalLabel.
+  ///
+  /// In ko, this message translates to:
+  /// **'목표 (선택)'**
+  String get resultGoalLabel;
+
+  /// No description provided for @resultGoalHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'예: 300'**
+  String get resultGoalHint;
+
+  /// No description provided for @resultGoalInvalid.
+  ///
+  /// In ko, this message translates to:
+  /// **'목표 숫자를 올바르게 입력해 주세요'**
+  String get resultGoalInvalid;
+
+  /// No description provided for @resultPeriodLabel.
+  ///
+  /// In ko, this message translates to:
+  /// **'기간'**
+  String get resultPeriodLabel;
+
+  /// No description provided for @resultPeriodWeek.
+  ///
+  /// In ko, this message translates to:
+  /// **'이번 주'**
+  String get resultPeriodWeek;
+
+  /// No description provided for @resultPeriodMonth.
+  ///
+  /// In ko, this message translates to:
+  /// **'이번 달'**
+  String get resultPeriodMonth;
+
+  /// No description provided for @resultTotalOnly.
+  ///
+  /// In ko, this message translates to:
+  /// **'합계 {total}'**
+  String resultTotalOnly(String total);
+
+  /// No description provided for @resultTotalGoal.
+  ///
+  /// In ko, this message translates to:
+  /// **'합계 {total} / 목표 {goal}'**
+  String resultTotalGoal(String total, String goal);
+
+  /// No description provided for @resultTagLine.
+  ///
+  /// In ko, this message translates to:
+  /// **'{tag} {value}'**
+  String resultTagLine(String tag, String value);
+
+  /// No description provided for @resultSumLabel.
+  ///
+  /// In ko, this message translates to:
+  /// **'합계'**
+  String get resultSumLabel;
+
+  /// No description provided for @resultValueMinutes.
+  ///
+  /// In ko, this message translates to:
+  /// **'{value}분'**
+  String resultValueMinutes(String value);
+
+  /// No description provided for @resultValueWithUnit.
+  ///
+  /// In ko, this message translates to:
+  /// **'{value} {unit}'**
+  String resultValueWithUnit(String value, String unit);
+
+  /// No description provided for @resultNoRecordsYet.
+  ///
+  /// In ko, this message translates to:
+  /// **'아직 이 표에 맞는 기록이 없어요'**
+  String get resultNoRecordsYet;
 }
 
 class _AppLocalizationsDelegate

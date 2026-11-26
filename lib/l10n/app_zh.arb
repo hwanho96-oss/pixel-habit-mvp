@@ -214,5 +214,90 @@
   "titleComboNorth": "表达之蝶",
   "titleComboEast": "说服之桥",
   "titleComboSouth": "分析之泉",
-  "titleComboWest": "梦想之月"
+  "titleComboWest": "梦想之月",
+  "measureSectionTitle": "单次记录量",
+  "measureSectionHint": "留空则每次勾选计为 1 次",
+  "measureKindLabel": "类型",
+  "measureKindAmount": "数量",
+  "measureKindTime": "时间",
+  "measureAmountLabel": "数值",
+  "measureAmountHint": "例如: 250",
+  "measureAmountMinutesLabel": "分钟",
+  "measureAmountMinutesHint": "例如: 25",
+  "measureUnitLabel": "单位",
+  "measureUnitHint": "例如: ml",
+  "measureAmountInvalid": "请输入正确的数字",
+  "resultTableCreateTitle": "创建结果表",
+  "resultTableEditTitle": "编辑结果表",
+  "resultTableNameLabel": "名称",
+  "resultTableNameHint": "例如: 学习时间",
+  "resultTableEdit": "编辑",
+  "resultTableDelete": "删除",
+  "resultTableDeleteConfirm": "要删除这个结果表吗？",
+  "resultTableEmptyHint": "还没有记录。请完成带标签的任务试试",
+  "resultTableLimitReached": "最多可创建 {count} 个结果表",
+  "@resultTableLimitReached": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "resultGoalLabel": "目标（可选）",
+  "resultGoalHint": "例如: 300",
+  "resultGoalInvalid": "请输入正确的目标数字",
+  "resultPeriodLabel": "周期",
+  "resultPeriodWeek": "本周",
+  "resultPeriodMonth": "本月",
+  "resultTotalOnly": "合计 {total}",
+  "@resultTotalOnly": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "resultTotalGoal": "合计 {total} / 目标 {goal}",
+  "@resultTotalGoal": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      },
+      "goal": {
+        "type": "String"
+      }
+    }
+  },
+  "resultTagLine": "{tag} {value}",
+  "@resultTagLine": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      },
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "resultSumLabel": "合计",
+  "resultValueMinutes": "{value} 分钟",
+  "@resultValueMinutes": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "resultValueWithUnit": "{value} {unit}",
+  "@resultValueWithUnit": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "resultNoRecordsYet": "此表还没有匹配的记录"
 }

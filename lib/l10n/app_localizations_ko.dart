@@ -408,4 +408,118 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get titleComboWest => '몽상의 달';
+
+  @override
+  String get measureSectionTitle => '1회 기록량';
+
+  @override
+  String get measureSectionHint => '비우면 체크 1회 = 1회로 계산됩니다';
+
+  @override
+  String get measureKindLabel => '종류';
+
+  @override
+  String get measureKindAmount => '양';
+
+  @override
+  String get measureKindTime => '시간';
+
+  @override
+  String get measureAmountLabel => '숫자';
+
+  @override
+  String get measureAmountHint => '예: 250';
+
+  @override
+  String get measureAmountMinutesLabel => '분';
+
+  @override
+  String get measureAmountMinutesHint => '예: 25';
+
+  @override
+  String get measureUnitLabel => '단위';
+
+  @override
+  String get measureUnitHint => '예: ml';
+
+  @override
+  String get measureAmountInvalid => '숫자를 올바르게 입력해 주세요';
+
+  @override
+  String get resultTableCreateTitle => '결과표 만들기';
+
+  @override
+  String get resultTableEditTitle => '결과표 수정';
+
+  @override
+  String get resultTableNameLabel => '이름';
+
+  @override
+  String get resultTableNameHint => '예: 공부 시간';
+
+  @override
+  String get resultTableEdit => '수정';
+
+  @override
+  String get resultTableDelete => '삭제';
+
+  @override
+  String get resultTableDeleteConfirm => '이 결과표를 삭제할까요?';
+
+  @override
+  String get resultTableEmptyHint => '아직 기록이 없어요. 태그를 단 할 일을 완료해 보세요';
+
+  @override
+  String resultTableLimitReached(int count) {
+    return '결과표는 최대 $count개까지 만들 수 있어요';
+  }
+
+  @override
+  String get resultGoalLabel => '목표 (선택)';
+
+  @override
+  String get resultGoalHint => '예: 300';
+
+  @override
+  String get resultGoalInvalid => '목표 숫자를 올바르게 입력해 주세요';
+
+  @override
+  String get resultPeriodLabel => '기간';
+
+  @override
+  String get resultPeriodWeek => '이번 주';
+
+  @override
+  String get resultPeriodMonth => '이번 달';
+
+  @override
+  String resultTotalOnly(String total) {
+    return '합계 $total';
+  }
+
+  @override
+  String resultTotalGoal(String total, String goal) {
+    return '합계 $total / 목표 $goal';
+  }
+
+  @override
+  String resultTagLine(String tag, String value) {
+    return '$tag $value';
+  }
+
+  @override
+  String get resultSumLabel => '합계';
+
+  @override
+  String resultValueMinutes(String value) {
+    return '$value분';
+  }
+
+  @override
+  String resultValueWithUnit(String value, String unit) {
+    return '$value $unit';
+  }
+
+  @override
+  String get resultNoRecordsYet => '아직 이 표에 맞는 기록이 없어요';
 }

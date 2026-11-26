@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../models/result_table.dart';
+import '../screens/analysis_screen.dart';
 import '../screens/character_tab_screen.dart';
 import '../screens/home_screen.dart';
 import '../screens/placeholder_screen.dart';
+import '../screens/result_table_form_screen.dart';
 import '../screens/routine_form_screen.dart';
 import '../screens/shell_scaffold.dart';
 import '../screens/tag_create_screen.dart';
@@ -39,9 +42,7 @@ final GoRouter appRouter = GoRouter(
           routes: [
             GoRoute(
               path: '/analysis',
-              builder: (context, state) => PlaceholderScreen(
-                titleBuilder: (l10n) => l10n.tabAnalysis,
-              ),
+              builder: (context, state) => const AnalysisScreen(),
             ),
           ],
         ),
@@ -70,6 +71,14 @@ final GoRouter appRouter = GoRouter(
       parentNavigatorKey: rootNavigatorKey,
       path: '/tag/create',
       builder: (context, state) => const TagCreateScreen(),
+    ),
+    GoRoute(
+      parentNavigatorKey: rootNavigatorKey,
+      path: '/result-table/form',
+      builder: (context, state) {
+        final initial = state.extra as ResultTable?;
+        return ResultTableFormScreen(initial: initial);
+      },
     ),
   ],
 );

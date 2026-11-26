@@ -214,5 +214,90 @@
   "titleComboNorth": "표현의 나비",
   "titleComboEast": "설득의 다리",
   "titleComboSouth": "분석의 샘",
-  "titleComboWest": "몽상의 달"
+  "titleComboWest": "몽상의 달",
+  "measureSectionTitle": "1회 기록량",
+  "measureSectionHint": "비우면 체크 1회 = 1회로 계산됩니다",
+  "measureKindLabel": "종류",
+  "measureKindAmount": "양",
+  "measureKindTime": "시간",
+  "measureAmountLabel": "숫자",
+  "measureAmountHint": "예: 250",
+  "measureAmountMinutesLabel": "분",
+  "measureAmountMinutesHint": "예: 25",
+  "measureUnitLabel": "단위",
+  "measureUnitHint": "예: ml",
+  "measureAmountInvalid": "숫자를 올바르게 입력해 주세요",
+  "resultTableCreateTitle": "결과표 만들기",
+  "resultTableEditTitle": "결과표 수정",
+  "resultTableNameLabel": "이름",
+  "resultTableNameHint": "예: 공부 시간",
+  "resultTableEdit": "수정",
+  "resultTableDelete": "삭제",
+  "resultTableDeleteConfirm": "이 결과표를 삭제할까요?",
+  "resultTableEmptyHint": "아직 기록이 없어요. 태그를 단 할 일을 완료해 보세요",
+  "resultTableLimitReached": "결과표는 최대 {count}개까지 만들 수 있어요",
+  "@resultTableLimitReached": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "resultGoalLabel": "목표 (선택)",
+  "resultGoalHint": "예: 300",
+  "resultGoalInvalid": "목표 숫자를 올바르게 입력해 주세요",
+  "resultPeriodLabel": "기간",
+  "resultPeriodWeek": "이번 주",
+  "resultPeriodMonth": "이번 달",
+  "resultTotalOnly": "합계 {total}",
+  "@resultTotalOnly": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "resultTotalGoal": "합계 {total} / 목표 {goal}",
+  "@resultTotalGoal": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      },
+      "goal": {
+        "type": "String"
+      }
+    }
+  },
+  "resultTagLine": "{tag} {value}",
+  "@resultTagLine": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      },
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "resultSumLabel": "합계",
+  "resultValueMinutes": "{value}분",
+  "@resultValueMinutes": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "resultValueWithUnit": "{value} {unit}",
+  "@resultValueWithUnit": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "resultNoRecordsYet": "아직 이 표에 맞는 기록이 없어요"
 }

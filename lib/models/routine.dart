@@ -1,3 +1,5 @@
+import 'measure_kind.dart';
+
 class Routine {
   final String id;
   final String title;
@@ -10,6 +12,9 @@ class Routine {
   final List<int> repeatWeekdays;
   final List<String> tagIds;
   final String? lastDoneDate;
+  final double? amount;
+  final String? unit;
+  final MeasureKind? kind;
 
   const Routine({
     required this.id,
@@ -23,6 +28,9 @@ class Routine {
     required this.repeatWeekdays,
     required this.tagIds,
     this.lastDoneDate,
+    this.amount,
+    this.unit,
+    this.kind,
   });
 
   Routine copyWith({
@@ -37,10 +45,16 @@ class Routine {
     List<int>? repeatWeekdays,
     List<String>? tagIds,
     String? lastDoneDate,
+    double? amount,
+    String? unit,
+    MeasureKind? kind,
     bool clearLastDoneDate = false,
     bool clearChecklistDateKey = false,
     bool clearHour = false,
     bool clearMinute = false,
+    bool clearAmount = false,
+    bool clearUnit = false,
+    bool clearKind = false,
   }) {
     return Routine(
       id: id ?? this.id,
@@ -57,6 +71,9 @@ class Routine {
       tagIds: tagIds ?? this.tagIds,
       lastDoneDate:
           clearLastDoneDate ? null : (lastDoneDate ?? this.lastDoneDate),
+      amount: clearAmount ? null : (amount ?? this.amount),
+      unit: clearUnit ? null : (unit ?? this.unit),
+      kind: clearKind ? null : (kind ?? this.kind),
     );
   }
 
@@ -72,6 +89,9 @@ class Routine {
         'repeatWeekdays': repeatWeekdays,
         'tagIds': tagIds,
         'lastDoneDate': lastDoneDate,
+        'amount': amount,
+        'unit': unit,
+        'kind': measureKindToJson(kind),
       };
 
   factory Routine.fromJson(Map<String, dynamic> json) {
@@ -96,6 +116,9 @@ class Routine {
           .map((e) => e as String)
           .toList(),
       lastDoneDate: json['lastDoneDate'] as String?,
+      amount: (json['amount'] as num?)?.toDouble(),
+      unit: json['unit'] as String?,
+      kind: measureKindFromJson(json['kind'] as String?),
     );
   }
 }

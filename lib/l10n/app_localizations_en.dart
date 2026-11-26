@@ -408,4 +408,119 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get titleComboWest => 'Moon of Daydream';
+
+  @override
+  String get measureSectionTitle => 'Per completion amount';
+
+  @override
+  String get measureSectionHint => 'Leave empty to count each check as 1';
+
+  @override
+  String get measureKindLabel => 'Type';
+
+  @override
+  String get measureKindAmount => 'Amount';
+
+  @override
+  String get measureKindTime => 'Time';
+
+  @override
+  String get measureAmountLabel => 'Number';
+
+  @override
+  String get measureAmountHint => 'e.g. 250';
+
+  @override
+  String get measureAmountMinutesLabel => 'Minutes';
+
+  @override
+  String get measureAmountMinutesHint => 'e.g. 25';
+
+  @override
+  String get measureUnitLabel => 'Unit';
+
+  @override
+  String get measureUnitHint => 'e.g. ml';
+
+  @override
+  String get measureAmountInvalid => 'Please enter a valid number';
+
+  @override
+  String get resultTableCreateTitle => 'Create result table';
+
+  @override
+  String get resultTableEditTitle => 'Edit result table';
+
+  @override
+  String get resultTableNameLabel => 'Name';
+
+  @override
+  String get resultTableNameHint => 'e.g. Study time';
+
+  @override
+  String get resultTableEdit => 'Edit';
+
+  @override
+  String get resultTableDelete => 'Delete';
+
+  @override
+  String get resultTableDeleteConfirm => 'Delete this result table?';
+
+  @override
+  String get resultTableEmptyHint =>
+      'No records yet. Complete tagged tasks to get started';
+
+  @override
+  String resultTableLimitReached(int count) {
+    return 'You can create up to $count result tables';
+  }
+
+  @override
+  String get resultGoalLabel => 'Goal (optional)';
+
+  @override
+  String get resultGoalHint => 'e.g. 300';
+
+  @override
+  String get resultGoalInvalid => 'Please enter a valid goal number';
+
+  @override
+  String get resultPeriodLabel => 'Period';
+
+  @override
+  String get resultPeriodWeek => 'This week';
+
+  @override
+  String get resultPeriodMonth => 'This month';
+
+  @override
+  String resultTotalOnly(String total) {
+    return 'Total $total';
+  }
+
+  @override
+  String resultTotalGoal(String total, String goal) {
+    return 'Total $total / Goal $goal';
+  }
+
+  @override
+  String resultTagLine(String tag, String value) {
+    return '$tag $value';
+  }
+
+  @override
+  String get resultSumLabel => 'Total';
+
+  @override
+  String resultValueMinutes(String value) {
+    return '$value min';
+  }
+
+  @override
+  String resultValueWithUnit(String value, String unit) {
+    return '$value $unit';
+  }
+
+  @override
+  String get resultNoRecordsYet => 'No matching records for this table yet';
 }

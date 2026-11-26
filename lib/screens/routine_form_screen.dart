@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../data/day_clock.dart';
-import '../data/tag_palette.dart';
 import '../l10n/app_localizations.dart';
+import '../models/measure_kind.dart';
 import '../models/routine.dart';
-import '../models/tag.dart';
 import '../models/todo.dart';
 import '../providers/app_state.dart';
 import '../widgets/tag_chips.dart';
+import '../widgets/tag_picker_sheet.dart';
 
 enum FormItemType { routine, todo }
 
@@ -58,6 +57,10 @@ class _ItemFormScreenState extends State<ItemFormScreen> {
   late Set<int> _weekdays;
   late Set<String> _selectedTagIds;
   late List<String> _checklist;
+  late final TextEditingController _amountController;
+  late final TextEditingController _unitController;
+  MeasureKind _measureKind = MeasureKind.amount;
+  bool _hasMeasure = false;
 
   bool get _isRoutine => widget.type == FormItemType.routine;
 
@@ -84,6 +87,19 @@ class _ItemFormScreenState extends State<ItemFormScreen> {
     _weekdays = {...?routine?.repeatWeekdays};
     _selectedTagIds = {...?(routine?.tagIds ?? todo?.tagIds)};
     _checklist = [...?(routine?.checklist ?? todo?.checklist)];
+    final amount = routine?.amount ?? todo?.amount;
+    final unit = routine?.unit ?? todo?.unit;
+    final kind = routine?.kind ?? todo?.kind;
+    _hasMeasure = amount != null || kind != null || (unit != null && unit.isNotEmpty);
+    _measureKind = kind ?? MeasureKind.amount;
+    _amountController = TextEditingController(
+      text: amount == null
+          ? ''
+          : (amount == amount.roundToDouble()
+              ? amount.toInt().toString()
+              : amount.toString()),
+    );
+    _unitController = TextEditingController(text: unit ?? '');
     _titleController.addListener(() => setState(() {}));
   }
 
@@ -91,6 +107,8 @@ class _ItemFormScreenState extends State<ItemFormScreen> {
   void dispose() {
     _titleController.dispose();
     _checklistController.dispose();
+    _amountController.dispose();
+    _unitController.dispose();
     super.dispose();
   }
 
@@ -150,35 +168,47 @@ class _ItemFormScreenState extends State<ItemFormScreen> {
   }
 
   Future<void> _openTagPicker() async {
-    final result = await showModalBottomSheet<Object>(
+    final result = await showTagPicker(
       context: context,
-      isScrollControlled: true,
-      showDragHandle: true,
-      builder: (ctx) {
-        return _TagPickerSheet(
-          initiallySelected: _selectedTagIds,
-          onCreateTag: () => Navigator.pop(ctx, '__create__'),
-        );
-      },
+      initiallySelected: _selectedTagIds,
     );
-    if (!mounted) return;
-    if (result == '__create__') {
-      final createdId = await context.push<String>('/tag/create');
-      if (!mounted) return;
-      if (createdId != null) {
-        setState(() => _selectedTagIds = {..._selectedTagIds, createdId});
-      }
-      await _openTagPicker();
-      return;
-    }
-    if (result is Set<String>) {
+    if (result != null && mounted) {
       setState(() => _selectedTagIds = result);
     }
+  }
+
+  ({double? amount, String? unit, MeasureKind? kind}) _measureFields() {
+    if (!_hasMeasure) {
+      return (amount: null, unit: null, kind: null);
+    }
+    final raw = _amountController.text.trim();
+    final parsed = raw.isEmpty ? null : double.tryParse(raw);
+    final unit = _measureKind == MeasureKind.amount
+        ? (_unitController.text.trim().isEmpty
+            ? null
+            : _unitController.text.trim())
+        : null;
+    return (
+      amount: parsed,
+      unit: unit,
+      kind: _measureKind,
+    );
   }
 
   Future<void> _submit() async {
     final title = _titleController.text.trim();
     if (title.isEmpty) return;
+
+    final measure = _measureFields();
+    if (_hasMeasure &&
+        _amountController.text.trim().isNotEmpty &&
+        measure.amount == null) {
+      final l10n = AppLocalizations.of(context)!;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.measureAmountInvalid)),
+      );
+      return;
+    }
 
     final state = context.read<AppState>();
 
@@ -203,6 +233,9 @@ class _ItemFormScreenState extends State<ItemFormScreen> {
         repeatWeekdays: _weekdays.toList()..sort(),
         tagIds: _selectedTagIds.toList(),
         lastDoneDate: existing?.lastDoneDate,
+        amount: measure.amount,
+        unit: measure.unit,
+        kind: measure.kind,
       );
       if (_isEdit) {
         await state.updateRoutine(routine);
@@ -230,6 +263,9 @@ class _ItemFormScreenState extends State<ItemFormScreen> {
         tagIds: _selectedTagIds.toList(),
         done: existing?.done ?? false,
         doneDate: existing?.doneDate,
+        amount: measure.amount,
+        unit: measure.unit,
+        kind: measure.kind,
       );
       if (_isEdit) {
         await state.updateTodo(todo);
@@ -456,6 +492,80 @@ class _ItemFormScreenState extends State<ItemFormScreen> {
               ],
             ),
           ),
+          _FormCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(
+                    l10n.measureSectionTitle,
+                    softWrap: true,
+                  ),
+                  subtitle: Text(
+                    l10n.measureSectionHint,
+                    softWrap: true,
+                  ),
+                  value: _hasMeasure,
+                  onChanged: (v) => setState(() => _hasMeasure = v),
+                ),
+                if (_hasMeasure) ...[
+                  const SizedBox(height: 8),
+                  SegmentedButton<MeasureKind>(
+                    segments: [
+                      ButtonSegment(
+                        value: MeasureKind.amount,
+                        label: Text(
+                          l10n.measureKindAmount,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      ButtonSegment(
+                        value: MeasureKind.time,
+                        label: Text(
+                          l10n.measureKindTime,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                    selected: {_measureKind},
+                    onSelectionChanged: (next) {
+                      setState(() => _measureKind = next.first);
+                    },
+                    showSelectedIcon: false,
+                  ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: _amountController,
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: true),
+                    decoration: InputDecoration(
+                      labelText: _measureKind == MeasureKind.time
+                          ? l10n.measureAmountMinutesLabel
+                          : l10n.measureAmountLabel,
+                      hintText: _measureKind == MeasureKind.time
+                          ? l10n.measureAmountMinutesHint
+                          : l10n.measureAmountHint,
+                      border: const OutlineInputBorder(),
+                    ),
+                  ),
+                  if (_measureKind == MeasureKind.amount) ...[
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: _unitController,
+                      decoration: InputDecoration(
+                        labelText: l10n.measureUnitLabel,
+                        hintText: l10n.measureUnitHint,
+                        border: const OutlineInputBorder(),
+                      ),
+                    ),
+                  ],
+                ],
+              ],
+            ),
+          ),
           const SizedBox(height: 8),
           SizedBox(
             width: double.infinity,
@@ -473,209 +583,6 @@ class _ItemFormScreenState extends State<ItemFormScreen> {
           ),
         ],
       ),
-    );
-  }
-}
-
-class _TagPickerSheet extends StatefulWidget {
-  const _TagPickerSheet({
-    required this.initiallySelected,
-    required this.onCreateTag,
-  });
-
-  final Set<String> initiallySelected;
-  final VoidCallback onCreateTag;
-
-  @override
-  State<_TagPickerSheet> createState() => _TagPickerSheetState();
-}
-
-class _TagPickerSheetState extends State<_TagPickerSheet> {
-  late Set<String> _selected;
-  final Set<String> _expanded = {};
-
-  @override
-  void initState() {
-    super.initState();
-    _selected = {...widget.initiallySelected};
-  }
-
-  void _toggle(String id) {
-    setState(() {
-      if (_selected.contains(id)) {
-        _selected = {..._selected}..remove(id);
-      } else {
-        _selected = {..._selected, id};
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final state = context.watch<AppState>();
-    final mains = state.mainTags;
-    final presets = [
-      for (final id in TagPresets.ids)
-        if (state.tagById(id) != null) state.tagById(id)!,
-    ];
-
-    return SafeArea(
-      child: Padding(
-        padding: EdgeInsets.only(
-          left: 16,
-          right: 16,
-          bottom: MediaQuery.viewInsetsOf(context).bottom + 16,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        for (final tag in presets) ...[
-                          FilterChip(
-                            avatar: CircleAvatar(
-                              backgroundColor: Color(tag.colorValue),
-                              radius: 8,
-                            ),
-                            label: Text(
-                              TagPresets.displayName(l10n, tag),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            selected: _selected.contains(tag.id),
-                            onSelected: (_) => _toggle(tag.id),
-                          ),
-                          const SizedBox(width: 8),
-                        ],
-                      ],
-                    ),
-                  ),
-                ),
-                IconButton(
-                  tooltip: l10n.tagCreateTitle,
-                  onPressed: widget.onCreateTag,
-                  icon: const Icon(Icons.add),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            ConstrainedBox(
-              constraints: BoxConstraints(
-                maxHeight: MediaQuery.sizeOf(context).height * 0.45,
-              ),
-              child: ListView(
-                shrinkWrap: true,
-                children: [
-                  for (final main in mains)
-                    _MainTagTile(
-                      main: main,
-                      subTags: state.subTagsOf(main.id),
-                      selected: _selected,
-                      expanded: _expanded.contains(main.id),
-                      onToggleExpand: () {
-                        setState(() {
-                          if (_expanded.contains(main.id)) {
-                            _expanded.remove(main.id);
-                          } else {
-                            _expanded.add(main.id);
-                          }
-                        });
-                      },
-                      onToggle: _toggle,
-                    ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 8),
-            FilledButton(
-              onPressed: () => Navigator.pop(context, _selected),
-              child: Text(l10n.confirm),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _MainTagTile extends StatelessWidget {
-  const _MainTagTile({
-    required this.main,
-    required this.subTags,
-    required this.selected,
-    required this.expanded,
-    required this.onToggleExpand,
-    required this.onToggle,
-  });
-
-  final Tag main;
-  final List<Tag> subTags;
-  final Set<String> selected;
-  final bool expanded;
-  final VoidCallback onToggleExpand;
-  final void Function(String id) onToggle;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final name = TagPresets.displayName(l10n, main);
-    final color = Color(main.colorValue);
-
-    return Column(
-      children: [
-        ListTile(
-          contentPadding: EdgeInsets.zero,
-          leading: CircleAvatar(backgroundColor: color, radius: 10),
-          title: Text(
-            name,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Checkbox(
-                value: selected.contains(main.id),
-                onChanged: (_) => onToggle(main.id),
-              ),
-              if (subTags.isNotEmpty)
-                IconButton(
-                  onPressed: onToggleExpand,
-                  icon: Icon(
-                    expanded ? Icons.expand_less : Icons.expand_more,
-                  ),
-                ),
-            ],
-          ),
-          onTap: () => onToggle(main.id),
-        ),
-        if (expanded)
-          for (final sub in subTags)
-            ListTile(
-              contentPadding: const EdgeInsets.only(left: 28),
-              leading: CircleAvatar(
-                backgroundColor: Color(sub.colorValue),
-                radius: 8,
-              ),
-              title: Text(
-                TagPresets.chipLabel(l10n, sub, parent: main),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              trailing: Checkbox(
-                value: selected.contains(sub.id),
-                onChanged: (_) => onToggle(sub.id),
-              ),
-              onTap: () => onToggle(sub.id),
-            ),
-      ],
     );
   }
 }

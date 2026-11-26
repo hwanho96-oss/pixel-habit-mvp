@@ -408,4 +408,118 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get titleComboWest => '夢想の月';
+
+  @override
+  String get measureSectionTitle => '1回の記録量';
+
+  @override
+  String get measureSectionHint => '空欄ならチェック1回 = 1回として計算します';
+
+  @override
+  String get measureKindLabel => '種類';
+
+  @override
+  String get measureKindAmount => '量';
+
+  @override
+  String get measureKindTime => '時間';
+
+  @override
+  String get measureAmountLabel => '数値';
+
+  @override
+  String get measureAmountHint => '例: 250';
+
+  @override
+  String get measureAmountMinutesLabel => '分';
+
+  @override
+  String get measureAmountMinutesHint => '例: 25';
+
+  @override
+  String get measureUnitLabel => '単位';
+
+  @override
+  String get measureUnitHint => '例: ml';
+
+  @override
+  String get measureAmountInvalid => '正しい数値を入力してください';
+
+  @override
+  String get resultTableCreateTitle => '結果表を作成';
+
+  @override
+  String get resultTableEditTitle => '結果表を編集';
+
+  @override
+  String get resultTableNameLabel => '名前';
+
+  @override
+  String get resultTableNameHint => '例: 勉強時間';
+
+  @override
+  String get resultTableEdit => '編集';
+
+  @override
+  String get resultTableDelete => '削除';
+
+  @override
+  String get resultTableDeleteConfirm => 'この結果表を削除しますか？';
+
+  @override
+  String get resultTableEmptyHint => 'まだ記録がありません。タグ付きのタスクを完了してみてください';
+
+  @override
+  String resultTableLimitReached(int count) {
+    return '結果表は最大 $count 個まで作れます';
+  }
+
+  @override
+  String get resultGoalLabel => '目標（任意）';
+
+  @override
+  String get resultGoalHint => '例: 300';
+
+  @override
+  String get resultGoalInvalid => '正しい目標数値を入力してください';
+
+  @override
+  String get resultPeriodLabel => '期間';
+
+  @override
+  String get resultPeriodWeek => '今週';
+
+  @override
+  String get resultPeriodMonth => '今月';
+
+  @override
+  String resultTotalOnly(String total) {
+    return '合計 $total';
+  }
+
+  @override
+  String resultTotalGoal(String total, String goal) {
+    return '合計 $total / 目標 $goal';
+  }
+
+  @override
+  String resultTagLine(String tag, String value) {
+    return '$tag $value';
+  }
+
+  @override
+  String get resultSumLabel => '合計';
+
+  @override
+  String resultValueMinutes(String value) {
+    return '$value分';
+  }
+
+  @override
+  String resultValueWithUnit(String value, String unit) {
+    return '$value $unit';
+  }
+
+  @override
+  String get resultNoRecordsYet => 'この表に合う記録はまだありません';
 }

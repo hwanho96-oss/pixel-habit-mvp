@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/completion_record.dart';
+import '../models/result_table.dart';
 import '../models/reward_record.dart';
 import '../models/routine.dart';
 import '../models/tag.dart';
@@ -21,6 +22,7 @@ class AppStorage {
   static const _rewardLogKey = 'reward_log_v1';
   static const _ownedTitlesKey = 'owned_titles_v1';
   static const _equippedTitleKey = 'equipped_title_v1';
+  static const _resultTablesKey = 'result_tables_v1';
 
   Future<List<Routine>> loadRoutines() async {
     final prefs = await SharedPreferences.getInstance();
@@ -179,5 +181,21 @@ class AppStorage {
     } else {
       await prefs.setString(_equippedTitleKey, id);
     }
+  }
+
+  Future<List<ResultTable>> loadResultTables() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_resultTablesKey);
+    if (raw == null) return [];
+    final list = jsonDecode(raw) as List<dynamic>;
+    return list
+        .map((e) => ResultTable.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<void> saveResultTables(List<ResultTable> tables) async {
+    final prefs = await SharedPreferences.getInstance();
+    final encoded = jsonEncode(tables.map((e) => e.toJson()).toList());
+    await prefs.setString(_resultTablesKey, encoded);
   }
 }

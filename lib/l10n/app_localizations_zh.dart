@@ -408,4 +408,118 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get titleComboWest => '梦想之月';
+
+  @override
+  String get measureSectionTitle => '单次记录量';
+
+  @override
+  String get measureSectionHint => '留空则每次勾选计为 1 次';
+
+  @override
+  String get measureKindLabel => '类型';
+
+  @override
+  String get measureKindAmount => '数量';
+
+  @override
+  String get measureKindTime => '时间';
+
+  @override
+  String get measureAmountLabel => '数值';
+
+  @override
+  String get measureAmountHint => '例如: 250';
+
+  @override
+  String get measureAmountMinutesLabel => '分钟';
+
+  @override
+  String get measureAmountMinutesHint => '例如: 25';
+
+  @override
+  String get measureUnitLabel => '单位';
+
+  @override
+  String get measureUnitHint => '例如: ml';
+
+  @override
+  String get measureAmountInvalid => '请输入正确的数字';
+
+  @override
+  String get resultTableCreateTitle => '创建结果表';
+
+  @override
+  String get resultTableEditTitle => '编辑结果表';
+
+  @override
+  String get resultTableNameLabel => '名称';
+
+  @override
+  String get resultTableNameHint => '例如: 学习时间';
+
+  @override
+  String get resultTableEdit => '编辑';
+
+  @override
+  String get resultTableDelete => '删除';
+
+  @override
+  String get resultTableDeleteConfirm => '要删除这个结果表吗？';
+
+  @override
+  String get resultTableEmptyHint => '还没有记录。请完成带标签的任务试试';
+
+  @override
+  String resultTableLimitReached(int count) {
+    return '最多可创建 $count 个结果表';
+  }
+
+  @override
+  String get resultGoalLabel => '目标（可选）';
+
+  @override
+  String get resultGoalHint => '例如: 300';
+
+  @override
+  String get resultGoalInvalid => '请输入正确的目标数字';
+
+  @override
+  String get resultPeriodLabel => '周期';
+
+  @override
+  String get resultPeriodWeek => '本周';
+
+  @override
+  String get resultPeriodMonth => '本月';
+
+  @override
+  String resultTotalOnly(String total) {
+    return '合计 $total';
+  }
+
+  @override
+  String resultTotalGoal(String total, String goal) {
+    return '合计 $total / 目标 $goal';
+  }
+
+  @override
+  String resultTagLine(String tag, String value) {
+    return '$tag $value';
+  }
+
+  @override
+  String get resultSumLabel => '合计';
+
+  @override
+  String resultValueMinutes(String value) {
+    return '$value 分钟';
+  }
+
+  @override
+  String resultValueWithUnit(String value, String unit) {
+    return '$value $unit';
+  }
+
+  @override
+  String get resultNoRecordsYet => '此表还没有匹配的记录';
 }

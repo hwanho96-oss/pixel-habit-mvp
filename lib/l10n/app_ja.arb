@@ -214,5 +214,90 @@
   "titleComboNorth": "表現の蝶",
   "titleComboEast": "説得の橋",
   "titleComboSouth": "分析の泉",
-  "titleComboWest": "夢想の月"
+  "titleComboWest": "夢想の月",
+  "measureSectionTitle": "1回の記録量",
+  "measureSectionHint": "空欄ならチェック1回 = 1回として計算します",
+  "measureKindLabel": "種類",
+  "measureKindAmount": "量",
+  "measureKindTime": "時間",
+  "measureAmountLabel": "数値",
+  "measureAmountHint": "例: 250",
+  "measureAmountMinutesLabel": "分",
+  "measureAmountMinutesHint": "例: 25",
+  "measureUnitLabel": "単位",
+  "measureUnitHint": "例: ml",
+  "measureAmountInvalid": "正しい数値を入力してください",
+  "resultTableCreateTitle": "結果表を作成",
+  "resultTableEditTitle": "結果表を編集",
+  "resultTableNameLabel": "名前",
+  "resultTableNameHint": "例: 勉強時間",
+  "resultTableEdit": "編集",
+  "resultTableDelete": "削除",
+  "resultTableDeleteConfirm": "この結果表を削除しますか？",
+  "resultTableEmptyHint": "まだ記録がありません。タグ付きのタスクを完了してみてください",
+  "resultTableLimitReached": "結果表は最大 {count} 個まで作れます",
+  "@resultTableLimitReached": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "resultGoalLabel": "目標（任意）",
+  "resultGoalHint": "例: 300",
+  "resultGoalInvalid": "正しい目標数値を入力してください",
+  "resultPeriodLabel": "期間",
+  "resultPeriodWeek": "今週",
+  "resultPeriodMonth": "今月",
+  "resultTotalOnly": "合計 {total}",
+  "@resultTotalOnly": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "resultTotalGoal": "合計 {total} / 目標 {goal}",
+  "@resultTotalGoal": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      },
+      "goal": {
+        "type": "String"
+      }
+    }
+  },
+  "resultTagLine": "{tag} {value}",
+  "@resultTagLine": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      },
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "resultSumLabel": "合計",
+  "resultValueMinutes": "{value}分",
+  "@resultValueMinutes": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "resultValueWithUnit": "{value} {unit}",
+  "@resultValueWithUnit": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "resultNoRecordsYet": "この表に合う記録はまだありません"
 }

@@ -7,6 +7,8 @@ import '../data/storage.dart';
 import '../data/tag_palette.dart';
 import '../data/title_repository.dart';
 import '../models/completion_record.dart';
+import '../models/measure_kind.dart';
+import '../models/result_table.dart';
 import '../models/reward_record.dart';
 import '../models/routine.dart';
 import '../models/tag.dart';
@@ -38,6 +40,7 @@ class AppState extends ChangeNotifier {
   List<TitleDef> titles = [];
   Set<String> ownedTitleIds = {};
   String? equippedTitleId;
+  List<ResultTable> resultTables = [];
 
   static const String centerTitleId = 'me';
 
@@ -48,6 +51,7 @@ class AppState extends ChangeNotifier {
     unspentPoints = await _storage.loadPoints();
     ownedItemIds = await _storage.loadOwnedItems();
     equipped = await _storage.loadEquipped();
+    resultTables = await _storage.loadResultTables();
     titles = await TitleRepository.load();
     final validIds = titles.map((t) => t.id).toSet();
     final savedOwned = await _storage.loadOwnedTitles();
@@ -542,10 +546,18 @@ class AppState extends ChangeNotifier {
     required String type,
     required String itemId,
     required String title,
-    required List<String> tags,
+    required List<String> tagIds,
+    double? amount,
+    String? unit,
+    MeasureKind? kind,
   }) {
     final dateKey = DayClock.todayKey();
     if (_hasRecordFor(itemId, dateKey)) return;
+
+    // Empty measure → count as 1 amount-unit completion.
+    final resolvedAmount = amount ?? 1.0;
+    final resolvedKind = kind ?? MeasureKind.amount;
+
     completionLog = [
       ...completionLog,
       CompletionRecord(
@@ -554,7 +566,10 @@ class AppState extends ChangeNotifier {
         itemId: itemId,
         title: title,
         dateKey: dateKey,
-        tags: List<String>.from(tags),
+        tagIds: List<String>.from(tagIds),
+        amount: resolvedAmount,
+        unit: unit,
+        kind: resolvedKind,
       ),
     ];
   }
@@ -578,6 +593,7 @@ class AppState extends ChangeNotifier {
       _storage.saveEquipped(equipped),
       _storage.saveOwnedTitles(ownedTitleIds),
       _storage.saveEquippedTitle(equippedTitleId),
+      _storage.saveResultTables(resultTables),
     ]);
   }
 
@@ -608,7 +624,10 @@ class AppState extends ChangeNotifier {
       type: 'routine',
       itemId: routine.id,
       title: routine.title,
-      tags: routine.tagIds,
+      tagIds: routine.tagIds,
+      amount: routine.amount,
+      unit: routine.unit,
+      kind: routine.kind,
     );
     routines[index] = routine.copyWith(lastDoneDate: today);
     notifyListeners();
@@ -644,7 +663,10 @@ class AppState extends ChangeNotifier {
       type: 'todo',
       itemId: todo.id,
       title: todo.title,
-      tags: todo.tagIds,
+      tagIds: todo.tagIds,
+      amount: todo.amount,
+      unit: todo.unit,
+      kind: todo.kind,
     );
     todos[index] = todo.copyWith(
       done: true,
@@ -655,6 +677,98 @@ class AppState extends ChangeNotifier {
     return alreadyRewarded
         ? CompleteOutcome.alreadyRewarded
         : CompleteOutcome.rewarded;
+  }
+
+  Future<bool> addResultTable(ResultTable table) async {
+    if (resultTables.length >= maxResultTables) return false;
+    resultTables = [...resultTables, table];
+    notifyListeners();
+    await _storage.saveResultTables(resultTables);
+    return true;
+  }
+
+  Future<void> updateResultTable(ResultTable table) async {
+    final index = resultTables.indexWhere((t) => t.id == table.id);
+    if (index < 0) return;
+    resultTables = [...resultTables];
+    resultTables[index] = table;
+    notifyListeners();
+    await _storage.saveResultTables(resultTables);
+  }
+
+  Future<void> deleteResultTable(String id) async {
+    resultTables = resultTables.where((t) => t.id != id).toList();
+    notifyListeners();
+    await _storage.saveResultTables(resultTables);
+  }
+
+  /// Tag ids that count for [table], expanding main tags to their subs.
+  Set<String> expandedTagIdsFor(ResultTable table) {
+    final result = <String>{...table.tagIds};
+    for (final id in table.tagIds) {
+      final tag = tagById(id);
+      if (tag == null || !tag.isMain) continue;
+      for (final sub in subTagsOf(id)) {
+        result.add(sub.id);
+      }
+    }
+    return result;
+  }
+
+  bool _dateKeyInPeriod(String dateKey, ResultPeriod period) {
+    if (period == ResultPeriod.month) {
+      return dateKey.startsWith(DayClock.monthKey());
+    }
+    final mondayKey = DayClock.weekKey();
+    final monday = DateTime.parse(mondayKey);
+    final sunday = monday.add(const Duration(days: 6));
+    final sundayKey = DayClock.keyFromDate(sunday);
+    return dateKey.compareTo(mondayKey) >= 0 &&
+        dateKey.compareTo(sundayKey) <= 0;
+  }
+
+  List<CompletionRecord> _matchingRecords(ResultTable table) {
+    final expanded = expandedTagIdsFor(table);
+    return completionLog.where((r) {
+      if (r.kind != table.kind) return false;
+      if (!_dateKeyInPeriod(r.dateKey, table.period)) return false;
+      return r.tagIds.any(expanded.contains);
+    }).toList();
+  }
+
+  /// Per-tag totals for a result table (subs preferred over mains).
+  Map<String, double> resultTableTagTotals(ResultTable table) {
+    final expanded = expandedTagIdsFor(table);
+    final totals = <String, double>{};
+    for (final record in _matchingRecords(table)) {
+      final value = record.amount ?? 1.0;
+      final key = _breakdownTagId(record.tagIds, expanded);
+      if (key == null) continue;
+      totals[key] = (totals[key] ?? 0) + value;
+    }
+    return totals;
+  }
+
+  double resultTableTotal(ResultTable table) {
+    return _matchingRecords(table).fold<double>(
+      0,
+      (sum, r) => sum + (r.amount ?? 1.0),
+    );
+  }
+
+  String? _breakdownTagId(List<String> recordTags, Set<String> expanded) {
+    final candidates =
+        recordTags.where(expanded.contains).map(tagById).whereType<Tag>();
+    Tag? sub;
+    Tag? main;
+    for (final tag in candidates) {
+      if (!tag.isMain) {
+        sub ??= tag;
+      } else {
+        main ??= tag;
+      }
+    }
+    return (sub ?? main)?.id;
   }
 
   Future<void> addRoutine(Routine routine) async {
@@ -710,5 +824,4 @@ class AppState extends ChangeNotifier {
     notifyListeners();
     await _persist();
   }
-
 }
