@@ -143,6 +143,36 @@ class AppLocalizationsKo extends AppLocalizations {
   String get tagRelationship => '관계';
 
   @override
+  String get tagSelectLabel => '태그 선택';
+
+  @override
+  String get tagSelectHint => '태그를 선택하세요';
+
+  @override
+  String get tagCreateTitle => '태그 만들기';
+
+  @override
+  String get tagNameLabel => '이름';
+
+  @override
+  String get tagNameHint => '태그 이름';
+
+  @override
+  String get tagColorLabel => '색';
+
+  @override
+  String get tagTypeLabel => '종류';
+
+  @override
+  String get tagTypeMain => '메인 태그';
+
+  @override
+  String get tagTypeSub => '서브 태그';
+
+  @override
+  String get tagParentLabel => '상위 메인 태그';
+
+  @override
   String get addCustomTagTitle => '태그 추가';
 
   @override

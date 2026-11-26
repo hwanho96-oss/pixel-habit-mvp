@@ -143,6 +143,36 @@ class AppLocalizationsZh extends AppLocalizations {
   String get tagRelationship => '人际';
 
   @override
+  String get tagSelectLabel => '选择标签';
+
+  @override
+  String get tagSelectHint => '请选择标签';
+
+  @override
+  String get tagCreateTitle => '创建标签';
+
+  @override
+  String get tagNameLabel => '名称';
+
+  @override
+  String get tagNameHint => '标签名称';
+
+  @override
+  String get tagColorLabel => '颜色';
+
+  @override
+  String get tagTypeLabel => '类型';
+
+  @override
+  String get tagTypeMain => '主标签';
+
+  @override
+  String get tagTypeSub => '子标签';
+
+  @override
+  String get tagParentLabel => '上级主标签';
+
+  @override
   String get addCustomTagTitle => '添加标签';
 
   @override

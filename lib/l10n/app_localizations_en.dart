@@ -143,6 +143,36 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tagRelationship => 'Relationships';
 
   @override
+  String get tagSelectLabel => 'Select tags';
+
+  @override
+  String get tagSelectHint => 'Choose tags';
+
+  @override
+  String get tagCreateTitle => 'Create tag';
+
+  @override
+  String get tagNameLabel => 'Name';
+
+  @override
+  String get tagNameHint => 'Tag name';
+
+  @override
+  String get tagColorLabel => 'Color';
+
+  @override
+  String get tagTypeLabel => 'Type';
+
+  @override
+  String get tagTypeMain => 'Main tag';
+
+  @override
+  String get tagTypeSub => 'Sub tag';
+
+  @override
+  String get tagParentLabel => 'Parent main tag';
+
+  @override
   String get addCustomTagTitle => 'Add tag';
 
   @override

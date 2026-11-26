@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../data/day_clock.dart';
-import '../data/default_tags.dart';
+import '../data/tag_palette.dart';
 import '../l10n/app_localizations.dart';
 import '../models/routine.dart';
+import '../models/tag.dart';
 import '../models/todo.dart';
 import '../providers/app_state.dart';
+import '../widgets/tag_chips.dart';
 
 enum FormItemType { routine, todo }
 
@@ -53,7 +56,7 @@ class _ItemFormScreenState extends State<ItemFormScreen> {
   int? _hour;
   int? _minute;
   late Set<int> _weekdays;
-  late Set<String> _selectedTags;
+  late Set<String> _selectedTagIds;
   late List<String> _checklist;
 
   bool get _isRoutine => widget.type == FormItemType.routine;
@@ -79,7 +82,7 @@ class _ItemFormScreenState extends State<ItemFormScreen> {
     _hour = routine?.hour ?? todo?.hour;
     _minute = routine?.minute ?? todo?.minute;
     _weekdays = {...?routine?.repeatWeekdays};
-    _selectedTags = {...?(routine?.tags ?? todo?.tags)};
+    _selectedTagIds = {...?(routine?.tagIds ?? todo?.tagIds)};
     _checklist = [...?(routine?.checklist ?? todo?.checklist)];
     _titleController.addListener(() => setState(() {}));
   }
@@ -89,21 +92,6 @@ class _ItemFormScreenState extends State<ItemFormScreen> {
     _titleController.dispose();
     _checklistController.dispose();
     super.dispose();
-  }
-
-  String _defaultTagLabel(AppLocalizations l10n, String id) {
-    switch (id) {
-      case DefaultTags.health:
-        return l10n.tagHealth;
-      case DefaultTags.study:
-        return l10n.tagStudy;
-      case DefaultTags.selfGrowth:
-        return l10n.tagSelfGrowth;
-      case DefaultTags.relationship:
-        return l10n.tagRelationship;
-      default:
-        return id;
-    }
   }
 
   List<String> _weekdayLabels(AppLocalizations l10n) => [
@@ -161,38 +149,31 @@ class _ItemFormScreenState extends State<ItemFormScreen> {
     });
   }
 
-  Future<void> _addCustomTag() async {
-    final l10n = AppLocalizations.of(context)!;
-    final controller = TextEditingController();
-    final tag = await showDialog<String>(
+  Future<void> _openTagPicker() async {
+    final result = await showModalBottomSheet<Object>(
       context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
       builder: (ctx) {
-        return AlertDialog(
-          title: Text(l10n.addCustomTagTitle),
-          content: TextField(
-            controller: controller,
-            autofocus: true,
-            decoration: InputDecoration(hintText: l10n.addCustomTagHint),
-            onSubmitted: (value) => Navigator.pop(ctx, value.trim()),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: Text(l10n.cancel),
-            ),
-            TextButton(
-              onPressed: () => Navigator.pop(ctx, controller.text.trim()),
-              child: Text(l10n.add),
-            ),
-          ],
+        return _TagPickerSheet(
+          initiallySelected: _selectedTagIds,
+          onCreateTag: () => Navigator.pop(ctx, '__create__'),
         );
       },
     );
-    controller.dispose();
-    if (tag == null || tag.isEmpty || !mounted) return;
-
-    await context.read<AppState>().addCustomTag(tag);
-    setState(() => _selectedTags = {..._selectedTags, tag});
+    if (!mounted) return;
+    if (result == '__create__') {
+      final createdId = await context.push<String>('/tag/create');
+      if (!mounted) return;
+      if (createdId != null) {
+        setState(() => _selectedTagIds = {..._selectedTagIds, createdId});
+      }
+      await _openTagPicker();
+      return;
+    }
+    if (result is Set<String>) {
+      setState(() => _selectedTagIds = result);
+    }
   }
 
   Future<void> _submit() async {
@@ -220,7 +201,7 @@ class _ItemFormScreenState extends State<ItemFormScreen> {
         hour: _hour,
         minute: _minute,
         repeatWeekdays: _weekdays.toList()..sort(),
-        tags: _selectedTags.toList(),
+        tagIds: _selectedTagIds.toList(),
         lastDoneDate: existing?.lastDoneDate,
       );
       if (_isEdit) {
@@ -246,7 +227,7 @@ class _ItemFormScreenState extends State<ItemFormScreen> {
         date: _date,
         hour: _hour,
         minute: _minute,
-        tags: _selectedTags.toList(),
+        tagIds: _selectedTagIds.toList(),
         done: existing?.done ?? false,
         doneDate: existing?.doneDate,
       );
@@ -263,7 +244,6 @@ class _ItemFormScreenState extends State<ItemFormScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final customTags = context.watch<AppState>().customTags;
     final canSubmit = _titleController.text.trim().isNotEmpty;
     final timeText = (_hour != null && _minute != null)
         ? '${_hour!.toString().padLeft(2, '0')}:${_minute!.toString().padLeft(2, '0')}'
@@ -451,51 +431,27 @@ class _ItemFormScreenState extends State<ItemFormScreen> {
               children: [
                 Text(l10n.routineSectionTags),
                 const SizedBox(height: 8),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    for (final id in DefaultTags.all)
-                      FilterChip(
-                        label: Text(
-                          _defaultTagLabel(l10n, id),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        selected: _selectedTags.contains(id),
-                        onSelected: (selected) {
-                          setState(() {
-                            if (selected) {
-                              _selectedTags = {..._selectedTags, id};
-                            } else {
-                              _selectedTags = {..._selectedTags}..remove(id);
-                            }
-                          });
-                        },
-                      ),
-                    for (final tag in customTags)
-                      FilterChip(
-                        label: Text(
-                          tag,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        selected: _selectedTags.contains(tag),
-                        onSelected: (selected) {
-                          setState(() {
-                            if (selected) {
-                              _selectedTags = {..._selectedTags, tag};
-                            } else {
-                              _selectedTags = {..._selectedTags}..remove(tag);
-                            }
-                          });
-                        },
-                      ),
-                    ActionChip(
-                      label: const Text('+'),
-                      onPressed: _addCustomTag,
+                InkWell(
+                  onTap: _openTagPicker,
+                  borderRadius: BorderRadius.circular(8),
+                  child: InputDecorator(
+                    decoration: InputDecoration(
+                      labelText: l10n.tagSelectLabel,
+                      border: const OutlineInputBorder(),
+                      suffixIcon: const Icon(Icons.arrow_drop_down),
                     ),
-                  ],
+                    child: _selectedTagIds.isEmpty
+                        ? Text(
+                            l10n.tagSelectHint,
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(
+                              color: Theme.of(context).hintColor,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          )
+                        : TagChipsRow(tagIds: _selectedTagIds.toList()),
+                  ),
                 ),
               ],
             ),
@@ -517,6 +473,209 @@ class _ItemFormScreenState extends State<ItemFormScreen> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _TagPickerSheet extends StatefulWidget {
+  const _TagPickerSheet({
+    required this.initiallySelected,
+    required this.onCreateTag,
+  });
+
+  final Set<String> initiallySelected;
+  final VoidCallback onCreateTag;
+
+  @override
+  State<_TagPickerSheet> createState() => _TagPickerSheetState();
+}
+
+class _TagPickerSheetState extends State<_TagPickerSheet> {
+  late Set<String> _selected;
+  final Set<String> _expanded = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _selected = {...widget.initiallySelected};
+  }
+
+  void _toggle(String id) {
+    setState(() {
+      if (_selected.contains(id)) {
+        _selected = {..._selected}..remove(id);
+      } else {
+        _selected = {..._selected, id};
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final state = context.watch<AppState>();
+    final mains = state.mainTags;
+    final presets = [
+      for (final id in TagPresets.ids)
+        if (state.tagById(id) != null) state.tagById(id)!,
+    ];
+
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.only(
+          left: 16,
+          right: 16,
+          bottom: MediaQuery.viewInsetsOf(context).bottom + 16,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        for (final tag in presets) ...[
+                          FilterChip(
+                            avatar: CircleAvatar(
+                              backgroundColor: Color(tag.colorValue),
+                              radius: 8,
+                            ),
+                            label: Text(
+                              TagPresets.displayName(l10n, tag),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            selected: _selected.contains(tag.id),
+                            onSelected: (_) => _toggle(tag.id),
+                          ),
+                          const SizedBox(width: 8),
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
+                IconButton(
+                  tooltip: l10n.tagCreateTitle,
+                  onPressed: widget.onCreateTag,
+                  icon: const Icon(Icons.add),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.sizeOf(context).height * 0.45,
+              ),
+              child: ListView(
+                shrinkWrap: true,
+                children: [
+                  for (final main in mains)
+                    _MainTagTile(
+                      main: main,
+                      subTags: state.subTagsOf(main.id),
+                      selected: _selected,
+                      expanded: _expanded.contains(main.id),
+                      onToggleExpand: () {
+                        setState(() {
+                          if (_expanded.contains(main.id)) {
+                            _expanded.remove(main.id);
+                          } else {
+                            _expanded.add(main.id);
+                          }
+                        });
+                      },
+                      onToggle: _toggle,
+                    ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 8),
+            FilledButton(
+              onPressed: () => Navigator.pop(context, _selected),
+              child: Text(l10n.confirm),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _MainTagTile extends StatelessWidget {
+  const _MainTagTile({
+    required this.main,
+    required this.subTags,
+    required this.selected,
+    required this.expanded,
+    required this.onToggleExpand,
+    required this.onToggle,
+  });
+
+  final Tag main;
+  final List<Tag> subTags;
+  final Set<String> selected;
+  final bool expanded;
+  final VoidCallback onToggleExpand;
+  final void Function(String id) onToggle;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final name = TagPresets.displayName(l10n, main);
+    final color = Color(main.colorValue);
+
+    return Column(
+      children: [
+        ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: CircleAvatar(backgroundColor: color, radius: 10),
+          title: Text(
+            name,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Checkbox(
+                value: selected.contains(main.id),
+                onChanged: (_) => onToggle(main.id),
+              ),
+              if (subTags.isNotEmpty)
+                IconButton(
+                  onPressed: onToggleExpand,
+                  icon: Icon(
+                    expanded ? Icons.expand_less : Icons.expand_more,
+                  ),
+                ),
+            ],
+          ),
+          onTap: () => onToggle(main.id),
+        ),
+        if (expanded)
+          for (final sub in subTags)
+            ListTile(
+              contentPadding: const EdgeInsets.only(left: 28),
+              leading: CircleAvatar(
+                backgroundColor: Color(sub.colorValue),
+                radius: 8,
+              ),
+              title: Text(
+                TagPresets.chipLabel(l10n, sub, parent: main),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              trailing: Checkbox(
+                value: selected.contains(sub.id),
+                onChanged: (_) => onToggle(sub.id),
+              ),
+              onTap: () => onToggle(sub.id),
+            ),
+      ],
     );
   }
 }

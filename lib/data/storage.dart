@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/completion_record.dart';
 import '../models/reward_record.dart';
 import '../models/routine.dart';
+import '../models/tag.dart';
 import '../models/todo.dart';
 
 class AppStorage {
@@ -12,6 +13,7 @@ class AppStorage {
   static const _todosKey = 'todos_v1';
   static const _goldKey = 'gold_v1';
   static const _customTagsKey = 'custom_tags_v1';
+  static const _tagsKey = 'tags_v1';
   static const _completionLogKey = 'completion_log_v1';
   static const _pointsKey = 'points_v1';
   static const _ownedItemsKey = 'owned_items_v1';
@@ -60,6 +62,7 @@ class AppStorage {
     await prefs.setInt(_goldKey, gold);
   }
 
+  /// Legacy string tags (pre tag model). Used once for migration.
   Future<List<String>> loadCustomTags() async {
     final prefs = await SharedPreferences.getInstance();
     final raw = prefs.getString(_customTagsKey);
@@ -68,9 +71,18 @@ class AppStorage {
     return list.map((e) => e as String).toList();
   }
 
-  Future<void> saveCustomTags(List<String> tags) async {
+  Future<List<Tag>> loadTags() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_customTagsKey, jsonEncode(tags));
+    final raw = prefs.getString(_tagsKey);
+    if (raw == null) return [];
+    final list = jsonDecode(raw) as List<dynamic>;
+    return list.map((e) => Tag.fromJson(e as Map<String, dynamic>)).toList();
+  }
+
+  Future<void> saveTags(List<Tag> tags) async {
+    final prefs = await SharedPreferences.getInstance();
+    final encoded = jsonEncode(tags.map((e) => e.toJson()).toList());
+    await prefs.setString(_tagsKey, encoded);
   }
 
   Future<List<CompletionRecord>> loadCompletionLog() async {

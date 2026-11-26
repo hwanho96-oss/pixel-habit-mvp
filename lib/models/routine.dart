@@ -8,7 +8,7 @@ class Routine {
   final int? hour;
   final int? minute;
   final List<int> repeatWeekdays;
-  final List<String> tags;
+  final List<String> tagIds;
   final String? lastDoneDate;
 
   const Routine({
@@ -21,7 +21,7 @@ class Routine {
     this.hour,
     this.minute,
     required this.repeatWeekdays,
-    required this.tags,
+    required this.tagIds,
     this.lastDoneDate,
   });
 
@@ -35,7 +35,7 @@ class Routine {
     int? hour,
     int? minute,
     List<int>? repeatWeekdays,
-    List<String>? tags,
+    List<String>? tagIds,
     String? lastDoneDate,
     bool clearLastDoneDate = false,
     bool clearChecklistDateKey = false,
@@ -54,7 +54,7 @@ class Routine {
       hour: clearHour ? null : (hour ?? this.hour),
       minute: clearMinute ? null : (minute ?? this.minute),
       repeatWeekdays: repeatWeekdays ?? this.repeatWeekdays,
-      tags: tags ?? this.tags,
+      tagIds: tagIds ?? this.tagIds,
       lastDoneDate:
           clearLastDoneDate ? null : (lastDoneDate ?? this.lastDoneDate),
     );
@@ -70,11 +70,12 @@ class Routine {
         'hour': hour,
         'minute': minute,
         'repeatWeekdays': repeatWeekdays,
-        'tags': tags,
+        'tagIds': tagIds,
         'lastDoneDate': lastDoneDate,
       };
 
   factory Routine.fromJson(Map<String, dynamic> json) {
+    final rawTags = json['tagIds'] ?? json['tags'];
     return Routine(
       id: json['id'] as String,
       title: json['title'] as String,
@@ -91,7 +92,7 @@ class Routine {
       repeatWeekdays: (json['repeatWeekdays'] as List<dynamic>? ?? [])
           .map((e) => e as int)
           .toList(),
-      tags: (json['tags'] as List<dynamic>? ?? [])
+      tagIds: (rawTags as List<dynamic>? ?? [])
           .map((e) => e as String)
           .toList(),
       lastDoneDate: json['lastDoneDate'] as String?,

@@ -4,10 +4,12 @@ import '../data/day_clock.dart';
 import '../data/economy.dart';
 import '../data/shop_items.dart';
 import '../data/storage.dart';
+import '../data/tag_palette.dart';
 import '../data/title_repository.dart';
 import '../models/completion_record.dart';
 import '../models/reward_record.dart';
 import '../models/routine.dart';
+import '../models/tag.dart';
 import '../models/title_def.dart';
 import '../models/todo.dart';
 
@@ -25,7 +27,7 @@ class AppState extends ChangeNotifier {
 
   List<Routine> routines = [];
   List<Todo> todos = [];
-  List<String> customTags = [];
+  List<Tag> tags = [];
   List<CompletionRecord> completionLog = [];
   List<RewardRecord> rewardLog = [];
   int gold = 0;
@@ -40,10 +42,7 @@ class AppState extends ChangeNotifier {
   static const String centerTitleId = 'me';
 
   Future<void> load() async {
-    routines = await _storage.loadRoutines();
-    todos = await _storage.loadTodos();
     gold = await _storage.loadGold();
-    customTags = await _storage.loadCustomTags();
     completionLog = await _storage.loadCompletionLog();
     rewardLog = await _storage.loadRewardLog();
     unspentPoints = await _storage.loadPoints();
@@ -61,12 +60,170 @@ class AppState extends ChangeNotifier {
         savedEquipped != null && ownedTitleIds.contains(savedEquipped)
             ? savedEquipped
             : null;
-    // Drop legacy title ids that are no longer in titles.json.
+
+    tags = await _storage.loadTags();
+    var tagsDirty = false;
+    if (tags.isEmpty) {
+      tags = TagPresets.createDefaults();
+      tagsDirty = true;
+    }
+
+    // Migrate legacy custom_tags_v1 string list into main tags.
+    final legacyCustom = await _storage.loadCustomTags();
+    for (final name in legacyCustom) {
+      final trimmed = name.trim();
+      if (trimmed.isEmpty) continue;
+      if (_findTagIdByRef(trimmed) != null) continue;
+      tags = [
+        ...tags,
+        Tag(
+          id: _newTagId(),
+          name: trimmed,
+          colorValue: kTagPaletteColors[
+              tags.length % kTagPaletteColors.length],
+        ),
+      ];
+      tagsDirty = true;
+    }
+
+    routines = await _storage.loadRoutines();
+    todos = await _storage.loadTodos();
+    final routinesMigrated = _migrateItemTagIds(routines.map((r) => r.tagIds));
+    final todosMigrated = _migrateItemTagIds(todos.map((t) => t.tagIds));
+    var itemsDirty = false;
+    if (routinesMigrated.dirty) {
+      routines = [
+        for (var i = 0; i < routines.length; i++)
+          routines[i].copyWith(tagIds: routinesMigrated.ids[i]),
+      ];
+      itemsDirty = true;
+    }
+    if (todosMigrated.dirty) {
+      todos = [
+        for (var i = 0; i < todos.length; i++)
+          todos[i].copyWith(tagIds: todosMigrated.ids[i]),
+      ];
+      itemsDirty = true;
+    }
+    if (routinesMigrated.tagsDirty || todosMigrated.tagsDirty) {
+      tagsDirty = true;
+    }
+
     await Future.wait([
       _storage.saveOwnedTitles(ownedTitleIds),
       _storage.saveEquippedTitle(equippedTitleId),
+      if (tagsDirty) _storage.saveTags(tags),
+      if (itemsDirty) _storage.saveRoutines(routines),
+      if (itemsDirty) _storage.saveTodos(todos),
     ]);
     notifyListeners();
+  }
+
+  int _tagIdSeq = 0;
+
+  String _newTagId() {
+    _tagIdSeq += 1;
+    return 'tag_${DateTime.now().microsecondsSinceEpoch}_$_tagIdSeq';
+  }
+
+  Tag? tagById(String id) {
+    for (final tag in tags) {
+      if (tag.id == id) return tag;
+    }
+    return null;
+  }
+
+  List<Tag> get mainTags => tags.where((t) => t.isMain).toList();
+
+  List<Tag> subTagsOf(String parentId) =>
+      tags.where((t) => t.parentId == parentId).toList();
+
+  /// Resolves a stored ref (id or legacy name) to an existing tag id, if any.
+  String? _findTagIdByRef(String ref) {
+    if (tags.any((t) => t.id == ref)) return ref;
+    for (final tag in tags) {
+      if (tag.name == ref) return tag.id;
+    }
+    for (final presetId in TagPresets.ids) {
+      if (ref == presetId) return presetId;
+      if (TagPresets.knownNamesFor(presetId).contains(ref)) return presetId;
+    }
+    return null;
+  }
+
+  String _resolveOrCreateTagRef(String ref) {
+    final existing = _findTagIdByRef(ref);
+    if (existing != null) return existing;
+    final created = Tag(
+      id: _newTagId(),
+      name: ref,
+      colorValue:
+          kTagPaletteColors[tags.length % kTagPaletteColors.length],
+    );
+    tags = [...tags, created];
+    return created.id;
+  }
+
+  ({List<List<String>> ids, bool dirty, bool tagsDirty}) _migrateItemTagIds(
+    Iterable<List<String>> source,
+  ) {
+    final result = <List<String>>[];
+    var dirty = false;
+    final tagsBefore = tags.length;
+    for (final refs in source) {
+      final next = refs.map(_resolveOrCreateTagRef).toList();
+      if (!listEquals(next, refs)) dirty = true;
+      result.add(next);
+    }
+    return (
+      ids: result,
+      dirty: dirty,
+      tagsDirty: tags.length != tagsBefore,
+    );
+  }
+
+  Future<Tag> addTag({
+    required String name,
+    required int colorValue,
+    String? parentId,
+  }) async {
+    final trimmed = name.trim();
+    final tag = Tag(
+      id: _newTagId(),
+      name: trimmed,
+      colorValue: colorValue,
+      parentId: parentId,
+    );
+    tags = [...tags, tag];
+    notifyListeners();
+    await _storage.saveTags(tags);
+    return tag;
+  }
+
+  Future<void> deleteTag(String id) async {
+    final toRemove = <String>{id};
+    for (final tag in tags) {
+      if (tag.parentId == id) toRemove.add(tag.id);
+    }
+    tags = tags.where((t) => !toRemove.contains(t.id)).toList();
+    routines = [
+      for (final r in routines)
+        r.copyWith(
+          tagIds: r.tagIds.where((tid) => !toRemove.contains(tid)).toList(),
+        ),
+    ];
+    todos = [
+      for (final t in todos)
+        t.copyWith(
+          tagIds: t.tagIds.where((tid) => !toRemove.contains(tid)).toList(),
+        ),
+    ];
+    notifyListeners();
+    await Future.wait([
+      _storage.saveTags(tags),
+      _storage.saveRoutines(routines),
+      _storage.saveTodos(todos),
+    ]);
   }
 
   TitleDef? titleById(String id) {
@@ -412,6 +569,7 @@ class AppState extends ChangeNotifier {
     await Future.wait([
       _storage.saveRoutines(routines),
       _storage.saveTodos(todos),
+      _storage.saveTags(tags),
       _storage.saveGold(gold),
       _storage.saveCompletionLog(completionLog),
       _storage.saveRewardLog(rewardLog),
@@ -450,7 +608,7 @@ class AppState extends ChangeNotifier {
       type: 'routine',
       itemId: routine.id,
       title: routine.title,
-      tags: routine.tags,
+      tags: routine.tagIds,
     );
     routines[index] = routine.copyWith(lastDoneDate: today);
     notifyListeners();
@@ -486,7 +644,7 @@ class AppState extends ChangeNotifier {
       type: 'todo',
       itemId: todo.id,
       title: todo.title,
-      tags: todo.tags,
+      tags: todo.tagIds,
     );
     todos[index] = todo.copyWith(
       done: true,
@@ -553,11 +711,4 @@ class AppState extends ChangeNotifier {
     await _persist();
   }
 
-  Future<void> addCustomTag(String tag) async {
-    final trimmed = tag.trim();
-    if (trimmed.isEmpty || customTags.contains(trimmed)) return;
-    customTags = [...customTags, trimmed];
-    notifyListeners();
-    await _storage.saveCustomTags(customTags);
-  }
 }

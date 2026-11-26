@@ -6,6 +6,7 @@ import '../screens/home_screen.dart';
 import '../screens/placeholder_screen.dart';
 import '../screens/routine_form_screen.dart';
 import '../screens/shell_scaffold.dart';
+import '../screens/tag_create_screen.dart';
 
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -64,6 +65,11 @@ final GoRouter appRouter = GoRouter(
             const ItemFormArgs(type: FormItemType.routine);
         return ItemFormScreen.fromArgs(args);
       },
+    ),
+    GoRoute(
+      parentNavigatorKey: rootNavigatorKey,
+      path: '/tag/create',
+      builder: (context, state) => const TagCreateScreen(),
     ),
   ],
 );

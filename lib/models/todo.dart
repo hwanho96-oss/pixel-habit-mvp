@@ -6,7 +6,7 @@ class Todo {
   final DateTime date;
   final int? hour;
   final int? minute;
-  final List<String> tags;
+  final List<String> tagIds;
   final bool done;
   final String? doneDate;
 
@@ -18,7 +18,7 @@ class Todo {
     required this.date,
     this.hour,
     this.minute,
-    required this.tags,
+    required this.tagIds,
     required this.done,
     this.doneDate,
   });
@@ -31,7 +31,7 @@ class Todo {
     DateTime? date,
     int? hour,
     int? minute,
-    List<String>? tags,
+    List<String>? tagIds,
     bool? done,
     String? doneDate,
     bool clearHour = false,
@@ -46,7 +46,7 @@ class Todo {
       date: date ?? this.date,
       hour: clearHour ? null : (hour ?? this.hour),
       minute: clearMinute ? null : (minute ?? this.minute),
-      tags: tags ?? this.tags,
+      tagIds: tagIds ?? this.tagIds,
       done: done ?? this.done,
       doneDate: clearDoneDate ? null : (doneDate ?? this.doneDate),
     );
@@ -60,12 +60,13 @@ class Todo {
         'date': date.toIso8601String(),
         'hour': hour,
         'minute': minute,
-        'tags': tags,
+        'tagIds': tagIds,
         'done': done,
         'doneDate': doneDate,
       };
 
   factory Todo.fromJson(Map<String, dynamic> json) {
+    final rawTags = json['tagIds'] ?? json['tags'];
     return Todo(
       id: json['id'] as String,
       title: json['title'] as String,
@@ -78,7 +79,7 @@ class Todo {
       date: DateTime.parse(json['date'] as String),
       hour: json['hour'] as int?,
       minute: json['minute'] as int?,
-      tags: (json['tags'] as List<dynamic>? ?? [])
+      tagIds: (rawTags as List<dynamic>? ?? [])
           .map((e) => e as String)
           .toList(),
       done: json['done'] as bool? ?? false,

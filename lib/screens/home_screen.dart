@@ -10,6 +10,7 @@ import '../models/routine.dart';
 import '../models/todo.dart';
 import '../providers/app_state.dart';
 import '../ui/layout_config.dart';
+import '../widgets/tag_chips.dart';
 import 'routine_form_screen.dart';
 
 enum _HomeSegment { routine, todo }
@@ -523,6 +524,7 @@ class _RoutineList extends StatelessWidget {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
+                            TagChipsRow(tagIds: routine.tagIds),
                           ],
                         ),
                       ),
@@ -648,6 +650,7 @@ class _TodoList extends StatelessWidget {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
+                            TagChipsRow(tagIds: todo.tagIds),
                           ],
                         ),
                       ),

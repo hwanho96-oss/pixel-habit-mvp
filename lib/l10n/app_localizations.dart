@@ -360,6 +360,66 @@ abstract class AppLocalizations {
   /// **'관계'**
   String get tagRelationship;
 
+  /// No description provided for @tagSelectLabel.
+  ///
+  /// In ko, this message translates to:
+  /// **'태그 선택'**
+  String get tagSelectLabel;
+
+  /// No description provided for @tagSelectHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'태그를 선택하세요'**
+  String get tagSelectHint;
+
+  /// No description provided for @tagCreateTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'태그 만들기'**
+  String get tagCreateTitle;
+
+  /// No description provided for @tagNameLabel.
+  ///
+  /// In ko, this message translates to:
+  /// **'이름'**
+  String get tagNameLabel;
+
+  /// No description provided for @tagNameHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'태그 이름'**
+  String get tagNameHint;
+
+  /// No description provided for @tagColorLabel.
+  ///
+  /// In ko, this message translates to:
+  /// **'색'**
+  String get tagColorLabel;
+
+  /// No description provided for @tagTypeLabel.
+  ///
+  /// In ko, this message translates to:
+  /// **'종류'**
+  String get tagTypeLabel;
+
+  /// No description provided for @tagTypeMain.
+  ///
+  /// In ko, this message translates to:
+  /// **'메인 태그'**
+  String get tagTypeMain;
+
+  /// No description provided for @tagTypeSub.
+  ///
+  /// In ko, this message translates to:
+  /// **'서브 태그'**
+  String get tagTypeSub;
+
+  /// No description provided for @tagParentLabel.
+  ///
+  /// In ko, this message translates to:
+  /// **'상위 메인 태그'**
+  String get tagParentLabel;
+
   /// No description provided for @addCustomTagTitle.
   ///
   /// In ko, this message translates to:

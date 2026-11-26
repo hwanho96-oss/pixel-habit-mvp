@@ -143,6 +143,36 @@ class AppLocalizationsJa extends AppLocalizations {
   String get tagRelationship => '人間関係';
 
   @override
+  String get tagSelectLabel => 'タグを選択';
+
+  @override
+  String get tagSelectHint => 'タグを選んでください';
+
+  @override
+  String get tagCreateTitle => 'タグを作成';
+
+  @override
+  String get tagNameLabel => '名前';
+
+  @override
+  String get tagNameHint => 'タグ名';
+
+  @override
+  String get tagColorLabel => '色';
+
+  @override
+  String get tagTypeLabel => '種類';
+
+  @override
+  String get tagTypeMain => 'メインタグ';
+
+  @override
+  String get tagTypeSub => 'サブタグ';
+
+  @override
+  String get tagParentLabel => '親メインタグ';
+
+  @override
   String get addCustomTagTitle => 'タグを追加';
 
   @override
