@@ -310,5 +310,107 @@
       }
     }
   },
-  "resultNoRecordsYet": "No matching records for this table yet"
+  "resultNoRecordsYet": "No matching records for this table yet",
+  "goalFormTitle": "Create goal",
+  "goalFormTitleEdit": "Edit goal",
+  "goalNameLabel": "Name",
+  "goalNameHint": "e.g. Drink water",
+  "goalPeriodLabel": "Period",
+  "goalPeriodWeek": "Week",
+  "goalPeriodMonth": "Month",
+  "goalPeriodTargetLabel": "Weekly/monthly target",
+  "goalPeriodTargetHint": "e.g. 700",
+  "goalPeriodTargetMinutesLabel": "Weekly/monthly target (min)",
+  "goalPeriodTargetMinutesHint": "e.g. 420",
+  "goalStepLabel": "Step size",
+  "goalStepHint": "e.g. 100",
+  "goalDailyPreviewAmount": "Daily goal: {value}{unit}",
+  "@goalDailyPreviewAmount": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "goalDailyPreviewMinutes": "Daily goal: {value} min",
+  "@goalDailyPreviewMinutes": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "emptyGoalsHint": "Tap + to create your first goal",
+  "goalProgressAmount": "{current} / {target} {unit}",
+  "@goalProgressAmount": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "target": {
+        "type": "int"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "goalProgressMinutes": "{current} / {target} min",
+  "@goalProgressMinutes": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "target": {
+        "type": "int"
+      }
+    }
+  },
+  "goalPeriodSumWeekAmount": "This week total {value} {unit}",
+  "@goalPeriodSumWeekAmount": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "goalPeriodSumMonthAmount": "This month total {value} {unit}",
+  "@goalPeriodSumMonthAmount": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "goalPeriodSumWeekMinutes": "This week total {value} min",
+  "@goalPeriodSumWeekMinutes": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "goalPeriodSumMonthMinutes": "This month total {value} min",
+  "@goalPeriodSumMonthMinutes": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "goalTimerStart": "Start",
+  "goalTimerPause": "Pause",
+  "goalTimerStop": "Finish",
+  "goalDailyReached": "You've reached today's time goal",
+  "goalEdit": "Edit",
+  "goalDelete": "Delete"
 }

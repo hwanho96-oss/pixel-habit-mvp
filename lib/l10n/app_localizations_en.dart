@@ -556,4 +556,104 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get resultNoRecordsYet => 'No matching records for this table yet';
+
+  @override
+  String get goalFormTitle => 'Create goal';
+
+  @override
+  String get goalFormTitleEdit => 'Edit goal';
+
+  @override
+  String get goalNameLabel => 'Name';
+
+  @override
+  String get goalNameHint => 'e.g. Drink water';
+
+  @override
+  String get goalPeriodLabel => 'Period';
+
+  @override
+  String get goalPeriodWeek => 'Week';
+
+  @override
+  String get goalPeriodMonth => 'Month';
+
+  @override
+  String get goalPeriodTargetLabel => 'Weekly/monthly target';
+
+  @override
+  String get goalPeriodTargetHint => 'e.g. 700';
+
+  @override
+  String get goalPeriodTargetMinutesLabel => 'Weekly/monthly target (min)';
+
+  @override
+  String get goalPeriodTargetMinutesHint => 'e.g. 420';
+
+  @override
+  String get goalStepLabel => 'Step size';
+
+  @override
+  String get goalStepHint => 'e.g. 100';
+
+  @override
+  String goalDailyPreviewAmount(int value, String unit) {
+    return 'Daily goal: $value$unit';
+  }
+
+  @override
+  String goalDailyPreviewMinutes(int value) {
+    return 'Daily goal: $value min';
+  }
+
+  @override
+  String get emptyGoalsHint => 'Tap + to create your first goal';
+
+  @override
+  String goalProgressAmount(int current, int target, String unit) {
+    return '$current / $target $unit';
+  }
+
+  @override
+  String goalProgressMinutes(int current, int target) {
+    return '$current / $target min';
+  }
+
+  @override
+  String goalPeriodSumWeekAmount(int value, String unit) {
+    return 'This week total $value $unit';
+  }
+
+  @override
+  String goalPeriodSumMonthAmount(int value, String unit) {
+    return 'This month total $value $unit';
+  }
+
+  @override
+  String goalPeriodSumWeekMinutes(int value) {
+    return 'This week total $value min';
+  }
+
+  @override
+  String goalPeriodSumMonthMinutes(int value) {
+    return 'This month total $value min';
+  }
+
+  @override
+  String get goalTimerStart => 'Start';
+
+  @override
+  String get goalTimerPause => 'Pause';
+
+  @override
+  String get goalTimerStop => 'Finish';
+
+  @override
+  String get goalDailyReached => 'You\'ve reached today\'s time goal';
+
+  @override
+  String get goalEdit => 'Edit';
+
+  @override
+  String get goalDelete => 'Delete';
 }

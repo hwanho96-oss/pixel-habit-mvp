@@ -310,5 +310,107 @@
       }
     }
   },
-  "resultNoRecordsYet": "此表还没有匹配的记录"
+  "resultNoRecordsYet": "此表还没有匹配的记录",
+  "goalFormTitle": "创建目标",
+  "goalFormTitleEdit": "编辑目标",
+  "goalNameLabel": "名称",
+  "goalNameHint": "例如: 喝水",
+  "goalPeriodLabel": "周期",
+  "goalPeriodWeek": "周",
+  "goalPeriodMonth": "月",
+  "goalPeriodTargetLabel": "周/月目标量",
+  "goalPeriodTargetHint": "例如: 700",
+  "goalPeriodTargetMinutesLabel": "周/月目标（分钟）",
+  "goalPeriodTargetMinutesHint": "例如: 420",
+  "goalStepLabel": "一次增减值",
+  "goalStepHint": "例如: 100",
+  "goalDailyPreviewAmount": "每日目标: {value}{unit}",
+  "@goalDailyPreviewAmount": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "goalDailyPreviewMinutes": "每日目标: {value}分钟",
+  "@goalDailyPreviewMinutes": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "emptyGoalsHint": "点 + 创建第一个目标",
+  "goalProgressAmount": "{current} / {target} {unit}",
+  "@goalProgressAmount": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "target": {
+        "type": "int"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "goalProgressMinutes": "{current} / {target} 分钟",
+  "@goalProgressMinutes": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "target": {
+        "type": "int"
+      }
+    }
+  },
+  "goalPeriodSumWeekAmount": "本周合计 {value} {unit}",
+  "@goalPeriodSumWeekAmount": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "goalPeriodSumMonthAmount": "本月合计 {value} {unit}",
+  "@goalPeriodSumMonthAmount": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "goalPeriodSumWeekMinutes": "本周合计 {value}分钟",
+  "@goalPeriodSumWeekMinutes": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "goalPeriodSumMonthMinutes": "本月合计 {value}分钟",
+  "@goalPeriodSumMonthMinutes": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "goalTimerStart": "开始",
+  "goalTimerPause": "暂停",
+  "goalTimerStop": "结束",
+  "goalDailyReached": "已达到今日时间目标",
+  "goalEdit": "编辑",
+  "goalDelete": "删除"
 }

@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../screens/analysis_screen.dart';
 import '../screens/character_tab_screen.dart';
+import '../screens/goal_form_screen.dart';
 import '../screens/home_screen.dart';
 import '../screens/placeholder_screen.dart';
 import '../screens/shell_scaffold.dart';
@@ -62,6 +63,14 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) {
         final args = state.extra as TaskFormArgs? ?? const TaskFormArgs();
         return TaskFormScreen.fromArgs(args);
+      },
+    ),
+    GoRoute(
+      parentNavigatorKey: rootNavigatorKey,
+      path: '/goal/form',
+      builder: (context, state) {
+        final args = state.extra as GoalFormArgs? ?? const GoalFormArgs();
+        return GoalFormScreen.fromArgs(args);
       },
     ),
     GoRoute(

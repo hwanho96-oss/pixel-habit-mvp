@@ -5,11 +5,14 @@ import 'package:provider/provider.dart';
 import '../data/day_clock.dart';
 import '../data/economy.dart';
 import '../l10n/app_localizations.dart';
+import '../models/goal.dart';
 import '../models/task.dart';
 import '../providers/app_state.dart';
 import '../ui/layout_config.dart';
 import '../widgets/character_preview.dart';
+import '../widgets/goal_card.dart';
 import '../widgets/tag_chips.dart';
+import 'goal_form_screen.dart';
 import 'task_form_screen.dart';
 
 enum _HomeSegment { tasks, analysis }
@@ -72,7 +75,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _onFabPressed() {
-    context.push('/item/form');
+    if (_segment == _HomeSegment.analysis) {
+      context.push('/goal/form');
+    } else {
+      context.push('/item/form');
+    }
   }
 
   bool _isAwayTwoOrMoreDays(String? lastCheckDateKey) {
@@ -127,8 +134,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final state = context.watch<AppState>();
-    final showFab = _segment == _HomeSegment.tasks;
-
     return Scaffold(
       body: SafeArea(
         child: LayoutBuilder(
@@ -290,15 +295,20 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ],
                         )
-                      : Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(24),
-                            child: Text(
-                              l10n.analysisComingSoon,
-                              textAlign: TextAlign.center,
-                              softWrap: true,
-                            ),
-                          ),
+                      : _GoalList(
+                          goals: state.goals,
+                          emptyHint: l10n.emptyGoalsHint,
+                          onOpen: (goal) {
+                            context.push(
+                              '/goal/form',
+                              extra: GoalFormArgs(goal: goal),
+                            );
+                          },
+                          onDelete: (goal) {
+                            _confirmDelete(
+                              onConfirm: () => state.deleteGoal(goal.id),
+                            );
+                          },
                         ),
                 ),
               ],
@@ -306,12 +316,10 @@ class _HomeScreenState extends State<HomeScreen> {
           },
         ),
       ),
-      floatingActionButton: showFab
-          ? FloatingActionButton(
-              onPressed: _onFabPressed,
-              child: const Icon(Icons.add),
-            )
-          : null,
+      floatingActionButton: FloatingActionButton(
+        onPressed: _onFabPressed,
+        child: const Icon(Icons.add),
+      ),
     );
   }
 }
@@ -539,6 +547,40 @@ class _ChecklistItems extends StatelessWidget {
             ),
         ],
       ),
+    );
+  }
+}
+
+class _GoalList extends StatelessWidget {
+  const _GoalList({
+    required this.goals,
+    required this.emptyHint,
+    required this.onOpen,
+    required this.onDelete,
+  });
+
+  final List<Goal> goals;
+  final String emptyHint;
+  final void Function(Goal goal) onOpen;
+  final void Function(Goal goal) onDelete;
+
+  @override
+  Widget build(BuildContext context) {
+    if (goals.isEmpty) {
+      return _EmptyHint(text: emptyHint);
+    }
+
+    return ListView.builder(
+      padding: const EdgeInsets.only(bottom: 88),
+      itemCount: goals.length,
+      itemBuilder: (context, index) {
+        final goal = goals[index];
+        return GoalCard(
+          goal: goal,
+          onEdit: () => onOpen(goal),
+          onDelete: () => onDelete(goal),
+        );
+      },
     );
   }
 }

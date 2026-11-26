@@ -310,5 +310,107 @@
       }
     }
   },
-  "resultNoRecordsYet": "この表に合う記録はまだありません"
+  "resultNoRecordsYet": "この表に合う記録はまだありません",
+  "goalFormTitle": "目標を作成",
+  "goalFormTitleEdit": "目標を編集",
+  "goalNameLabel": "名前",
+  "goalNameHint": "例: 水分補給",
+  "goalPeriodLabel": "期間",
+  "goalPeriodWeek": "週",
+  "goalPeriodMonth": "月",
+  "goalPeriodTargetLabel": "週/月の目標量",
+  "goalPeriodTargetHint": "例: 700",
+  "goalPeriodTargetMinutesLabel": "週/月の目標（分）",
+  "goalPeriodTargetMinutesHint": "例: 420",
+  "goalStepLabel": "1回の増減値",
+  "goalStepHint": "例: 100",
+  "goalDailyPreviewAmount": "1日の目標: {value}{unit}",
+  "@goalDailyPreviewAmount": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "goalDailyPreviewMinutes": "1日の目標: {value}分",
+  "@goalDailyPreviewMinutes": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "emptyGoalsHint": "+ ボタンで最初の目標を作成しましょう",
+  "goalProgressAmount": "{current} / {target} {unit}",
+  "@goalProgressAmount": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "target": {
+        "type": "int"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "goalProgressMinutes": "{current} / {target} 分",
+  "@goalProgressMinutes": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "target": {
+        "type": "int"
+      }
+    }
+  },
+  "goalPeriodSumWeekAmount": "今週の合計 {value} {unit}",
+  "@goalPeriodSumWeekAmount": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "goalPeriodSumMonthAmount": "今月の合計 {value} {unit}",
+  "@goalPeriodSumMonthAmount": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "goalPeriodSumWeekMinutes": "今週の合計 {value}分",
+  "@goalPeriodSumWeekMinutes": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "goalPeriodSumMonthMinutes": "今月の合計 {value}分",
+  "@goalPeriodSumMonthMinutes": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "goalTimerStart": "開始",
+  "goalTimerPause": "一時停止",
+  "goalTimerStop": "終了",
+  "goalDailyReached": "今日の時間目標に到達しました",
+  "goalEdit": "編集",
+  "goalDelete": "削除"
 }

@@ -2,11 +2,14 @@ import 'package:flutter/foundation.dart';
 
 import '../data/day_clock.dart';
 import '../data/economy.dart';
+import '../data/goal_math.dart';
 import '../data/shop_items.dart';
 import '../data/storage.dart';
 import '../data/tag_palette.dart';
 import '../data/title_repository.dart';
 import '../models/completion_record.dart';
+import '../models/goal.dart';
+import '../models/measure_kind.dart';
 import '../models/reward_record.dart';
 import '../models/tag.dart';
 import '../models/task.dart';
@@ -28,6 +31,10 @@ class AppState extends ChangeNotifier {
   List<Tag> tags = [];
   List<CompletionRecord> completionLog = [];
   List<RewardRecord> rewardLog = [];
+  List<Goal> goals = [];
+  List<GoalLog> goalLogs = [];
+  /// goalId → timer state (persisted across restarts).
+  Map<String, GoalTimerState> goalTimers = {};
   int gold = 0;
   int unspentPoints = 0;
   Set<String> ownedItemIds = {};
@@ -98,6 +105,11 @@ class AppState extends ChangeNotifier {
       tagsDirty = true;
     }
 
+    goals = await _storage.loadGoals();
+    goalLogs = await _storage.loadGoalLogs();
+    final timers = await _storage.loadGoalTimers();
+    goalTimers = {for (final t in timers) t.goalId: t};
+
     await Future.wait([
       _storage.saveOwnedTitles(ownedTitleIds),
       _storage.saveEquippedTitle(equippedTitleId),
@@ -106,7 +118,6 @@ class AppState extends ChangeNotifier {
     ]);
     notifyListeners();
   }
-
   int _tagIdSeq = 0;
 
   String _newTagId() {
@@ -200,10 +211,17 @@ class AppState extends ChangeNotifier {
           tagIds: t.tagIds.where((tid) => !toRemove.contains(tid)).toList(),
         ),
     ];
+    goals = [
+      for (final g in goals)
+        g.copyWith(
+          tagIds: g.tagIds.where((tid) => !toRemove.contains(tid)).toList(),
+        ),
+    ];
     notifyListeners();
     await Future.wait([
       _storage.saveTags(tags),
       _storage.saveTasks(tasks),
+      _storage.saveGoals(goals),
     ]);
   }
 
@@ -523,7 +541,150 @@ class AppState extends ChangeNotifier {
       _storage.saveEquipped(equipped),
       _storage.saveOwnedTitles(ownedTitleIds),
       _storage.saveEquippedTitle(equippedTitleId),
+      _storage.saveGoals(goals),
+      _storage.saveGoalLogs(goalLogs),
+      _storage.saveGoalTimers(goalTimers.values.toList()),
     ]);
+  }
+
+  Goal? goalById(String id) {
+    for (final g in goals) {
+      if (g.id == id) return g;
+    }
+    return null;
+  }
+
+  int goalValueOn(String goalId, String dateKey) {
+    for (final log in goalLogs) {
+      if (log.goalId == goalId && log.dateKey == dateKey) return log.value;
+    }
+    return 0;
+  }
+
+  int goalValueToday(String goalId) =>
+      goalValueOn(goalId, DayClock.todayKey());
+
+  int goalPeriodSum(Goal goal) {
+    final keys = periodDateKeysFor(goal.period).toSet();
+    var sum = 0;
+    for (final log in goalLogs) {
+      if (log.goalId == goal.id && keys.contains(log.dateKey)) {
+        sum += log.value;
+      }
+    }
+    return sum;
+  }
+
+  GoalTimerState? goalTimerOf(String goalId) => goalTimers[goalId];
+
+  int goalTimerElapsedMs(String goalId) {
+    final timer = goalTimers[goalId];
+    if (timer == null) return 0;
+    return timer.elapsedMs();
+  }
+
+  Future<void> addGoal(Goal goal) async {
+    goals = [...goals, goal];
+    notifyListeners();
+    await _persist();
+  }
+
+  Future<void> updateGoal(Goal goal) async {
+    final index = goals.indexWhere((g) => g.id == goal.id);
+    if (index < 0) return;
+    goals = [...goals];
+    goals[index] = goal;
+    notifyListeners();
+    await _persist();
+  }
+
+  Future<void> deleteGoal(String id) async {
+    goals = goals.where((g) => g.id != id).toList();
+    goalLogs = goalLogs.where((l) => l.goalId != id).toList();
+    goalTimers = Map<String, GoalTimerState>.from(goalTimers)..remove(id);
+    notifyListeners();
+    await _persist();
+  }
+
+  Future<void> _setGoalValueToday(String goalId, int value) async {
+    final today = DayClock.todayKey();
+    final next = value < 0 ? 0 : value;
+    final index =
+        goalLogs.indexWhere((l) => l.goalId == goalId && l.dateKey == today);
+    if (next == 0) {
+      if (index >= 0) {
+        goalLogs = [...goalLogs]..removeAt(index);
+      }
+    } else if (index >= 0) {
+      goalLogs = [...goalLogs];
+      goalLogs[index] = goalLogs[index].copyWith(value: next);
+    } else {
+      goalLogs = [
+        ...goalLogs,
+        GoalLog(goalId: goalId, dateKey: today, value: next),
+      ];
+    }
+    notifyListeners();
+    await _persist();
+  }
+
+  /// Adjust today's amount log by [delta] (clamped at 0).
+  Future<void> adjustGoalAmount(String goalId, int delta) async {
+    final goal = goalById(goalId);
+    if (goal == null || goal.kind != MeasureKind.amount) return;
+    final current = goalValueToday(goalId);
+    await _setGoalValueToday(goalId, current + delta);
+  }
+
+  Future<void> startGoalTimer(String goalId) async {
+    final goal = goalById(goalId);
+    if (goal == null || goal.kind != MeasureKind.time) return;
+    final existing = goalTimers[goalId];
+    if (existing?.isRunning == true) return;
+    final nowMs = DateTime.now().millisecondsSinceEpoch;
+    goalTimers = {
+      ...goalTimers,
+      goalId: GoalTimerState(
+        goalId: goalId,
+        accumulatedMs: existing?.accumulatedMs ?? 0,
+        runningStartedAtMs: nowMs,
+      ),
+    };
+    notifyListeners();
+    await _persist();
+  }
+
+  Future<void> pauseGoalTimer(String goalId) async {
+    final existing = goalTimers[goalId];
+    if (existing == null || !existing.isRunning) return;
+    goalTimers = {
+      ...goalTimers,
+      goalId: GoalTimerState(
+        goalId: goalId,
+        accumulatedMs: existing.elapsedMs(),
+      ),
+    };
+    notifyListeners();
+    await _persist();
+  }
+
+  /// Stops timer, adds elapsed minutes to today's log, resets timer.
+  /// Returns minutes added (0 if none).
+  Future<int> stopGoalTimer(String goalId) async {
+    final goal = goalById(goalId);
+    if (goal == null || goal.kind != MeasureKind.time) return 0;
+    final existing = goalTimers[goalId];
+    if (existing == null) return 0;
+    final minutes = existing.elapsedMs() ~/ 60000;
+    goalTimers = Map<String, GoalTimerState>.from(goalTimers)..remove(goalId);
+    if (minutes > 0) {
+      final current = goalValueToday(goalId);
+      await _setGoalValueToday(goalId, current + minutes);
+    } else {
+      notifyListeners();
+      await _persist();
+    }
+    return minutes;
   }
 
   Future<CompleteOutcome> toggleTaskDone(String id) async {

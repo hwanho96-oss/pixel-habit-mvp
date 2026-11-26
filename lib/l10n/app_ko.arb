@@ -310,5 +310,107 @@
       }
     }
   },
-  "resultNoRecordsYet": "아직 이 표에 맞는 기록이 없어요"
+  "resultNoRecordsYet": "아직 이 표에 맞는 기록이 없어요",
+  "goalFormTitle": "목표 만들기",
+  "goalFormTitleEdit": "목표 수정",
+  "goalNameLabel": "이름",
+  "goalNameHint": "예: 물 마시기",
+  "goalPeriodLabel": "기간",
+  "goalPeriodWeek": "주",
+  "goalPeriodMonth": "월",
+  "goalPeriodTargetLabel": "주/월 목표량",
+  "goalPeriodTargetHint": "예: 700",
+  "goalPeriodTargetMinutesLabel": "주/월 목표 (분)",
+  "goalPeriodTargetMinutesHint": "예: 420",
+  "goalStepLabel": "1회 증감값",
+  "goalStepHint": "예: 100",
+  "goalDailyPreviewAmount": "하루 목표: {value}{unit}",
+  "@goalDailyPreviewAmount": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "goalDailyPreviewMinutes": "하루 목표: {value}분",
+  "@goalDailyPreviewMinutes": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "emptyGoalsHint": "+ 버튼으로 첫 목표를 만들어 보세요",
+  "goalProgressAmount": "{current} / {target} {unit}",
+  "@goalProgressAmount": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "target": {
+        "type": "int"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "goalProgressMinutes": "{current} / {target} 분",
+  "@goalProgressMinutes": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "target": {
+        "type": "int"
+      }
+    }
+  },
+  "goalPeriodSumWeekAmount": "이번 주 합계 {value} {unit}",
+  "@goalPeriodSumWeekAmount": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "goalPeriodSumMonthAmount": "이번 달 합계 {value} {unit}",
+  "@goalPeriodSumMonthAmount": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "goalPeriodSumWeekMinutes": "이번 주 합계 {value}분",
+  "@goalPeriodSumWeekMinutes": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "goalPeriodSumMonthMinutes": "이번 달 합계 {value}분",
+  "@goalPeriodSumMonthMinutes": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "goalTimerStart": "시작",
+  "goalTimerPause": "멈춤",
+  "goalTimerStop": "종료",
+  "goalDailyReached": "오늘 목표 시간에 도달했어요",
+  "goalEdit": "수정",
+  "goalDelete": "삭제"
 }

@@ -555,4 +555,104 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get resultNoRecordsYet => '아직 이 표에 맞는 기록이 없어요';
+
+  @override
+  String get goalFormTitle => '목표 만들기';
+
+  @override
+  String get goalFormTitleEdit => '목표 수정';
+
+  @override
+  String get goalNameLabel => '이름';
+
+  @override
+  String get goalNameHint => '예: 물 마시기';
+
+  @override
+  String get goalPeriodLabel => '기간';
+
+  @override
+  String get goalPeriodWeek => '주';
+
+  @override
+  String get goalPeriodMonth => '월';
+
+  @override
+  String get goalPeriodTargetLabel => '주/월 목표량';
+
+  @override
+  String get goalPeriodTargetHint => '예: 700';
+
+  @override
+  String get goalPeriodTargetMinutesLabel => '주/월 목표 (분)';
+
+  @override
+  String get goalPeriodTargetMinutesHint => '예: 420';
+
+  @override
+  String get goalStepLabel => '1회 증감값';
+
+  @override
+  String get goalStepHint => '예: 100';
+
+  @override
+  String goalDailyPreviewAmount(int value, String unit) {
+    return '하루 목표: $value$unit';
+  }
+
+  @override
+  String goalDailyPreviewMinutes(int value) {
+    return '하루 목표: $value분';
+  }
+
+  @override
+  String get emptyGoalsHint => '+ 버튼으로 첫 목표를 만들어 보세요';
+
+  @override
+  String goalProgressAmount(int current, int target, String unit) {
+    return '$current / $target $unit';
+  }
+
+  @override
+  String goalProgressMinutes(int current, int target) {
+    return '$current / $target 분';
+  }
+
+  @override
+  String goalPeriodSumWeekAmount(int value, String unit) {
+    return '이번 주 합계 $value $unit';
+  }
+
+  @override
+  String goalPeriodSumMonthAmount(int value, String unit) {
+    return '이번 달 합계 $value $unit';
+  }
+
+  @override
+  String goalPeriodSumWeekMinutes(int value) {
+    return '이번 주 합계 $value분';
+  }
+
+  @override
+  String goalPeriodSumMonthMinutes(int value) {
+    return '이번 달 합계 $value분';
+  }
+
+  @override
+  String get goalTimerStart => '시작';
+
+  @override
+  String get goalTimerPause => '멈춤';
+
+  @override
+  String get goalTimerStop => '종료';
+
+  @override
+  String get goalDailyReached => '오늘 목표 시간에 도달했어요';
+
+  @override
+  String get goalEdit => '수정';
+
+  @override
+  String get goalDelete => '삭제';
 }

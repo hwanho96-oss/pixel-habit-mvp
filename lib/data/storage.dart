@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/completion_record.dart';
+import '../models/goal.dart';
 import '../models/reward_record.dart';
 import '../models/tag.dart';
 import '../models/task.dart';
@@ -23,6 +24,9 @@ class AppStorage {
   static const _rewardLogKey = 'reward_log_v1';
   static const _ownedTitlesKey = 'owned_titles_v1';
   static const _equippedTitleKey = 'equipped_title_v1';
+  static const _goalsKey = 'goals_v1';
+  static const _goalLogsKey = 'goal_logs_v1';
+  static const _goalTimersKey = 'goal_timers_v1';
 
   Future<List<Task>> loadTasks() async {
     final prefs = await SharedPreferences.getInstance();
@@ -196,5 +200,51 @@ class AppStorage {
     } else {
       await prefs.setString(_equippedTitleKey, id);
     }
+  }
+
+  Future<List<Goal>> loadGoals() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_goalsKey);
+    if (raw == null) return [];
+    final list = jsonDecode(raw) as List<dynamic>;
+    return list.map((e) => Goal.fromJson(e as Map<String, dynamic>)).toList();
+  }
+
+  Future<void> saveGoals(List<Goal> goals) async {
+    final prefs = await SharedPreferences.getInstance();
+    final encoded = jsonEncode(goals.map((e) => e.toJson()).toList());
+    await prefs.setString(_goalsKey, encoded);
+  }
+
+  Future<List<GoalLog>> loadGoalLogs() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_goalLogsKey);
+    if (raw == null) return [];
+    final list = jsonDecode(raw) as List<dynamic>;
+    return list
+        .map((e) => GoalLog.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<void> saveGoalLogs(List<GoalLog> logs) async {
+    final prefs = await SharedPreferences.getInstance();
+    final encoded = jsonEncode(logs.map((e) => e.toJson()).toList());
+    await prefs.setString(_goalLogsKey, encoded);
+  }
+
+  Future<List<GoalTimerState>> loadGoalTimers() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_goalTimersKey);
+    if (raw == null) return [];
+    final list = jsonDecode(raw) as List<dynamic>;
+    return list
+        .map((e) => GoalTimerState.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<void> saveGoalTimers(List<GoalTimerState> timers) async {
+    final prefs = await SharedPreferences.getInstance();
+    final encoded = jsonEncode(timers.map((e) => e.toJson()).toList());
+    await prefs.setString(_goalTimersKey, encoded);
   }
 }

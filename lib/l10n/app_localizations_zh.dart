@@ -555,4 +555,104 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get resultNoRecordsYet => '此表还没有匹配的记录';
+
+  @override
+  String get goalFormTitle => '创建目标';
+
+  @override
+  String get goalFormTitleEdit => '编辑目标';
+
+  @override
+  String get goalNameLabel => '名称';
+
+  @override
+  String get goalNameHint => '例如: 喝水';
+
+  @override
+  String get goalPeriodLabel => '周期';
+
+  @override
+  String get goalPeriodWeek => '周';
+
+  @override
+  String get goalPeriodMonth => '月';
+
+  @override
+  String get goalPeriodTargetLabel => '周/月目标量';
+
+  @override
+  String get goalPeriodTargetHint => '例如: 700';
+
+  @override
+  String get goalPeriodTargetMinutesLabel => '周/月目标（分钟）';
+
+  @override
+  String get goalPeriodTargetMinutesHint => '例如: 420';
+
+  @override
+  String get goalStepLabel => '一次增减值';
+
+  @override
+  String get goalStepHint => '例如: 100';
+
+  @override
+  String goalDailyPreviewAmount(int value, String unit) {
+    return '每日目标: $value$unit';
+  }
+
+  @override
+  String goalDailyPreviewMinutes(int value) {
+    return '每日目标: $value分钟';
+  }
+
+  @override
+  String get emptyGoalsHint => '点 + 创建第一个目标';
+
+  @override
+  String goalProgressAmount(int current, int target, String unit) {
+    return '$current / $target $unit';
+  }
+
+  @override
+  String goalProgressMinutes(int current, int target) {
+    return '$current / $target 分钟';
+  }
+
+  @override
+  String goalPeriodSumWeekAmount(int value, String unit) {
+    return '本周合计 $value $unit';
+  }
+
+  @override
+  String goalPeriodSumMonthAmount(int value, String unit) {
+    return '本月合计 $value $unit';
+  }
+
+  @override
+  String goalPeriodSumWeekMinutes(int value) {
+    return '本周合计 $value分钟';
+  }
+
+  @override
+  String goalPeriodSumMonthMinutes(int value) {
+    return '本月合计 $value分钟';
+  }
+
+  @override
+  String get goalTimerStart => '开始';
+
+  @override
+  String get goalTimerPause => '暂停';
+
+  @override
+  String get goalTimerStop => '结束';
+
+  @override
+  String get goalDailyReached => '已达到今日时间目标';
+
+  @override
+  String get goalEdit => '编辑';
+
+  @override
+  String get goalDelete => '删除';
 }

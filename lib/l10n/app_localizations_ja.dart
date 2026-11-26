@@ -555,4 +555,104 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get resultNoRecordsYet => 'この表に合う記録はまだありません';
+
+  @override
+  String get goalFormTitle => '目標を作成';
+
+  @override
+  String get goalFormTitleEdit => '目標を編集';
+
+  @override
+  String get goalNameLabel => '名前';
+
+  @override
+  String get goalNameHint => '例: 水分補給';
+
+  @override
+  String get goalPeriodLabel => '期間';
+
+  @override
+  String get goalPeriodWeek => '週';
+
+  @override
+  String get goalPeriodMonth => '月';
+
+  @override
+  String get goalPeriodTargetLabel => '週/月の目標量';
+
+  @override
+  String get goalPeriodTargetHint => '例: 700';
+
+  @override
+  String get goalPeriodTargetMinutesLabel => '週/月の目標（分）';
+
+  @override
+  String get goalPeriodTargetMinutesHint => '例: 420';
+
+  @override
+  String get goalStepLabel => '1回の増減値';
+
+  @override
+  String get goalStepHint => '例: 100';
+
+  @override
+  String goalDailyPreviewAmount(int value, String unit) {
+    return '1日の目標: $value$unit';
+  }
+
+  @override
+  String goalDailyPreviewMinutes(int value) {
+    return '1日の目標: $value分';
+  }
+
+  @override
+  String get emptyGoalsHint => '+ ボタンで最初の目標を作成しましょう';
+
+  @override
+  String goalProgressAmount(int current, int target, String unit) {
+    return '$current / $target $unit';
+  }
+
+  @override
+  String goalProgressMinutes(int current, int target) {
+    return '$current / $target 分';
+  }
+
+  @override
+  String goalPeriodSumWeekAmount(int value, String unit) {
+    return '今週の合計 $value $unit';
+  }
+
+  @override
+  String goalPeriodSumMonthAmount(int value, String unit) {
+    return '今月の合計 $value $unit';
+  }
+
+  @override
+  String goalPeriodSumWeekMinutes(int value) {
+    return '今週の合計 $value分';
+  }
+
+  @override
+  String goalPeriodSumMonthMinutes(int value) {
+    return '今月の合計 $value分';
+  }
+
+  @override
+  String get goalTimerStart => '開始';
+
+  @override
+  String get goalTimerPause => '一時停止';
+
+  @override
+  String get goalTimerStop => '終了';
+
+  @override
+  String get goalDailyReached => '今日の時間目標に到達しました';
+
+  @override
+  String get goalEdit => '編集';
+
+  @override
+  String get goalDelete => '削除';
 }

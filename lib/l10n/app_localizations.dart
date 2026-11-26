@@ -1127,6 +1127,174 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'아직 이 표에 맞는 기록이 없어요'**
   String get resultNoRecordsYet;
+
+  /// No description provided for @goalFormTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'목표 만들기'**
+  String get goalFormTitle;
+
+  /// No description provided for @goalFormTitleEdit.
+  ///
+  /// In ko, this message translates to:
+  /// **'목표 수정'**
+  String get goalFormTitleEdit;
+
+  /// No description provided for @goalNameLabel.
+  ///
+  /// In ko, this message translates to:
+  /// **'이름'**
+  String get goalNameLabel;
+
+  /// No description provided for @goalNameHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'예: 물 마시기'**
+  String get goalNameHint;
+
+  /// No description provided for @goalPeriodLabel.
+  ///
+  /// In ko, this message translates to:
+  /// **'기간'**
+  String get goalPeriodLabel;
+
+  /// No description provided for @goalPeriodWeek.
+  ///
+  /// In ko, this message translates to:
+  /// **'주'**
+  String get goalPeriodWeek;
+
+  /// No description provided for @goalPeriodMonth.
+  ///
+  /// In ko, this message translates to:
+  /// **'월'**
+  String get goalPeriodMonth;
+
+  /// No description provided for @goalPeriodTargetLabel.
+  ///
+  /// In ko, this message translates to:
+  /// **'주/월 목표량'**
+  String get goalPeriodTargetLabel;
+
+  /// No description provided for @goalPeriodTargetHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'예: 700'**
+  String get goalPeriodTargetHint;
+
+  /// No description provided for @goalPeriodTargetMinutesLabel.
+  ///
+  /// In ko, this message translates to:
+  /// **'주/월 목표 (분)'**
+  String get goalPeriodTargetMinutesLabel;
+
+  /// No description provided for @goalPeriodTargetMinutesHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'예: 420'**
+  String get goalPeriodTargetMinutesHint;
+
+  /// No description provided for @goalStepLabel.
+  ///
+  /// In ko, this message translates to:
+  /// **'1회 증감값'**
+  String get goalStepLabel;
+
+  /// No description provided for @goalStepHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'예: 100'**
+  String get goalStepHint;
+
+  /// No description provided for @goalDailyPreviewAmount.
+  ///
+  /// In ko, this message translates to:
+  /// **'하루 목표: {value}{unit}'**
+  String goalDailyPreviewAmount(int value, String unit);
+
+  /// No description provided for @goalDailyPreviewMinutes.
+  ///
+  /// In ko, this message translates to:
+  /// **'하루 목표: {value}분'**
+  String goalDailyPreviewMinutes(int value);
+
+  /// No description provided for @emptyGoalsHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'+ 버튼으로 첫 목표를 만들어 보세요'**
+  String get emptyGoalsHint;
+
+  /// No description provided for @goalProgressAmount.
+  ///
+  /// In ko, this message translates to:
+  /// **'{current} / {target} {unit}'**
+  String goalProgressAmount(int current, int target, String unit);
+
+  /// No description provided for @goalProgressMinutes.
+  ///
+  /// In ko, this message translates to:
+  /// **'{current} / {target} 분'**
+  String goalProgressMinutes(int current, int target);
+
+  /// No description provided for @goalPeriodSumWeekAmount.
+  ///
+  /// In ko, this message translates to:
+  /// **'이번 주 합계 {value} {unit}'**
+  String goalPeriodSumWeekAmount(int value, String unit);
+
+  /// No description provided for @goalPeriodSumMonthAmount.
+  ///
+  /// In ko, this message translates to:
+  /// **'이번 달 합계 {value} {unit}'**
+  String goalPeriodSumMonthAmount(int value, String unit);
+
+  /// No description provided for @goalPeriodSumWeekMinutes.
+  ///
+  /// In ko, this message translates to:
+  /// **'이번 주 합계 {value}분'**
+  String goalPeriodSumWeekMinutes(int value);
+
+  /// No description provided for @goalPeriodSumMonthMinutes.
+  ///
+  /// In ko, this message translates to:
+  /// **'이번 달 합계 {value}분'**
+  String goalPeriodSumMonthMinutes(int value);
+
+  /// No description provided for @goalTimerStart.
+  ///
+  /// In ko, this message translates to:
+  /// **'시작'**
+  String get goalTimerStart;
+
+  /// No description provided for @goalTimerPause.
+  ///
+  /// In ko, this message translates to:
+  /// **'멈춤'**
+  String get goalTimerPause;
+
+  /// No description provided for @goalTimerStop.
+  ///
+  /// In ko, this message translates to:
+  /// **'종료'**
+  String get goalTimerStop;
+
+  /// No description provided for @goalDailyReached.
+  ///
+  /// In ko, this message translates to:
+  /// **'오늘 목표 시간에 도달했어요'**
+  String get goalDailyReached;
+
+  /// No description provided for @goalEdit.
+  ///
+  /// In ko, this message translates to:
+  /// **'수정'**
+  String get goalEdit;
+
+  /// No description provided for @goalDelete.
+  ///
+  /// In ko, this message translates to:
+  /// **'삭제'**
+  String get goalDelete;
 }
 
 class _AppLocalizationsDelegate
