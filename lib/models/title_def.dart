@@ -1,56 +1,108 @@
-enum AxisId {
-  relation,
-  emotion,
-  action,
-}
+import 'package:flutter/material.dart' show Locale;
 
-enum TitleKind {
-  single,
+import '../l10n/app_localizations.dart';
+
+enum TitleDirection {
+  center,
+  extro,
+  creative,
+  intro,
+  logic,
   combo,
-  final_,
 }
 
 class TitleDef {
   const TitleDef({
     required this.id,
-    required this.name,
-    required this.kind,
-    required this.tier,
+    required this.nameKey,
+    required this.direction,
+    required this.x,
+    required this.y,
     required this.cost,
-    required this.requires,
+    required this.neighbors,
   });
 
   final String id;
-  final Map<String, String> name;
-  final TitleKind kind;
-  final int tier;
-  final Map<AxisId, int> cost;
-  final List<String> requires;
+  final String nameKey;
+  final TitleDirection direction;
+  final double x;
+  final double y;
+  final int cost;
+  final List<String> neighbors;
 
+  /// Resolves [nameKey] for home and other callers that only have a language code.
   String localizedName(String languageCode) {
-    return name[languageCode] ?? name['en'] ?? name.values.first;
+    final l10n = lookupAppLocalizations(Locale(languageCode));
+    return titleName(l10n, nameKey);
   }
 
-  int costOf(AxisId axis) => cost[axis] ?? 0;
+  static String titleName(AppLocalizations l10n, String nameKey) {
+    switch (nameKey) {
+      case 'titleMe':
+        return l10n.titleMe;
+      case 'titleExtro1':
+        return l10n.titleExtro1;
+      case 'titleExtro2':
+        return l10n.titleExtro2;
+      case 'titleCreative1':
+        return l10n.titleCreative1;
+      case 'titleCreative2':
+        return l10n.titleCreative2;
+      case 'titleIntro1':
+        return l10n.titleIntro1;
+      case 'titleIntro2':
+        return l10n.titleIntro2;
+      case 'titleLogic1':
+        return l10n.titleLogic1;
+      case 'titleLogic2':
+        return l10n.titleLogic2;
+      case 'titleComboNorth':
+        return l10n.titleComboNorth;
+      case 'titleComboEast':
+        return l10n.titleComboEast;
+      case 'titleComboSouth':
+        return l10n.titleComboSouth;
+      case 'titleComboWest':
+        return l10n.titleComboWest;
+      default:
+        return nameKey;
+    }
+  }
+
+  static String directionLabel(AppLocalizations l10n, TitleDirection direction) {
+    switch (direction) {
+      case TitleDirection.center:
+        return l10n.dirCenter;
+      case TitleDirection.extro:
+        return l10n.dirExtro;
+      case TitleDirection.creative:
+        return l10n.dirCreative;
+      case TitleDirection.intro:
+        return l10n.dirIntro;
+      case TitleDirection.logic:
+        return l10n.dirLogic;
+      case TitleDirection.combo:
+        return l10n.dirCombo;
+    }
+  }
 
   factory TitleDef.fromJson(Map<String, dynamic> json) {
-    final nameRaw = json['name'] as Map<String, dynamic>;
-    final costRaw = json['cost'] as Map<String, dynamic>? ?? {};
-    final kindRaw = json['kind'] as String;
+    final directionRaw = json['direction'] as String;
     return TitleDef(
       id: json['id'] as String,
-      name: nameRaw.map((k, v) => MapEntry(k, v as String)),
-      kind: switch (kindRaw) {
-        'combo' => TitleKind.combo,
-        'final' => TitleKind.final_,
-        _ => TitleKind.single,
+      nameKey: json['nameKey'] as String,
+      direction: switch (directionRaw) {
+        'extro' => TitleDirection.extro,
+        'creative' => TitleDirection.creative,
+        'intro' => TitleDirection.intro,
+        'logic' => TitleDirection.logic,
+        'combo' => TitleDirection.combo,
+        _ => TitleDirection.center,
       },
-      tier: json['tier'] as int,
-      cost: {
-        for (final axis in AxisId.values)
-          axis: (costRaw[axis.name] as num?)?.toInt() ?? 0,
-      },
-      requires: (json['requires'] as List<dynamic>? ?? [])
+      x: (json['x'] as num).toDouble(),
+      y: (json['y'] as num).toDouble(),
+      cost: (json['cost'] as num).toInt(),
+      neighbors: (json['neighbors'] as List<dynamic>? ?? [])
           .map((e) => e as String)
           .toList(),
     );

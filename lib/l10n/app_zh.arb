@@ -134,22 +134,10 @@
   "characterPaneShop": "商店",
   "characterPanePersonality": "性格",
   "rewardAlreadyClaimed": "今天已经领取过奖励了",
-  "axisRelation": "关系",
-  "axisEmotion": "情感",
-  "axisAction": "行动",
-  "unspentPointsLabel": "未分配点数 {points}",
+  "unspentPointsLabel": "点数 {points}",
   "@unspentPointsLabel": {
     "placeholders": {
       "points": {
-        "type": "int"
-      }
-    }
-  },
-  "allocatePointPlusOne": "+1",
-  "titleTierLabel": "等级 {tier}",
-  "@titleTierLabel": {
-    "placeholders": {
-      "tier": {
         "type": "int"
       }
     }
@@ -158,37 +146,43 @@
   "titleStatusAvailable": "可购买",
   "titleStatusOwned": "已拥有",
   "titleStatusEquipped": "装备中",
-  "titleCostHeading": "所需点数",
-  "titleCostLine": "{axis}: {need}（拥有 {have}）· {status}",
-  "@titleCostLine": {
+  "titleCannotBuy": "未满足购买条件",
+  "titleNotEnoughPoints": "点数不足",
+  "titleUnequip": "卸下",
+  "titlePriceLabel": "价格: {cost}",
+  "@titlePriceLabel": {
     "placeholders": {
-      "axis": {
-        "type": "String"
-      },
-      "need": {
+      "cost": {
         "type": "int"
-      },
-      "have": {
-        "type": "int"
-      },
-      "status": {
+      }
+    }
+  },
+  "dirCenter": "起点",
+  "dirExtro": "外向",
+  "dirCreative": "创意·情感",
+  "dirIntro": "内向",
+  "dirLogic": "理性·现实",
+  "dirCombo": "组合",
+  "myTendency": "我的倾向: {direction}",
+  "@myTendency": {
+    "placeholders": {
+      "direction": {
         "type": "String"
       }
     }
   },
-  "titleCostMet": "满足",
-  "titleCostShort": "不足",
-  "titleRequiresHeading": "前置称号",
-  "titleRequireLine": "{name} · {status}",
-  "@titleRequireLine": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      },
-      "status": {
-        "type": "String"
-      }
-    }
-  },
-  "titleCannotBuy": "未满足购买条件"
+  "myTendencyBalanced": "我的倾向: 平衡",
+  "titleMe": "我",
+  "titleExtro1": "社交火花",
+  "titleExtro2": "舞台主角",
+  "titleCreative1": "感性颜料",
+  "titleCreative2": "灵感之风",
+  "titleIntro1": "静谧之林",
+  "titleIntro2": "内心灯火",
+  "titleLogic1": "理性天平",
+  "titleLogic2": "现实地图",
+  "titleComboNorth": "表达之蝶",
+  "titleComboEast": "说服之桥",
+  "titleComboSouth": "分析之泉",
+  "titleComboWest": "梦想之月"
 }

@@ -600,41 +600,11 @@ abstract class AppLocalizations {
   /// **'오늘은 이미 보상을 받았어요'**
   String get rewardAlreadyClaimed;
 
-  /// No description provided for @axisRelation.
-  ///
-  /// In ko, this message translates to:
-  /// **'관계'**
-  String get axisRelation;
-
-  /// No description provided for @axisEmotion.
-  ///
-  /// In ko, this message translates to:
-  /// **'감정'**
-  String get axisEmotion;
-
-  /// No description provided for @axisAction.
-  ///
-  /// In ko, this message translates to:
-  /// **'행동'**
-  String get axisAction;
-
   /// No description provided for @unspentPointsLabel.
   ///
   /// In ko, this message translates to:
-  /// **'미분배 포인트 {points}'**
+  /// **'포인트 {points}'**
   String unspentPointsLabel(int points);
-
-  /// No description provided for @allocatePointPlusOne.
-  ///
-  /// In ko, this message translates to:
-  /// **'+1'**
-  String get allocatePointPlusOne;
-
-  /// No description provided for @titleTierLabel.
-  ///
-  /// In ko, this message translates to:
-  /// **'티어 {tier}'**
-  String titleTierLabel(int tier);
 
   /// No description provided for @titleStatusLocked.
   ///
@@ -660,47 +630,155 @@ abstract class AppLocalizations {
   /// **'장착 중'**
   String get titleStatusEquipped;
 
-  /// No description provided for @titleCostHeading.
-  ///
-  /// In ko, this message translates to:
-  /// **'필요 포인트'**
-  String get titleCostHeading;
-
-  /// No description provided for @titleCostLine.
-  ///
-  /// In ko, this message translates to:
-  /// **'{axis}: {need} (보유 {have}) · {status}'**
-  String titleCostLine(String axis, int need, int have, String status);
-
-  /// No description provided for @titleCostMet.
-  ///
-  /// In ko, this message translates to:
-  /// **'충족'**
-  String get titleCostMet;
-
-  /// No description provided for @titleCostShort.
-  ///
-  /// In ko, this message translates to:
-  /// **'부족'**
-  String get titleCostShort;
-
-  /// No description provided for @titleRequiresHeading.
-  ///
-  /// In ko, this message translates to:
-  /// **'선행 칭호'**
-  String get titleRequiresHeading;
-
-  /// No description provided for @titleRequireLine.
-  ///
-  /// In ko, this message translates to:
-  /// **'{name} · {status}'**
-  String titleRequireLine(String name, String status);
-
   /// No description provided for @titleCannotBuy.
   ///
   /// In ko, this message translates to:
   /// **'구매 조건을 충족하지 않습니다'**
   String get titleCannotBuy;
+
+  /// No description provided for @titleNotEnoughPoints.
+  ///
+  /// In ko, this message translates to:
+  /// **'포인트가 부족합니다'**
+  String get titleNotEnoughPoints;
+
+  /// No description provided for @titleUnequip.
+  ///
+  /// In ko, this message translates to:
+  /// **'해제'**
+  String get titleUnequip;
+
+  /// No description provided for @titlePriceLabel.
+  ///
+  /// In ko, this message translates to:
+  /// **'가격: {cost}'**
+  String titlePriceLabel(int cost);
+
+  /// No description provided for @dirCenter.
+  ///
+  /// In ko, this message translates to:
+  /// **'시작'**
+  String get dirCenter;
+
+  /// No description provided for @dirExtro.
+  ///
+  /// In ko, this message translates to:
+  /// **'외향'**
+  String get dirExtro;
+
+  /// No description provided for @dirCreative.
+  ///
+  /// In ko, this message translates to:
+  /// **'창의·감정'**
+  String get dirCreative;
+
+  /// No description provided for @dirIntro.
+  ///
+  /// In ko, this message translates to:
+  /// **'내향'**
+  String get dirIntro;
+
+  /// No description provided for @dirLogic.
+  ///
+  /// In ko, this message translates to:
+  /// **'이성·현실'**
+  String get dirLogic;
+
+  /// No description provided for @dirCombo.
+  ///
+  /// In ko, this message translates to:
+  /// **'조합'**
+  String get dirCombo;
+
+  /// No description provided for @myTendency.
+  ///
+  /// In ko, this message translates to:
+  /// **'내 성향: {direction}'**
+  String myTendency(String direction);
+
+  /// No description provided for @myTendencyBalanced.
+  ///
+  /// In ko, this message translates to:
+  /// **'내 성향: 균형'**
+  String get myTendencyBalanced;
+
+  /// No description provided for @titleMe.
+  ///
+  /// In ko, this message translates to:
+  /// **'나'**
+  String get titleMe;
+
+  /// No description provided for @titleExtro1.
+  ///
+  /// In ko, this message translates to:
+  /// **'사교의 불꽃'**
+  String get titleExtro1;
+
+  /// No description provided for @titleExtro2.
+  ///
+  /// In ko, this message translates to:
+  /// **'무대의 주인공'**
+  String get titleExtro2;
+
+  /// No description provided for @titleCreative1.
+  ///
+  /// In ko, this message translates to:
+  /// **'감성의 물감'**
+  String get titleCreative1;
+
+  /// No description provided for @titleCreative2.
+  ///
+  /// In ko, this message translates to:
+  /// **'영감의 바람'**
+  String get titleCreative2;
+
+  /// No description provided for @titleIntro1.
+  ///
+  /// In ko, this message translates to:
+  /// **'고요한 숲'**
+  String get titleIntro1;
+
+  /// No description provided for @titleIntro2.
+  ///
+  /// In ko, this message translates to:
+  /// **'내면의 등불'**
+  String get titleIntro2;
+
+  /// No description provided for @titleLogic1.
+  ///
+  /// In ko, this message translates to:
+  /// **'이성의 저울'**
+  String get titleLogic1;
+
+  /// No description provided for @titleLogic2.
+  ///
+  /// In ko, this message translates to:
+  /// **'현실의 지도'**
+  String get titleLogic2;
+
+  /// No description provided for @titleComboNorth.
+  ///
+  /// In ko, this message translates to:
+  /// **'표현의 나비'**
+  String get titleComboNorth;
+
+  /// No description provided for @titleComboEast.
+  ///
+  /// In ko, this message translates to:
+  /// **'설득의 다리'**
+  String get titleComboEast;
+
+  /// No description provided for @titleComboSouth.
+  ///
+  /// In ko, this message translates to:
+  /// **'분석의 샘'**
+  String get titleComboSouth;
+
+  /// No description provided for @titleComboWest.
+  ///
+  /// In ko, this message translates to:
+  /// **'몽상의 달'**
+  String get titleComboWest;
 }
 
 class _AppLocalizationsDelegate

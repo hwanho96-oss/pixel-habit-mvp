@@ -271,25 +271,8 @@ class AppLocalizationsKo extends AppLocalizations {
   String get rewardAlreadyClaimed => '오늘은 이미 보상을 받았어요';
 
   @override
-  String get axisRelation => '관계';
-
-  @override
-  String get axisEmotion => '감정';
-
-  @override
-  String get axisAction => '행동';
-
-  @override
   String unspentPointsLabel(int points) {
-    return '미분배 포인트 $points';
-  }
-
-  @override
-  String get allocatePointPlusOne => '+1';
-
-  @override
-  String titleTierLabel(int tier) {
-    return '티어 $tier';
+    return '포인트 $points';
   }
 
   @override
@@ -305,27 +288,81 @@ class AppLocalizationsKo extends AppLocalizations {
   String get titleStatusEquipped => '장착 중';
 
   @override
-  String get titleCostHeading => '필요 포인트';
-
-  @override
-  String titleCostLine(String axis, int need, int have, String status) {
-    return '$axis: $need (보유 $have) · $status';
-  }
-
-  @override
-  String get titleCostMet => '충족';
-
-  @override
-  String get titleCostShort => '부족';
-
-  @override
-  String get titleRequiresHeading => '선행 칭호';
-
-  @override
-  String titleRequireLine(String name, String status) {
-    return '$name · $status';
-  }
-
-  @override
   String get titleCannotBuy => '구매 조건을 충족하지 않습니다';
+
+  @override
+  String get titleNotEnoughPoints => '포인트가 부족합니다';
+
+  @override
+  String get titleUnequip => '해제';
+
+  @override
+  String titlePriceLabel(int cost) {
+    return '가격: $cost';
+  }
+
+  @override
+  String get dirCenter => '시작';
+
+  @override
+  String get dirExtro => '외향';
+
+  @override
+  String get dirCreative => '창의·감정';
+
+  @override
+  String get dirIntro => '내향';
+
+  @override
+  String get dirLogic => '이성·현실';
+
+  @override
+  String get dirCombo => '조합';
+
+  @override
+  String myTendency(String direction) {
+    return '내 성향: $direction';
+  }
+
+  @override
+  String get myTendencyBalanced => '내 성향: 균형';
+
+  @override
+  String get titleMe => '나';
+
+  @override
+  String get titleExtro1 => '사교의 불꽃';
+
+  @override
+  String get titleExtro2 => '무대의 주인공';
+
+  @override
+  String get titleCreative1 => '감성의 물감';
+
+  @override
+  String get titleCreative2 => '영감의 바람';
+
+  @override
+  String get titleIntro1 => '고요한 숲';
+
+  @override
+  String get titleIntro2 => '내면의 등불';
+
+  @override
+  String get titleLogic1 => '이성의 저울';
+
+  @override
+  String get titleLogic2 => '현실의 지도';
+
+  @override
+  String get titleComboNorth => '표현의 나비';
+
+  @override
+  String get titleComboEast => '설득의 다리';
+
+  @override
+  String get titleComboSouth => '분석의 샘';
+
+  @override
+  String get titleComboWest => '몽상의 달';
 }

@@ -271,25 +271,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rewardAlreadyClaimed => 'You already claimed today\'s reward';
 
   @override
-  String get axisRelation => 'Relation';
-
-  @override
-  String get axisEmotion => 'Emotion';
-
-  @override
-  String get axisAction => 'Action';
-
-  @override
   String unspentPointsLabel(int points) {
-    return 'Unspent points $points';
-  }
-
-  @override
-  String get allocatePointPlusOne => '+1';
-
-  @override
-  String titleTierLabel(int tier) {
-    return 'Tier $tier';
+    return 'Points $points';
   }
 
   @override
@@ -305,27 +288,81 @@ class AppLocalizationsEn extends AppLocalizations {
   String get titleStatusEquipped => 'Equipped';
 
   @override
-  String get titleCostHeading => 'Required points';
-
-  @override
-  String titleCostLine(String axis, int need, int have, String status) {
-    return '$axis: $need (have $have) · $status';
-  }
-
-  @override
-  String get titleCostMet => 'OK';
-
-  @override
-  String get titleCostShort => 'Short';
-
-  @override
-  String get titleRequiresHeading => 'Prerequisites';
-
-  @override
-  String titleRequireLine(String name, String status) {
-    return '$name · $status';
-  }
-
-  @override
   String get titleCannotBuy => 'Purchase requirements not met';
+
+  @override
+  String get titleNotEnoughPoints => 'Not enough points';
+
+  @override
+  String get titleUnequip => 'Unequip';
+
+  @override
+  String titlePriceLabel(int cost) {
+    return 'Price: $cost';
+  }
+
+  @override
+  String get dirCenter => 'Start';
+
+  @override
+  String get dirExtro => 'Extrovert';
+
+  @override
+  String get dirCreative => 'Creative · Emotion';
+
+  @override
+  String get dirIntro => 'Introvert';
+
+  @override
+  String get dirLogic => 'Logic · Reality';
+
+  @override
+  String get dirCombo => 'Combo';
+
+  @override
+  String myTendency(String direction) {
+    return 'My tendency: $direction';
+  }
+
+  @override
+  String get myTendencyBalanced => 'My tendency: Balanced';
+
+  @override
+  String get titleMe => 'Me';
+
+  @override
+  String get titleExtro1 => 'Social Spark';
+
+  @override
+  String get titleExtro2 => 'Stage Star';
+
+  @override
+  String get titleCreative1 => 'Feeling Palette';
+
+  @override
+  String get titleCreative2 => 'Wind of Inspiration';
+
+  @override
+  String get titleIntro1 => 'Quiet Forest';
+
+  @override
+  String get titleIntro2 => 'Inner Lantern';
+
+  @override
+  String get titleLogic1 => 'Scale of Reason';
+
+  @override
+  String get titleLogic2 => 'Map of Reality';
+
+  @override
+  String get titleComboNorth => 'Butterfly of Expression';
+
+  @override
+  String get titleComboEast => 'Bridge of Persuasion';
+
+  @override
+  String get titleComboSouth => 'Well of Analysis';
+
+  @override
+  String get titleComboWest => 'Moon of Daydream';
 }

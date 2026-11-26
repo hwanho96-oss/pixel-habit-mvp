@@ -17,7 +17,6 @@ class AppStorage {
   static const _ownedItemsKey = 'owned_items_v1';
   static const _equippedKey = 'equipped_v1';
   static const _rewardLogKey = 'reward_log_v1';
-  static const _axisPointsKey = 'axis_points_v1';
   static const _ownedTitlesKey = 'owned_titles_v1';
   static const _equippedTitleKey = 'equipped_title_v1';
 
@@ -141,19 +140,6 @@ class AppStorage {
     final prefs = await SharedPreferences.getInstance();
     final encoded = jsonEncode(records.map((e) => e.toJson()).toList());
     await prefs.setString(_rewardLogKey, encoded);
-  }
-
-  Future<Map<String, int>> loadAxisPoints() async {
-    final prefs = await SharedPreferences.getInstance();
-    final raw = prefs.getString(_axisPointsKey);
-    if (raw == null) return {};
-    final map = jsonDecode(raw) as Map<String, dynamic>;
-    return map.map((k, v) => MapEntry(k, (v as num).toInt()));
-  }
-
-  Future<void> saveAxisPoints(Map<String, int> points) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_axisPointsKey, jsonEncode(points));
   }
 
   Future<Set<String>> loadOwnedTitles() async {

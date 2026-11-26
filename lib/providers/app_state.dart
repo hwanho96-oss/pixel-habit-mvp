@@ -33,13 +33,11 @@ class AppState extends ChangeNotifier {
   Set<String> ownedItemIds = {};
   /// Category name → equipped item id.
   Map<String, String> equipped = {};
-  /// Axis name → allocated points.
-  Map<String, int> axisPoints = {
-    for (final axis in AxisId.values) axis.name: 0,
-  };
   List<TitleDef> titles = [];
   Set<String> ownedTitleIds = {};
   String? equippedTitleId;
+
+  static const String centerTitleId = 'me';
 
   Future<void> load() async {
     routines = await _storage.loadRoutines();
@@ -51,17 +49,25 @@ class AppState extends ChangeNotifier {
     unspentPoints = await _storage.loadPoints();
     ownedItemIds = await _storage.loadOwnedItems();
     equipped = await _storage.loadEquipped();
-    final savedAxis = await _storage.loadAxisPoints();
-    axisPoints = {
-      for (final axis in AxisId.values) axis.name: savedAxis[axis.name] ?? 0,
-    };
     titles = await TitleRepository.load();
-    ownedTitleIds = await _storage.loadOwnedTitles();
-    equippedTitleId = await _storage.loadEquippedTitle();
+    final validIds = titles.map((t) => t.id).toSet();
+    final savedOwned = await _storage.loadOwnedTitles();
+    ownedTitleIds = {
+      centerTitleId,
+      ...savedOwned.where(validIds.contains),
+    };
+    final savedEquipped = await _storage.loadEquippedTitle();
+    equippedTitleId =
+        savedEquipped != null && ownedTitleIds.contains(savedEquipped)
+            ? savedEquipped
+            : null;
+    // Drop legacy title ids that are no longer in titles.json.
+    await Future.wait([
+      _storage.saveOwnedTitles(ownedTitleIds),
+      _storage.saveEquippedTitle(equippedTitleId),
+    ]);
     notifyListeners();
   }
-
-  int axisPointOf(AxisId axis) => axisPoints[axis.name] ?? 0;
 
   TitleDef? titleById(String id) {
     for (final title in titles) {
@@ -72,44 +78,24 @@ class AppState extends ChangeNotifier {
 
   bool ownsTitle(String id) => ownedTitleIds.contains(id);
 
-  bool meetsTitleRequires(TitleDef title) {
-    return title.requires.every(ownedTitleIds.contains);
+  /// True when at least one neighbor title is already owned.
+  bool isTitleReachable(TitleDef title) {
+    if (ownedTitleIds.contains(title.id)) return true;
+    return title.neighbors.any(ownedTitleIds.contains);
   }
 
-  bool canAffordTitle(TitleDef title) {
-    for (final axis in AxisId.values) {
-      if (axisPointOf(axis) < title.costOf(axis)) return false;
-    }
-    return true;
-  }
+  bool canAffordTitle(TitleDef title) => unspentPoints >= title.cost;
 
-  Future<void> allocatePoint(AxisId axis) async {
-    if (unspentPoints <= 0) return;
-    unspentPoints -= 1;
-    _clampPoints();
-    axisPoints = {
-      ...axisPoints,
-      axis.name: axisPointOf(axis) + 1,
-    };
-    notifyListeners();
-    await _persist();
-  }
-
-  /// Buys a title if prerequisites and axis costs are met. Owned titles stay owned.
+  /// Buys a reachable title with unspent points. Owned titles stay owned.
   Future<bool> buyTitle(String id) async {
     final title = titleById(id);
     if (title == null) return false;
     if (ownedTitleIds.contains(id)) return false;
-    if (!meetsTitleRequires(title)) return false;
+    if (!isTitleReachable(title)) return false;
     if (!canAffordTitle(title)) return false;
 
-    final nextAxis = Map<String, int>.from(axisPoints);
-    for (final axis in AxisId.values) {
-      final cost = title.costOf(axis);
-      if (cost <= 0) continue;
-      nextAxis[axis.name] = (nextAxis[axis.name] ?? 0) - cost;
-    }
-    axisPoints = nextAxis;
+    unspentPoints -= title.cost;
+    _clampPoints();
     ownedTitleIds = {...ownedTitleIds, id};
     notifyListeners();
     await _persist();
@@ -125,6 +111,30 @@ class AppState extends ChangeNotifier {
     }
     notifyListeners();
     await _persist();
+  }
+
+  /// Dominant direction by owned title count; null means balanced / none.
+  TitleDirection? dominantTendency() {
+    final counts = <TitleDirection, int>{
+      TitleDirection.extro: 0,
+      TitleDirection.creative: 0,
+      TitleDirection.intro: 0,
+      TitleDirection.logic: 0,
+    };
+    for (final id in ownedTitleIds) {
+      final title = titleById(id);
+      if (title == null) continue;
+      if (!counts.containsKey(title.direction)) continue;
+      counts[title.direction] = counts[title.direction]! + 1;
+    }
+    var best = 0;
+    for (final count in counts.values) {
+      if (count > best) best = count;
+    }
+    if (best == 0) return null;
+    final leaders = counts.entries.where((e) => e.value == best).toList();
+    if (leaders.length != 1) return null;
+    return leaders.first.key;
   }
 
   bool ownsItem(String id) => ownedItemIds.contains(id);
@@ -408,7 +418,6 @@ class AppState extends ChangeNotifier {
       _storage.savePoints(unspentPoints),
       _storage.saveOwnedItems(ownedItemIds),
       _storage.saveEquipped(equipped),
-      _storage.saveAxisPoints(axisPoints),
       _storage.saveOwnedTitles(ownedTitleIds),
       _storage.saveEquippedTitle(equippedTitleId),
     ]);

@@ -271,25 +271,8 @@ class AppLocalizationsJa extends AppLocalizations {
   String get rewardAlreadyClaimed => '今日はすでに報酬を受け取りました';
 
   @override
-  String get axisRelation => '関係';
-
-  @override
-  String get axisEmotion => '感情';
-
-  @override
-  String get axisAction => '行動';
-
-  @override
   String unspentPointsLabel(int points) {
-    return '未配分ポイント $points';
-  }
-
-  @override
-  String get allocatePointPlusOne => '+1';
-
-  @override
-  String titleTierLabel(int tier) {
-    return 'ティア $tier';
+    return 'ポイント $points';
   }
 
   @override
@@ -305,27 +288,81 @@ class AppLocalizationsJa extends AppLocalizations {
   String get titleStatusEquipped => '装備中';
 
   @override
-  String get titleCostHeading => '必要ポイント';
-
-  @override
-  String titleCostLine(String axis, int need, int have, String status) {
-    return '$axis: $need（所持 $have）· $status';
-  }
-
-  @override
-  String get titleCostMet => '充足';
-
-  @override
-  String get titleCostShort => '不足';
-
-  @override
-  String get titleRequiresHeading => '前提称号';
-
-  @override
-  String titleRequireLine(String name, String status) {
-    return '$name · $status';
-  }
-
-  @override
   String get titleCannotBuy => '購入条件を満たしていません';
+
+  @override
+  String get titleNotEnoughPoints => 'ポイントが足りません';
+
+  @override
+  String get titleUnequip => '解除';
+
+  @override
+  String titlePriceLabel(int cost) {
+    return '価格: $cost';
+  }
+
+  @override
+  String get dirCenter => 'スタート';
+
+  @override
+  String get dirExtro => '外向';
+
+  @override
+  String get dirCreative => '創造・感情';
+
+  @override
+  String get dirIntro => '内向';
+
+  @override
+  String get dirLogic => '理性・現実';
+
+  @override
+  String get dirCombo => 'コンボ';
+
+  @override
+  String myTendency(String direction) {
+    return '自分の傾向: $direction';
+  }
+
+  @override
+  String get myTendencyBalanced => '自分の傾向: バランス';
+
+  @override
+  String get titleMe => '自分';
+
+  @override
+  String get titleExtro1 => '社交の火花';
+
+  @override
+  String get titleExtro2 => '舞台の主役';
+
+  @override
+  String get titleCreative1 => '感性の絵の具';
+
+  @override
+  String get titleCreative2 => 'インスピレーションの風';
+
+  @override
+  String get titleIntro1 => '静かな森';
+
+  @override
+  String get titleIntro2 => '内なる灯火';
+
+  @override
+  String get titleLogic1 => '理性の秤';
+
+  @override
+  String get titleLogic2 => '現実の地図';
+
+  @override
+  String get titleComboNorth => '表現の蝶';
+
+  @override
+  String get titleComboEast => '説得の橋';
+
+  @override
+  String get titleComboSouth => '分析の泉';
+
+  @override
+  String get titleComboWest => '夢想の月';
 }

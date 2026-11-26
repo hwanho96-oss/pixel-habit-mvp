@@ -1,80 +1,119 @@
 [
   {
-    "id": "single_relation",
-    "name": {
-      "ko": "관계의 씨앗",
-      "en": "Seed of Relation",
-      "ja": "関係の種",
-      "zh": "关系之种"
-    },
-    "kind": "single",
-    "tier": 1,
-    "cost": { "relation": 3, "emotion": 0, "action": 0 },
-    "requires": []
+    "id": "me",
+    "nameKey": "titleMe",
+    "direction": "center",
+    "x": 0,
+    "y": 0,
+    "cost": 0,
+    "neighbors": ["extro_1", "creative_1", "intro_1", "logic_1"]
   },
   {
-    "id": "single_emotion",
-    "name": {
-      "ko": "감정의 씨앗",
-      "en": "Seed of Emotion",
-      "ja": "感情の種",
-      "zh": "情感之种"
-    },
-    "kind": "single",
-    "tier": 1,
-    "cost": { "relation": 0, "emotion": 3, "action": 0 },
-    "requires": []
+    "id": "extro_1",
+    "nameKey": "titleExtro1",
+    "direction": "extro",
+    "x": 2,
+    "y": 2,
+    "cost": 3,
+    "neighbors": ["me", "extro_2", "combo_north", "combo_east"]
   },
   {
-    "id": "single_action",
-    "name": {
-      "ko": "행동의 씨앗",
-      "en": "Seed of Action",
-      "ja": "行動の種",
-      "zh": "行动之种"
-    },
-    "kind": "single",
-    "tier": 1,
-    "cost": { "relation": 0, "emotion": 0, "action": 3 },
-    "requires": []
+    "id": "extro_2",
+    "nameKey": "titleExtro2",
+    "direction": "extro",
+    "x": 4,
+    "y": 4,
+    "cost": 6,
+    "neighbors": ["extro_1"]
   },
   {
-    "id": "combo_relation_emotion",
-    "name": {
-      "ko": "공감의 다리",
-      "en": "Bridge of Empathy",
-      "ja": "共感の橋",
-      "zh": "共情之桥"
-    },
-    "kind": "combo",
-    "tier": 2,
-    "cost": { "relation": 3, "emotion": 3, "action": 0 },
-    "requires": ["single_relation", "single_emotion"]
+    "id": "creative_1",
+    "nameKey": "titleCreative1",
+    "direction": "creative",
+    "x": -2,
+    "y": 2,
+    "cost": 3,
+    "neighbors": ["me", "creative_2", "combo_north", "combo_west"]
   },
   {
-    "id": "combo_emotion_action",
-    "name": {
-      "ko": "열정의 날개",
-      "en": "Wings of Passion",
-      "ja": "情熱の翼",
-      "zh": "热情之翼"
-    },
-    "kind": "combo",
-    "tier": 2,
-    "cost": { "relation": 0, "emotion": 3, "action": 3 },
-    "requires": ["single_emotion", "single_action"]
+    "id": "creative_2",
+    "nameKey": "titleCreative2",
+    "direction": "creative",
+    "x": -4,
+    "y": 4,
+    "cost": 6,
+    "neighbors": ["creative_1"]
   },
   {
-    "id": "final_harmony",
-    "name": {
-      "ko": "조화의 별",
-      "en": "Star of Harmony",
-      "ja": "調和の星",
-      "zh": "和谐之星"
-    },
-    "kind": "final",
-    "tier": 3,
-    "cost": { "relation": 5, "emotion": 5, "action": 5 },
-    "requires": ["combo_relation_emotion", "combo_emotion_action"]
+    "id": "intro_1",
+    "nameKey": "titleIntro1",
+    "direction": "intro",
+    "x": -2,
+    "y": -2,
+    "cost": 3,
+    "neighbors": ["me", "intro_2", "combo_south", "combo_west"]
+  },
+  {
+    "id": "intro_2",
+    "nameKey": "titleIntro2",
+    "direction": "intro",
+    "x": -4,
+    "y": -4,
+    "cost": 6,
+    "neighbors": ["intro_1"]
+  },
+  {
+    "id": "logic_1",
+    "nameKey": "titleLogic1",
+    "direction": "logic",
+    "x": 2,
+    "y": -2,
+    "cost": 3,
+    "neighbors": ["me", "logic_2", "combo_east", "combo_south"]
+  },
+  {
+    "id": "logic_2",
+    "nameKey": "titleLogic2",
+    "direction": "logic",
+    "x": 4,
+    "y": -4,
+    "cost": 6,
+    "neighbors": ["logic_1"]
+  },
+  {
+    "id": "combo_north",
+    "nameKey": "titleComboNorth",
+    "direction": "combo",
+    "x": 0,
+    "y": 3,
+    "cost": 8,
+    "neighbors": ["extro_1", "creative_1"]
+  },
+  {
+    "id": "combo_east",
+    "nameKey": "titleComboEast",
+    "direction": "combo",
+    "x": 3,
+    "y": 0,
+    "cost": 8,
+    "neighbors": ["extro_1", "logic_1"]
+  },
+  {
+    "id": "combo_south",
+    "nameKey": "titleComboSouth",
+    "direction": "combo",
+    "x": 0,
+    "y": -3,
+    "cost": 8,
+    "neighbors": ["intro_1", "logic_1"]
+  },
+  {
+    "id": "combo_west",
+    "nameKey": "titleComboWest",
+    "direction": "combo",
+    "x": -3,
+    "y": 0,
+    "cost": 8,
+    "neighbors": ["intro_1", "creative_1"]
   }
 ]

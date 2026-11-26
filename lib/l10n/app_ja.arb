@@ -134,22 +134,10 @@
   "characterPaneShop": "ショップ",
   "characterPanePersonality": "性格",
   "rewardAlreadyClaimed": "今日はすでに報酬を受け取りました",
-  "axisRelation": "関係",
-  "axisEmotion": "感情",
-  "axisAction": "行動",
-  "unspentPointsLabel": "未配分ポイント {points}",
+  "unspentPointsLabel": "ポイント {points}",
   "@unspentPointsLabel": {
     "placeholders": {
       "points": {
-        "type": "int"
-      }
-    }
-  },
-  "allocatePointPlusOne": "+1",
-  "titleTierLabel": "ティア {tier}",
-  "@titleTierLabel": {
-    "placeholders": {
-      "tier": {
         "type": "int"
       }
     }
@@ -158,37 +146,43 @@
   "titleStatusAvailable": "購入可能",
   "titleStatusOwned": "所持",
   "titleStatusEquipped": "装備中",
-  "titleCostHeading": "必要ポイント",
-  "titleCostLine": "{axis}: {need}（所持 {have}）· {status}",
-  "@titleCostLine": {
+  "titleCannotBuy": "購入条件を満たしていません",
+  "titleNotEnoughPoints": "ポイントが足りません",
+  "titleUnequip": "解除",
+  "titlePriceLabel": "価格: {cost}",
+  "@titlePriceLabel": {
     "placeholders": {
-      "axis": {
-        "type": "String"
-      },
-      "need": {
+      "cost": {
         "type": "int"
-      },
-      "have": {
-        "type": "int"
-      },
-      "status": {
+      }
+    }
+  },
+  "dirCenter": "スタート",
+  "dirExtro": "外向",
+  "dirCreative": "創造・感情",
+  "dirIntro": "内向",
+  "dirLogic": "理性・現実",
+  "dirCombo": "コンボ",
+  "myTendency": "自分の傾向: {direction}",
+  "@myTendency": {
+    "placeholders": {
+      "direction": {
         "type": "String"
       }
     }
   },
-  "titleCostMet": "充足",
-  "titleCostShort": "不足",
-  "titleRequiresHeading": "前提称号",
-  "titleRequireLine": "{name} · {status}",
-  "@titleRequireLine": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      },
-      "status": {
-        "type": "String"
-      }
-    }
-  },
-  "titleCannotBuy": "購入条件を満たしていません"
+  "myTendencyBalanced": "自分の傾向: バランス",
+  "titleMe": "自分",
+  "titleExtro1": "社交の火花",
+  "titleExtro2": "舞台の主役",
+  "titleCreative1": "感性の絵の具",
+  "titleCreative2": "インスピレーションの風",
+  "titleIntro1": "静かな森",
+  "titleIntro2": "内なる灯火",
+  "titleLogic1": "理性の秤",
+  "titleLogic2": "現実の地図",
+  "titleComboNorth": "表現の蝶",
+  "titleComboEast": "説得の橋",
+  "titleComboSouth": "分析の泉",
+  "titleComboWest": "夢想の月"
 }

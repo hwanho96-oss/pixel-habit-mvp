@@ -134,22 +134,10 @@
   "characterPaneShop": "Shop",
   "characterPanePersonality": "Personality",
   "rewardAlreadyClaimed": "You already claimed today's reward",
-  "axisRelation": "Relation",
-  "axisEmotion": "Emotion",
-  "axisAction": "Action",
-  "unspentPointsLabel": "Unspent points {points}",
+  "unspentPointsLabel": "Points {points}",
   "@unspentPointsLabel": {
     "placeholders": {
       "points": {
-        "type": "int"
-      }
-    }
-  },
-  "allocatePointPlusOne": "+1",
-  "titleTierLabel": "Tier {tier}",
-  "@titleTierLabel": {
-    "placeholders": {
-      "tier": {
         "type": "int"
       }
     }
@@ -158,37 +146,43 @@
   "titleStatusAvailable": "Available",
   "titleStatusOwned": "Owned",
   "titleStatusEquipped": "Equipped",
-  "titleCostHeading": "Required points",
-  "titleCostLine": "{axis}: {need} (have {have}) · {status}",
-  "@titleCostLine": {
+  "titleCannotBuy": "Purchase requirements not met",
+  "titleNotEnoughPoints": "Not enough points",
+  "titleUnequip": "Unequip",
+  "titlePriceLabel": "Price: {cost}",
+  "@titlePriceLabel": {
     "placeholders": {
-      "axis": {
-        "type": "String"
-      },
-      "need": {
+      "cost": {
         "type": "int"
-      },
-      "have": {
-        "type": "int"
-      },
-      "status": {
+      }
+    }
+  },
+  "dirCenter": "Start",
+  "dirExtro": "Extrovert",
+  "dirCreative": "Creative · Emotion",
+  "dirIntro": "Introvert",
+  "dirLogic": "Logic · Reality",
+  "dirCombo": "Combo",
+  "myTendency": "My tendency: {direction}",
+  "@myTendency": {
+    "placeholders": {
+      "direction": {
         "type": "String"
       }
     }
   },
-  "titleCostMet": "OK",
-  "titleCostShort": "Short",
-  "titleRequiresHeading": "Prerequisites",
-  "titleRequireLine": "{name} · {status}",
-  "@titleRequireLine": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      },
-      "status": {
-        "type": "String"
-      }
-    }
-  },
-  "titleCannotBuy": "Purchase requirements not met"
+  "myTendencyBalanced": "My tendency: Balanced",
+  "titleMe": "Me",
+  "titleExtro1": "Social Spark",
+  "titleExtro2": "Stage Star",
+  "titleCreative1": "Feeling Palette",
+  "titleCreative2": "Wind of Inspiration",
+  "titleIntro1": "Quiet Forest",
+  "titleIntro2": "Inner Lantern",
+  "titleLogic1": "Scale of Reason",
+  "titleLogic2": "Map of Reality",
+  "titleComboNorth": "Butterfly of Expression",
+  "titleComboEast": "Bridge of Persuasion",
+  "titleComboSouth": "Well of Analysis",
+  "titleComboWest": "Moon of Daydream"
 }

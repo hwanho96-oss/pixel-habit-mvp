@@ -134,22 +134,10 @@
   "characterPaneShop": "상점",
   "characterPanePersonality": "성격",
   "rewardAlreadyClaimed": "오늘은 이미 보상을 받았어요",
-  "axisRelation": "관계",
-  "axisEmotion": "감정",
-  "axisAction": "행동",
-  "unspentPointsLabel": "미분배 포인트 {points}",
+  "unspentPointsLabel": "포인트 {points}",
   "@unspentPointsLabel": {
     "placeholders": {
       "points": {
-        "type": "int"
-      }
-    }
-  },
-  "allocatePointPlusOne": "+1",
-  "titleTierLabel": "티어 {tier}",
-  "@titleTierLabel": {
-    "placeholders": {
-      "tier": {
         "type": "int"
       }
     }
@@ -158,37 +146,43 @@
   "titleStatusAvailable": "구매 가능",
   "titleStatusOwned": "보유",
   "titleStatusEquipped": "장착 중",
-  "titleCostHeading": "필요 포인트",
-  "titleCostLine": "{axis}: {need} (보유 {have}) · {status}",
-  "@titleCostLine": {
+  "titleCannotBuy": "구매 조건을 충족하지 않습니다",
+  "titleNotEnoughPoints": "포인트가 부족합니다",
+  "titleUnequip": "해제",
+  "titlePriceLabel": "가격: {cost}",
+  "@titlePriceLabel": {
     "placeholders": {
-      "axis": {
-        "type": "String"
-      },
-      "need": {
+      "cost": {
         "type": "int"
-      },
-      "have": {
-        "type": "int"
-      },
-      "status": {
+      }
+    }
+  },
+  "dirCenter": "시작",
+  "dirExtro": "외향",
+  "dirCreative": "창의·감정",
+  "dirIntro": "내향",
+  "dirLogic": "이성·현실",
+  "dirCombo": "조합",
+  "myTendency": "내 성향: {direction}",
+  "@myTendency": {
+    "placeholders": {
+      "direction": {
         "type": "String"
       }
     }
   },
-  "titleCostMet": "충족",
-  "titleCostShort": "부족",
-  "titleRequiresHeading": "선행 칭호",
-  "titleRequireLine": "{name} · {status}",
-  "@titleRequireLine": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      },
-      "status": {
-        "type": "String"
-      }
-    }
-  },
-  "titleCannotBuy": "구매 조건을 충족하지 않습니다"
+  "myTendencyBalanced": "내 성향: 균형",
+  "titleMe": "나",
+  "titleExtro1": "사교의 불꽃",
+  "titleExtro2": "무대의 주인공",
+  "titleCreative1": "감성의 물감",
+  "titleCreative2": "영감의 바람",
+  "titleIntro1": "고요한 숲",
+  "titleIntro2": "내면의 등불",
+  "titleLogic1": "이성의 저울",
+  "titleLogic2": "현실의 지도",
+  "titleComboNorth": "표현의 나비",
+  "titleComboEast": "설득의 다리",
+  "titleComboSouth": "분석의 샘",
+  "titleComboWest": "몽상의 달"
 }

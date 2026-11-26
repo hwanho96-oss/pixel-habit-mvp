@@ -271,25 +271,8 @@ class AppLocalizationsZh extends AppLocalizations {
   String get rewardAlreadyClaimed => '今天已经领取过奖励了';
 
   @override
-  String get axisRelation => '关系';
-
-  @override
-  String get axisEmotion => '情感';
-
-  @override
-  String get axisAction => '行动';
-
-  @override
   String unspentPointsLabel(int points) {
-    return '未分配点数 $points';
-  }
-
-  @override
-  String get allocatePointPlusOne => '+1';
-
-  @override
-  String titleTierLabel(int tier) {
-    return '等级 $tier';
+    return '点数 $points';
   }
 
   @override
@@ -305,27 +288,81 @@ class AppLocalizationsZh extends AppLocalizations {
   String get titleStatusEquipped => '装备中';
 
   @override
-  String get titleCostHeading => '所需点数';
-
-  @override
-  String titleCostLine(String axis, int need, int have, String status) {
-    return '$axis: $need（拥有 $have）· $status';
-  }
-
-  @override
-  String get titleCostMet => '满足';
-
-  @override
-  String get titleCostShort => '不足';
-
-  @override
-  String get titleRequiresHeading => '前置称号';
-
-  @override
-  String titleRequireLine(String name, String status) {
-    return '$name · $status';
-  }
-
-  @override
   String get titleCannotBuy => '未满足购买条件';
+
+  @override
+  String get titleNotEnoughPoints => '点数不足';
+
+  @override
+  String get titleUnequip => '卸下';
+
+  @override
+  String titlePriceLabel(int cost) {
+    return '价格: $cost';
+  }
+
+  @override
+  String get dirCenter => '起点';
+
+  @override
+  String get dirExtro => '外向';
+
+  @override
+  String get dirCreative => '创意·情感';
+
+  @override
+  String get dirIntro => '内向';
+
+  @override
+  String get dirLogic => '理性·现实';
+
+  @override
+  String get dirCombo => '组合';
+
+  @override
+  String myTendency(String direction) {
+    return '我的倾向: $direction';
+  }
+
+  @override
+  String get myTendencyBalanced => '我的倾向: 平衡';
+
+  @override
+  String get titleMe => '我';
+
+  @override
+  String get titleExtro1 => '社交火花';
+
+  @override
+  String get titleExtro2 => '舞台主角';
+
+  @override
+  String get titleCreative1 => '感性颜料';
+
+  @override
+  String get titleCreative2 => '灵感之风';
+
+  @override
+  String get titleIntro1 => '静谧之林';
+
+  @override
+  String get titleIntro2 => '内心灯火';
+
+  @override
+  String get titleLogic1 => '理性天平';
+
+  @override
+  String get titleLogic2 => '现实地图';
+
+  @override
+  String get titleComboNorth => '表达之蝶';
+
+  @override
+  String get titleComboEast => '说服之桥';
+
+  @override
+  String get titleComboSouth => '分析之泉';
+
+  @override
+  String get titleComboWest => '梦想之月';
 }
