@@ -121,6 +121,26 @@
   "shopEquip": "装备",
   "shopEquipped": "装备中",
   "shopNotEnoughGold": "金币不足",
+  "shopBuyConfirmTitle": "确认购买",
+  "shopBuyConfirmMessage": "要用 {price} 金币购买 {name} 吗？",
+  "@shopBuyConfirmMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "price": {
+        "type": "int"
+      }
+    }
+  },
+  "shopItemPrice": "🪙 {price}",
+  "@shopItemPrice": {
+    "placeholders": {
+      "price": {
+        "type": "int"
+      }
+    }
+  },
   "categoryTop": "上衣",
   "categoryBottom": "下装",
   "categoryWeapon": "武器",

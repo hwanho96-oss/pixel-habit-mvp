@@ -232,6 +232,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get shopNotEnoughGold => 'Not enough gold';
 
   @override
+  String get shopBuyConfirmTitle => 'Confirm purchase';
+
+  @override
+  String shopBuyConfirmMessage(String name, int price) {
+    return 'Buy $name for $price gold?';
+  }
+
+  @override
+  String shopItemPrice(int price) {
+    return '🪙 $price';
+  }
+
+  @override
   String get categoryTop => 'Top';
 
   @override

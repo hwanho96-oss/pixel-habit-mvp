@@ -119,8 +119,28 @@
   "shopEquippedSummary": "착용 중",
   "shopBuy": "구매",
   "shopEquip": "착용",
-  "shopEquipped": "착용 중",
+  "shopEquipped": "장착 중",
   "shopNotEnoughGold": "골드가 부족합니다",
+  "shopBuyConfirmTitle": "구매 확인",
+  "shopBuyConfirmMessage": "{name}을(를) {price} 골드로 구매할까요?",
+  "@shopBuyConfirmMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "price": {
+        "type": "int"
+      }
+    }
+  },
+  "shopItemPrice": "🪙 {price}",
+  "@shopItemPrice": {
+    "placeholders": {
+      "price": {
+        "type": "int"
+      }
+    }
+  },
   "categoryTop": "상의",
   "categoryBottom": "하의",
   "categoryWeapon": "무기",

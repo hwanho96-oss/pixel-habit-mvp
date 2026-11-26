@@ -4,12 +4,12 @@ import 'package:provider/provider.dart';
 
 import '../data/day_clock.dart';
 import '../data/economy.dart';
-import '../data/shop_items.dart';
 import '../l10n/app_localizations.dart';
 import '../models/routine.dart';
 import '../models/todo.dart';
 import '../providers/app_state.dart';
 import '../ui/layout_config.dart';
+import '../widgets/character_preview.dart';
 import '../widgets/tag_chips.dart';
 import 'routine_form_screen.dart';
 
@@ -313,71 +313,14 @@ class _HomeCharacterArea extends StatelessWidget {
   final Map<String, String> equipped;
   final String? equippedTitleName;
 
-  String? _labelFor(AppLocalizations l10n, ShopCategory category) {
-    final id = equipped[category.name];
-    if (id == null) return null;
-    final item = ShopCatalog.byId(id);
-    if (item == null) return null;
-    return ShopCatalog.itemName(l10n, item.nameKey);
-  }
-
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final bgId = equipped[ShopCategory.background.name];
-    final bgColor = ShopCatalog.backgroundColor(bgId) ??
-        Theme.of(context).colorScheme.surfaceContainerHighest;
-
-    final top = _labelFor(l10n, ShopCategory.top);
-    final bottom = _labelFor(l10n, ShopCategory.bottom);
-    final weapon = _labelFor(l10n, ShopCategory.weapon);
-    final pet = _labelFor(l10n, ShopCategory.pet);
-
     return Stack(
       fit: StackFit.expand,
       children: [
-        ColoredBox(color: bgColor),
-        Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                Icons.person,
-                size: 64,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
-              if (equippedTitleName != null) ...[
-                const SizedBox(height: 4),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Text(
-                    equippedTitleName!,
-                    style: Theme.of(context).textTheme.labelMedium,
-                    softWrap: true,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ],
-            ],
-          ),
-        ),
-        Positioned(
-          left: 8,
-          right: 8,
-          bottom: 8,
-          child: Wrap(
-            alignment: WrapAlignment.center,
-            spacing: 8,
-            runSpacing: 4,
-            children: [
-              if (top != null) _EquipLabel(text: top),
-              if (bottom != null) _EquipLabel(text: bottom),
-              if (weapon != null) _EquipLabel(text: weapon),
-              if (pet != null) _EquipLabel(text: pet),
-            ],
-          ),
+        CharacterPreview(
+          equipped: equipped,
+          equippedTitleName: equippedTitleName,
         ),
         Positioned(
           top: 8,
@@ -408,24 +351,6 @@ class _HomeCharacterArea extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-class _EquipLabel extends StatelessWidget {
-  const _EquipLabel({required this.text});
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: Theme.of(context).textTheme.labelSmall,
-      softWrap: true,
-      maxLines: 2,
-      overflow: TextOverflow.ellipsis,
-      textAlign: TextAlign.center,
     );
   }
 }

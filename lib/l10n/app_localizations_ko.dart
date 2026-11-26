@@ -226,10 +226,23 @@ class AppLocalizationsKo extends AppLocalizations {
   String get shopEquip => '착용';
 
   @override
-  String get shopEquipped => '착용 중';
+  String get shopEquipped => '장착 중';
 
   @override
   String get shopNotEnoughGold => '골드가 부족합니다';
+
+  @override
+  String get shopBuyConfirmTitle => '구매 확인';
+
+  @override
+  String shopBuyConfirmMessage(String name, int price) {
+    return '$name을(를) $price 골드로 구매할까요?';
+  }
+
+  @override
+  String shopItemPrice(int price) {
+    return '🪙 $price';
+  }
 
   @override
   String get categoryTop => '상의';

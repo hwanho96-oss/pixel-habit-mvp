@@ -121,6 +121,26 @@
   "shopEquip": "Equip",
   "shopEquipped": "Equipped",
   "shopNotEnoughGold": "Not enough gold",
+  "shopBuyConfirmTitle": "Confirm purchase",
+  "shopBuyConfirmMessage": "Buy {name} for {price} gold?",
+  "@shopBuyConfirmMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "price": {
+        "type": "int"
+      }
+    }
+  },
+  "shopItemPrice": "🪙 {price}",
+  "@shopItemPrice": {
+    "placeholders": {
+      "price": {
+        "type": "int"
+      }
+    }
+  },
   "categoryTop": "Top",
   "categoryBottom": "Bottom",
   "categoryWeapon": "Weapon",

@@ -121,6 +121,26 @@
   "shopEquip": "装備",
   "shopEquipped": "装備中",
   "shopNotEnoughGold": "ゴールドが足りません",
+  "shopBuyConfirmTitle": "購入確認",
+  "shopBuyConfirmMessage": "{name}を {price} ゴールドで購入しますか？",
+  "@shopBuyConfirmMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "price": {
+        "type": "int"
+      }
+    }
+  },
+  "shopItemPrice": "🪙 {price}",
+  "@shopItemPrice": {
+    "placeholders": {
+      "price": {
+        "type": "int"
+      }
+    }
+  },
   "categoryTop": "上衣",
   "categoryBottom": "下衣",
   "categoryWeapon": "武器",

@@ -513,7 +513,7 @@ abstract class AppLocalizations {
   /// No description provided for @shopEquipped.
   ///
   /// In ko, this message translates to:
-  /// **'착용 중'**
+  /// **'장착 중'**
   String get shopEquipped;
 
   /// No description provided for @shopNotEnoughGold.
@@ -521,6 +521,24 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'골드가 부족합니다'**
   String get shopNotEnoughGold;
+
+  /// No description provided for @shopBuyConfirmTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'구매 확인'**
+  String get shopBuyConfirmTitle;
+
+  /// No description provided for @shopBuyConfirmMessage.
+  ///
+  /// In ko, this message translates to:
+  /// **'{name}을(를) {price} 골드로 구매할까요?'**
+  String shopBuyConfirmMessage(String name, int price);
+
+  /// No description provided for @shopItemPrice.
+  ///
+  /// In ko, this message translates to:
+  /// **'🪙 {price}'**
+  String shopItemPrice(int price);
 
   /// No description provided for @categoryTop.
   ///

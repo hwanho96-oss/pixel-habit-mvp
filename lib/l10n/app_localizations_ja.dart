@@ -232,6 +232,19 @@ class AppLocalizationsJa extends AppLocalizations {
   String get shopNotEnoughGold => 'ゴールドが足りません';
 
   @override
+  String get shopBuyConfirmTitle => '購入確認';
+
+  @override
+  String shopBuyConfirmMessage(String name, int price) {
+    return '$nameを $price ゴールドで購入しますか？';
+  }
+
+  @override
+  String shopItemPrice(int price) {
+    return '🪙 $price';
+  }
+
+  @override
   String get categoryTop => '上衣';
 
   @override

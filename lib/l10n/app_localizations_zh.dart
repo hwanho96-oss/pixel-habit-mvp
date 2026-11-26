@@ -232,6 +232,19 @@ class AppLocalizationsZh extends AppLocalizations {
   String get shopNotEnoughGold => '金币不足';
 
   @override
+  String get shopBuyConfirmTitle => '确认购买';
+
+  @override
+  String shopBuyConfirmMessage(String name, int price) {
+    return '要用 $price 金币购买 $name 吗？';
+  }
+
+  @override
+  String shopItemPrice(int price) {
+    return '🪙 $price';
+  }
+
+  @override
   String get categoryTop => '上衣';
 
   @override
