@@ -182,4 +182,82 @@ class AppLocalizationsKo extends AppLocalizations {
   String adventureDaysCount(int days) {
     return '모험한 날 $days일';
   }
+
+  @override
+  String get shopName => '상점';
+
+  @override
+  String get shopEquippedSummary => '착용 중';
+
+  @override
+  String get shopBuy => '구매';
+
+  @override
+  String get shopEquip => '착용';
+
+  @override
+  String get shopEquipped => '착용 중';
+
+  @override
+  String get shopNotEnoughGold => '골드가 부족합니다';
+
+  @override
+  String get categoryTop => '상의';
+
+  @override
+  String get categoryBottom => '하의';
+
+  @override
+  String get categoryWeapon => '무기';
+
+  @override
+  String get categoryBackground => '배경';
+
+  @override
+  String get categoryPet => '펫';
+
+  @override
+  String get itemTopPlainShirt => '민소매 셔츠';
+
+  @override
+  String get itemTopHoodie => '후드티';
+
+  @override
+  String get itemTopArmor => '갑옷 상의';
+
+  @override
+  String get itemBottomShorts => '반바지';
+
+  @override
+  String get itemBottomJeans => '청바지';
+
+  @override
+  String get itemBottomArmorPants => '갑옷 하의';
+
+  @override
+  String get itemWeaponStick => '나무 막대';
+
+  @override
+  String get itemWeaponSword => '검';
+
+  @override
+  String get itemWeaponStaff => '지팡이';
+
+  @override
+  String get itemBgMeadow => '초원';
+
+  @override
+  String get itemBgCity => '도시';
+
+  @override
+  String get itemBgCastle => '성';
+
+  @override
+  String get itemPetCat => '고양이';
+
+  @override
+  String get itemPetDog => '강아지';
+
+  @override
+  String get itemPetDragon => '드래곤';
 }

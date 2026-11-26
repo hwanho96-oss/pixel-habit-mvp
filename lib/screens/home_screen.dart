@@ -4,10 +4,12 @@ import 'package:provider/provider.dart';
 
 import '../data/day_clock.dart';
 import '../data/economy.dart';
+import '../data/shop_items.dart';
 import '../l10n/app_localizations.dart';
 import '../models/routine.dart';
 import '../models/todo.dart';
 import '../providers/app_state.dart';
+import '../ui/layout_config.dart';
 import 'routine_form_screen.dart';
 
 enum _HomeSegment { routine, todo }
@@ -101,181 +103,280 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      l10n.goldAmount(state.gold),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.end,
-                    ),
-                    Text(
-                      l10n.adventureDaysCount(state.adventureDays),
-                      style: Theme.of(context).textTheme.bodySmall,
-                      softWrap: true,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.end,
-                    ),
-                  ],
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final characterHeight =
+                constraints.maxHeight * LayoutConfig.homeCharacterAreaRatio;
+
+            return Column(
+              children: [
+                SizedBox(
+                  height: characterHeight,
+                  width: double.infinity,
+                  child: _HomeCharacterArea(
+                    goldLabel: l10n.goldAmount(state.gold),
+                    adventureLabel:
+                        l10n.adventureDaysCount(state.adventureDays),
+                    equipped: state.equipped,
+                  ),
                 ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Center(
-              child: Container(
-                width: 120,
-                height: 120,
-                color: Colors.grey,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: SegmentedButton<_HomeSegment>(
-                segments: [
-                  ButtonSegment(
-                    value: _HomeSegment.routine,
-                    label: Text(
-                      l10n.segmentRoutine,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      softWrap: false,
-                    ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                  child: SegmentedButton<_HomeSegment>(
+                    segments: [
+                      ButtonSegment(
+                        value: _HomeSegment.routine,
+                        label: Text(
+                          l10n.segmentRoutine,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          softWrap: false,
+                        ),
+                      ),
+                      ButtonSegment(
+                        value: _HomeSegment.todo,
+                        label: Text(
+                          l10n.segmentTodo,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          softWrap: false,
+                        ),
+                      ),
+                    ],
+                    selected: {_segment},
+                    onSelectionChanged: (next) {
+                      setState(() => _segment = next.first);
+                    },
+                    showSelectedIcon: false,
                   ),
-                  ButtonSegment(
-                    value: _HomeSegment.todo,
-                    label: Text(
-                      l10n.segmentTodo,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      softWrap: false,
-                    ),
-                  ),
-                ],
-                selected: {_segment},
-                onSelectionChanged: (next) {
-                  setState(() => _segment = next.first);
-                },
-                showSelectedIcon: false,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Expanded(
-              child: _segment == _HomeSegment.routine
-                  ? _RoutineList(
-                      routines: state.todaysRoutines,
-                      emptyHint: l10n.emptyRoutinesHint,
-                      expandedIds: _expandedIds,
-                      isDone: state.isRoutineDoneToday,
-                      checklistDoneOf: state.effectiveRoutineChecklistDone,
-                      formatTime: _formatTime,
-                      checklistProgress: l10n.checklistProgress,
-                      onToggleExpand: _toggleExpanded,
-                      onOpen: (routine) {
-                        context.push(
-                          '/item/form',
-                          extra: ItemFormArgs(
-                            type: FormItemType.routine,
-                            routine: routine,
-                          ),
-                        );
-                      },
-                      onToggleDone: (routine, checked) async {
-                        final welcomeBack =
-                            _isAwayTwoOrMoreDays(state.lastCheckDateKey);
-                        await state.toggleRoutineDone(routine.id);
-                        if (!mounted) return;
-                        if (checked) {
-                          _showPraiseSnackBar(
-                            welcomeBack: welcomeBack,
-                            gold: Economy.routineCompleteGold,
-                          );
-                        }
-                      },
-                      onToggleChecklist: (routine, itemIndex) async {
-                        final welcomeBack =
-                            _isAwayTwoOrMoreDays(state.lastCheckDateKey);
-                        final becameComplete = await state
-                            .toggleRoutineChecklistItem(routine.id, itemIndex);
-                        if (!mounted) return;
-                        if (becameComplete) {
-                          _showPraiseSnackBar(
-                            welcomeBack: welcomeBack,
-                            gold: Economy.routineCompleteGold,
-                          );
-                        }
-                      },
-                      onLongPress: (routine) {
-                        _confirmDelete(
-                          onConfirm: () => state.deleteRoutine(routine.id),
-                        );
-                      },
-                    )
-                  : _TodoList(
-                      todos: state.todaysTodos,
-                      emptyHint: l10n.emptyTodosHint,
-                      expandedIds: _expandedIds,
-                      checklistDoneOf: state.effectiveTodoChecklistDone,
-                      formatTime: _formatTime,
-                      checklistProgress: l10n.checklistProgress,
-                      onToggleExpand: _toggleExpanded,
-                      onOpen: (todo) {
-                        context.push(
-                          '/item/form',
-                          extra: ItemFormArgs(
-                            type: FormItemType.todo,
-                            todo: todo,
-                          ),
-                        );
-                      },
-                      onToggleDone: (todo, checked) async {
-                        final welcomeBack =
-                            _isAwayTwoOrMoreDays(state.lastCheckDateKey);
-                        await state.toggleTodoDone(todo.id);
-                        if (!mounted) return;
-                        if (checked) {
-                          _showPraiseSnackBar(
-                            welcomeBack: welcomeBack,
-                            gold: Economy.todoCompleteGold,
-                          );
-                        }
-                      },
-                      onToggleChecklist: (todo, itemIndex) async {
-                        final welcomeBack =
-                            _isAwayTwoOrMoreDays(state.lastCheckDateKey);
-                        final becameComplete = await state
-                            .toggleTodoChecklistItem(todo.id, itemIndex);
-                        if (!mounted) return;
-                        if (becameComplete) {
-                          _showPraiseSnackBar(
-                            welcomeBack: welcomeBack,
-                            gold: Economy.todoCompleteGold,
-                          );
-                        }
-                      },
-                      onLongPress: (todo) {
-                        _confirmDelete(
-                          onConfirm: () => state.deleteTodo(todo.id),
-                        );
-                      },
-                    ),
-            ),
-          ],
+                ),
+                const SizedBox(height: 8),
+                Expanded(
+                  child: _segment == _HomeSegment.routine
+                      ? _RoutineList(
+                          routines: state.todaysRoutines,
+                          emptyHint: l10n.emptyRoutinesHint,
+                          expandedIds: _expandedIds,
+                          isDone: state.isRoutineDoneToday,
+                          checklistDoneOf:
+                              state.effectiveRoutineChecklistDone,
+                          formatTime: _formatTime,
+                          checklistProgress: l10n.checklistProgress,
+                          onToggleExpand: _toggleExpanded,
+                          onOpen: (routine) {
+                            context.push(
+                              '/item/form',
+                              extra: ItemFormArgs(
+                                type: FormItemType.routine,
+                                routine: routine,
+                              ),
+                            );
+                          },
+                          onToggleDone: (routine, checked) async {
+                            final welcomeBack =
+                                _isAwayTwoOrMoreDays(state.lastCheckDateKey);
+                            await state.toggleRoutineDone(routine.id);
+                            if (!mounted) return;
+                            if (checked) {
+                              _showPraiseSnackBar(
+                                welcomeBack: welcomeBack,
+                                gold: Economy.routineCompleteGold,
+                              );
+                            }
+                          },
+                          onToggleChecklist: (routine, itemIndex) async {
+                            final welcomeBack =
+                                _isAwayTwoOrMoreDays(state.lastCheckDateKey);
+                            final becameComplete =
+                                await state.toggleRoutineChecklistItem(
+                              routine.id,
+                              itemIndex,
+                            );
+                            if (!mounted) return;
+                            if (becameComplete) {
+                              _showPraiseSnackBar(
+                                welcomeBack: welcomeBack,
+                                gold: Economy.routineCompleteGold,
+                              );
+                            }
+                          },
+                          onLongPress: (routine) {
+                            _confirmDelete(
+                              onConfirm: () =>
+                                  state.deleteRoutine(routine.id),
+                            );
+                          },
+                        )
+                      : _TodoList(
+                          todos: state.todaysTodos,
+                          emptyHint: l10n.emptyTodosHint,
+                          expandedIds: _expandedIds,
+                          checklistDoneOf: state.effectiveTodoChecklistDone,
+                          formatTime: _formatTime,
+                          checklistProgress: l10n.checklistProgress,
+                          onToggleExpand: _toggleExpanded,
+                          onOpen: (todo) {
+                            context.push(
+                              '/item/form',
+                              extra: ItemFormArgs(
+                                type: FormItemType.todo,
+                                todo: todo,
+                              ),
+                            );
+                          },
+                          onToggleDone: (todo, checked) async {
+                            final welcomeBack =
+                                _isAwayTwoOrMoreDays(state.lastCheckDateKey);
+                            await state.toggleTodoDone(todo.id);
+                            if (!mounted) return;
+                            if (checked) {
+                              _showPraiseSnackBar(
+                                welcomeBack: welcomeBack,
+                                gold: Economy.todoCompleteGold,
+                              );
+                            }
+                          },
+                          onToggleChecklist: (todo, itemIndex) async {
+                            final welcomeBack =
+                                _isAwayTwoOrMoreDays(state.lastCheckDateKey);
+                            final becameComplete =
+                                await state.toggleTodoChecklistItem(
+                              todo.id,
+                              itemIndex,
+                            );
+                            if (!mounted) return;
+                            if (becameComplete) {
+                              _showPraiseSnackBar(
+                                welcomeBack: welcomeBack,
+                                gold: Economy.todoCompleteGold,
+                              );
+                            }
+                          },
+                          onLongPress: (todo) {
+                            _confirmDelete(
+                              onConfirm: () => state.deleteTodo(todo.id),
+                            );
+                          },
+                        ),
+                ),
+              ],
+            );
+          },
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _onFabPressed,
         child: const Icon(Icons.add),
       ),
+    );
+  }
+}
+
+class _HomeCharacterArea extends StatelessWidget {
+  const _HomeCharacterArea({
+    required this.goldLabel,
+    required this.adventureLabel,
+    required this.equipped,
+  });
+
+  final String goldLabel;
+  final String adventureLabel;
+  final Map<String, String> equipped;
+
+  String? _labelFor(AppLocalizations l10n, ShopCategory category) {
+    final id = equipped[category.name];
+    if (id == null) return null;
+    final item = ShopCatalog.byId(id);
+    if (item == null) return null;
+    return ShopCatalog.itemName(l10n, item.nameKey);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final bgId = equipped[ShopCategory.background.name];
+    final bgColor = ShopCatalog.backgroundColor(bgId) ??
+        Theme.of(context).colorScheme.surfaceContainerHighest;
+
+    final top = _labelFor(l10n, ShopCategory.top);
+    final bottom = _labelFor(l10n, ShopCategory.bottom);
+    final weapon = _labelFor(l10n, ShopCategory.weapon);
+    final pet = _labelFor(l10n, ShopCategory.pet);
+
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        ColoredBox(color: bgColor),
+        Center(
+          child: Icon(
+            Icons.person,
+            size: 64,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ),
+        Positioned(
+          left: 8,
+          right: 8,
+          bottom: 8,
+          child: Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 8,
+            runSpacing: 4,
+            children: [
+              if (top != null) _EquipLabel(text: top),
+              if (bottom != null) _EquipLabel(text: bottom),
+              if (weapon != null) _EquipLabel(text: weapon),
+              if (pet != null) _EquipLabel(text: pet),
+            ],
+          ),
+        ),
+        Positioned(
+          top: 8,
+          right: 12,
+          left: 12,
+          child: Align(
+            alignment: Alignment.topRight,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  goldLabel,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.end,
+                ),
+                Text(
+                  adventureLabel,
+                  style: Theme.of(context).textTheme.bodySmall,
+                  softWrap: true,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.end,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _EquipLabel extends StatelessWidget {
+  const _EquipLabel({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: Theme.of(context).textTheme.labelSmall,
+      softWrap: true,
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+      textAlign: TextAlign.center,
     );
   }
 }

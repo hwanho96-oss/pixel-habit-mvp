@@ -182,4 +182,82 @@ class AppLocalizationsEn extends AppLocalizations {
   String adventureDaysCount(int days) {
     return '$days adventure days';
   }
+
+  @override
+  String get shopName => 'Shop';
+
+  @override
+  String get shopEquippedSummary => 'Equipped';
+
+  @override
+  String get shopBuy => 'Buy';
+
+  @override
+  String get shopEquip => 'Equip';
+
+  @override
+  String get shopEquipped => 'Equipped';
+
+  @override
+  String get shopNotEnoughGold => 'Not enough gold';
+
+  @override
+  String get categoryTop => 'Top';
+
+  @override
+  String get categoryBottom => 'Bottom';
+
+  @override
+  String get categoryWeapon => 'Weapon';
+
+  @override
+  String get categoryBackground => 'Background';
+
+  @override
+  String get categoryPet => 'Pet';
+
+  @override
+  String get itemTopPlainShirt => 'Plain shirt';
+
+  @override
+  String get itemTopHoodie => 'Hoodie';
+
+  @override
+  String get itemTopArmor => 'Armor top';
+
+  @override
+  String get itemBottomShorts => 'Shorts';
+
+  @override
+  String get itemBottomJeans => 'Jeans';
+
+  @override
+  String get itemBottomArmorPants => 'Armor pants';
+
+  @override
+  String get itemWeaponStick => 'Wooden stick';
+
+  @override
+  String get itemWeaponSword => 'Sword';
+
+  @override
+  String get itemWeaponStaff => 'Staff';
+
+  @override
+  String get itemBgMeadow => 'Meadow';
+
+  @override
+  String get itemBgCity => 'City';
+
+  @override
+  String get itemBgCastle => 'Castle';
+
+  @override
+  String get itemPetCat => 'Cat';
+
+  @override
+  String get itemPetDog => 'Dog';
+
+  @override
+  String get itemPetDragon => 'Dragon';
 }

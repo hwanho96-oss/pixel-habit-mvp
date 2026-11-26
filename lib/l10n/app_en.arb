@@ -104,5 +104,31 @@
         "type": "int"
       }
     }
-  }
+  },
+  "shopName": "Shop",
+  "shopEquippedSummary": "Equipped",
+  "shopBuy": "Buy",
+  "shopEquip": "Equip",
+  "shopEquipped": "Equipped",
+  "shopNotEnoughGold": "Not enough gold",
+  "categoryTop": "Top",
+  "categoryBottom": "Bottom",
+  "categoryWeapon": "Weapon",
+  "categoryBackground": "Background",
+  "categoryPet": "Pet",
+  "itemTopPlainShirt": "Plain shirt",
+  "itemTopHoodie": "Hoodie",
+  "itemTopArmor": "Armor top",
+  "itemBottomShorts": "Shorts",
+  "itemBottomJeans": "Jeans",
+  "itemBottomArmorPants": "Armor pants",
+  "itemWeaponStick": "Wooden stick",
+  "itemWeaponSword": "Sword",
+  "itemWeaponStaff": "Staff",
+  "itemBgMeadow": "Meadow",
+  "itemBgCity": "City",
+  "itemBgCastle": "Castle",
+  "itemPetCat": "Cat",
+  "itemPetDog": "Dog",
+  "itemPetDragon": "Dragon"
 }

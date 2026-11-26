@@ -425,6 +425,162 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'모험한 날 {days}일'**
   String adventureDaysCount(int days);
+
+  /// No description provided for @shopName.
+  ///
+  /// In ko, this message translates to:
+  /// **'상점'**
+  String get shopName;
+
+  /// No description provided for @shopEquippedSummary.
+  ///
+  /// In ko, this message translates to:
+  /// **'착용 중'**
+  String get shopEquippedSummary;
+
+  /// No description provided for @shopBuy.
+  ///
+  /// In ko, this message translates to:
+  /// **'구매'**
+  String get shopBuy;
+
+  /// No description provided for @shopEquip.
+  ///
+  /// In ko, this message translates to:
+  /// **'착용'**
+  String get shopEquip;
+
+  /// No description provided for @shopEquipped.
+  ///
+  /// In ko, this message translates to:
+  /// **'착용 중'**
+  String get shopEquipped;
+
+  /// No description provided for @shopNotEnoughGold.
+  ///
+  /// In ko, this message translates to:
+  /// **'골드가 부족합니다'**
+  String get shopNotEnoughGold;
+
+  /// No description provided for @categoryTop.
+  ///
+  /// In ko, this message translates to:
+  /// **'상의'**
+  String get categoryTop;
+
+  /// No description provided for @categoryBottom.
+  ///
+  /// In ko, this message translates to:
+  /// **'하의'**
+  String get categoryBottom;
+
+  /// No description provided for @categoryWeapon.
+  ///
+  /// In ko, this message translates to:
+  /// **'무기'**
+  String get categoryWeapon;
+
+  /// No description provided for @categoryBackground.
+  ///
+  /// In ko, this message translates to:
+  /// **'배경'**
+  String get categoryBackground;
+
+  /// No description provided for @categoryPet.
+  ///
+  /// In ko, this message translates to:
+  /// **'펫'**
+  String get categoryPet;
+
+  /// No description provided for @itemTopPlainShirt.
+  ///
+  /// In ko, this message translates to:
+  /// **'민소매 셔츠'**
+  String get itemTopPlainShirt;
+
+  /// No description provided for @itemTopHoodie.
+  ///
+  /// In ko, this message translates to:
+  /// **'후드티'**
+  String get itemTopHoodie;
+
+  /// No description provided for @itemTopArmor.
+  ///
+  /// In ko, this message translates to:
+  /// **'갑옷 상의'**
+  String get itemTopArmor;
+
+  /// No description provided for @itemBottomShorts.
+  ///
+  /// In ko, this message translates to:
+  /// **'반바지'**
+  String get itemBottomShorts;
+
+  /// No description provided for @itemBottomJeans.
+  ///
+  /// In ko, this message translates to:
+  /// **'청바지'**
+  String get itemBottomJeans;
+
+  /// No description provided for @itemBottomArmorPants.
+  ///
+  /// In ko, this message translates to:
+  /// **'갑옷 하의'**
+  String get itemBottomArmorPants;
+
+  /// No description provided for @itemWeaponStick.
+  ///
+  /// In ko, this message translates to:
+  /// **'나무 막대'**
+  String get itemWeaponStick;
+
+  /// No description provided for @itemWeaponSword.
+  ///
+  /// In ko, this message translates to:
+  /// **'검'**
+  String get itemWeaponSword;
+
+  /// No description provided for @itemWeaponStaff.
+  ///
+  /// In ko, this message translates to:
+  /// **'지팡이'**
+  String get itemWeaponStaff;
+
+  /// No description provided for @itemBgMeadow.
+  ///
+  /// In ko, this message translates to:
+  /// **'초원'**
+  String get itemBgMeadow;
+
+  /// No description provided for @itemBgCity.
+  ///
+  /// In ko, this message translates to:
+  /// **'도시'**
+  String get itemBgCity;
+
+  /// No description provided for @itemBgCastle.
+  ///
+  /// In ko, this message translates to:
+  /// **'성'**
+  String get itemBgCastle;
+
+  /// No description provided for @itemPetCat.
+  ///
+  /// In ko, this message translates to:
+  /// **'고양이'**
+  String get itemPetCat;
+
+  /// No description provided for @itemPetDog.
+  ///
+  /// In ko, this message translates to:
+  /// **'강아지'**
+  String get itemPetDog;
+
+  /// No description provided for @itemPetDragon.
+  ///
+  /// In ko, this message translates to:
+  /// **'드래곤'**
+  String get itemPetDragon;
 }
 
 class _AppLocalizationsDelegate

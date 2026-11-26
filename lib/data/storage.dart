@@ -13,6 +13,8 @@ class AppStorage {
   static const _customTagsKey = 'custom_tags_v1';
   static const _completionLogKey = 'completion_log_v1';
   static const _pointsKey = 'points_v1';
+  static const _ownedItemsKey = 'owned_items_v1';
+  static const _equippedKey = 'equipped_v1';
 
   Future<List<Routine>> loadRoutines() async {
     final prefs = await SharedPreferences.getInstance();
@@ -91,5 +93,32 @@ class AppStorage {
   Future<void> savePoints(int points) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(_pointsKey, points);
+  }
+
+  Future<Set<String>> loadOwnedItems() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_ownedItemsKey);
+    if (raw == null) return {};
+    final list = jsonDecode(raw) as List<dynamic>;
+    return list.map((e) => e as String).toSet();
+  }
+
+  Future<void> saveOwnedItems(Set<String> ids) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_ownedItemsKey, jsonEncode(ids.toList()));
+  }
+
+  /// Map of category name → item id.
+  Future<Map<String, String>> loadEquipped() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_equippedKey);
+    if (raw == null) return {};
+    final map = jsonDecode(raw) as Map<String, dynamic>;
+    return map.map((k, v) => MapEntry(k, v as String));
+  }
+
+  Future<void> saveEquipped(Map<String, String> equipped) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_equippedKey, jsonEncode(equipped));
   }
 }

@@ -182,4 +182,82 @@ class AppLocalizationsZh extends AppLocalizations {
   String adventureDaysCount(int days) {
     return '冒险天数 $days天';
   }
+
+  @override
+  String get shopName => '商店';
+
+  @override
+  String get shopEquippedSummary => '已装备';
+
+  @override
+  String get shopBuy => '购买';
+
+  @override
+  String get shopEquip => '装备';
+
+  @override
+  String get shopEquipped => '装备中';
+
+  @override
+  String get shopNotEnoughGold => '金币不足';
+
+  @override
+  String get categoryTop => '上衣';
+
+  @override
+  String get categoryBottom => '下装';
+
+  @override
+  String get categoryWeapon => '武器';
+
+  @override
+  String get categoryBackground => '背景';
+
+  @override
+  String get categoryPet => '宠物';
+
+  @override
+  String get itemTopPlainShirt => '素色衬衫';
+
+  @override
+  String get itemTopHoodie => '连帽衫';
+
+  @override
+  String get itemTopArmor => '铠甲上衣';
+
+  @override
+  String get itemBottomShorts => '短裤';
+
+  @override
+  String get itemBottomJeans => '牛仔裤';
+
+  @override
+  String get itemBottomArmorPants => '铠甲下装';
+
+  @override
+  String get itemWeaponStick => '木棍';
+
+  @override
+  String get itemWeaponSword => '剑';
+
+  @override
+  String get itemWeaponStaff => '法杖';
+
+  @override
+  String get itemBgMeadow => '草原';
+
+  @override
+  String get itemBgCity => '城市';
+
+  @override
+  String get itemBgCastle => '城堡';
+
+  @override
+  String get itemPetCat => '猫';
+
+  @override
+  String get itemPetDog => '狗';
+
+  @override
+  String get itemPetDragon => '龙';
 }

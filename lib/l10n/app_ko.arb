@@ -104,5 +104,31 @@
         "type": "int"
       }
     }
-  }
+  },
+  "shopName": "상점",
+  "shopEquippedSummary": "착용 중",
+  "shopBuy": "구매",
+  "shopEquip": "착용",
+  "shopEquipped": "착용 중",
+  "shopNotEnoughGold": "골드가 부족합니다",
+  "categoryTop": "상의",
+  "categoryBottom": "하의",
+  "categoryWeapon": "무기",
+  "categoryBackground": "배경",
+  "categoryPet": "펫",
+  "itemTopPlainShirt": "민소매 셔츠",
+  "itemTopHoodie": "후드티",
+  "itemTopArmor": "갑옷 상의",
+  "itemBottomShorts": "반바지",
+  "itemBottomJeans": "청바지",
+  "itemBottomArmorPants": "갑옷 하의",
+  "itemWeaponStick": "나무 막대",
+  "itemWeaponSword": "검",
+  "itemWeaponStaff": "지팡이",
+  "itemBgMeadow": "초원",
+  "itemBgCity": "도시",
+  "itemBgCastle": "성",
+  "itemPetCat": "고양이",
+  "itemPetDog": "강아지",
+  "itemPetDragon": "드래곤"
 }

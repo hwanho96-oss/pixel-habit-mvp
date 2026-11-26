@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../screens/character_shop_screen.dart';
 import '../screens/home_screen.dart';
 import '../screens/placeholder_screen.dart';
 import '../screens/routine_form_screen.dart';
@@ -29,9 +30,7 @@ final GoRouter appRouter = GoRouter(
           routes: [
             GoRoute(
               path: '/character',
-              builder: (context, state) => PlaceholderScreen(
-                titleBuilder: (l10n) => l10n.tabCharacter,
-              ),
+              builder: (context, state) => const CharacterShopScreen(),
             ),
           ],
         ),

@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import '../data/day_clock.dart';
 import '../data/economy.dart';
+import '../data/shop_items.dart';
 import '../data/storage.dart';
 import '../models/completion_record.dart';
 import '../models/routine.dart';
@@ -18,6 +19,9 @@ class AppState extends ChangeNotifier {
   List<CompletionRecord> completionLog = [];
   int gold = 0;
   int unspentPoints = 0;
+  Set<String> ownedItemIds = {};
+  /// Category name → equipped item id.
+  Map<String, String> equipped = {};
 
   Future<void> load() async {
     routines = await _storage.loadRoutines();
@@ -26,7 +30,52 @@ class AppState extends ChangeNotifier {
     customTags = await _storage.loadCustomTags();
     completionLog = await _storage.loadCompletionLog();
     unspentPoints = await _storage.loadPoints();
+    ownedItemIds = await _storage.loadOwnedItems();
+    equipped = await _storage.loadEquipped();
     notifyListeners();
+  }
+
+  bool ownsItem(String id) => ownedItemIds.contains(id);
+
+  String? equippedId(ShopCategory category) => equipped[category.name];
+
+  bool isEquipped(String id) {
+    final item = ShopCatalog.byId(id);
+    if (item == null) return false;
+    return equipped[item.category.name] == id;
+  }
+
+  /// Deducts gold and adds to owned. Returns false if not enough gold or already owned.
+  Future<bool> buyItem(String id) async {
+    final item = ShopCatalog.byId(id);
+    if (item == null) return false;
+    if (ownedItemIds.contains(id)) return false;
+    if (gold < item.price) return false;
+
+    gold -= item.price;
+    _clampGold();
+    ownedItemIds = {...ownedItemIds, id};
+    notifyListeners();
+    await _persist();
+    return true;
+  }
+
+  /// Equips [id] in its category (one slot per category).
+  Future<void> equipItem(String id) async {
+    final item = ShopCatalog.byId(id);
+    if (item == null) return;
+    if (!ownedItemIds.contains(id)) return;
+
+    equipped = {...equipped, item.category.name: id};
+    notifyListeners();
+    await _persist();
+  }
+
+  Future<void> unequip(ShopCategory category) async {
+    if (!equipped.containsKey(category.name)) return;
+    equipped = Map<String, String>.from(equipped)..remove(category.name);
+    notifyListeners();
+    await _persist();
   }
 
   /// Empty [repeatWeekdays] means every day. Future start dates are excluded.
@@ -244,6 +293,8 @@ class AppState extends ChangeNotifier {
       _storage.saveGold(gold),
       _storage.saveCompletionLog(completionLog),
       _storage.savePoints(unspentPoints),
+      _storage.saveOwnedItems(ownedItemIds),
+      _storage.saveEquipped(equipped),
     ]);
   }
 

@@ -104,5 +104,31 @@
         "type": "int"
       }
     }
-  }
+  },
+  "shopName": "商店",
+  "shopEquippedSummary": "已装备",
+  "shopBuy": "购买",
+  "shopEquip": "装备",
+  "shopEquipped": "装备中",
+  "shopNotEnoughGold": "金币不足",
+  "categoryTop": "上衣",
+  "categoryBottom": "下装",
+  "categoryWeapon": "武器",
+  "categoryBackground": "背景",
+  "categoryPet": "宠物",
+  "itemTopPlainShirt": "素色衬衫",
+  "itemTopHoodie": "连帽衫",
+  "itemTopArmor": "铠甲上衣",
+  "itemBottomShorts": "短裤",
+  "itemBottomJeans": "牛仔裤",
+  "itemBottomArmorPants": "铠甲下装",
+  "itemWeaponStick": "木棍",
+  "itemWeaponSword": "剑",
+  "itemWeaponStaff": "法杖",
+  "itemBgMeadow": "草原",
+  "itemBgCity": "城市",
+  "itemBgCastle": "城堡",
+  "itemPetCat": "猫",
+  "itemPetDog": "狗",
+  "itemPetDragon": "龙"
 }

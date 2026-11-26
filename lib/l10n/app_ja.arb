@@ -104,5 +104,31 @@
         "type": "int"
       }
     }
-  }
+  },
+  "shopName": "ショップ",
+  "shopEquippedSummary": "装備中",
+  "shopBuy": "購入",
+  "shopEquip": "装備",
+  "shopEquipped": "装備中",
+  "shopNotEnoughGold": "ゴールドが足りません",
+  "categoryTop": "上衣",
+  "categoryBottom": "下衣",
+  "categoryWeapon": "武器",
+  "categoryBackground": "背景",
+  "categoryPet": "ペット",
+  "itemTopPlainShirt": "無地シャツ",
+  "itemTopHoodie": "パーカー",
+  "itemTopArmor": "アーマー上",
+  "itemBottomShorts": "ショートパンツ",
+  "itemBottomJeans": "ジーンズ",
+  "itemBottomArmorPants": "アーマー下",
+  "itemWeaponStick": "木の棒",
+  "itemWeaponSword": "剣",
+  "itemWeaponStaff": "杖",
+  "itemBgMeadow": "草原",
+  "itemBgCity": "街",
+  "itemBgCastle": "城",
+  "itemPetCat": "猫",
+  "itemPetDog": "犬",
+  "itemPetDragon": "ドラゴン"
 }
