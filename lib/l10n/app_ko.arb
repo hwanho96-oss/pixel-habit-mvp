@@ -130,5 +130,65 @@
   "itemBgCastle": "성",
   "itemPetCat": "고양이",
   "itemPetDog": "강아지",
-  "itemPetDragon": "드래곤"
+  "itemPetDragon": "드래곤",
+  "characterPaneShop": "상점",
+  "characterPanePersonality": "성격",
+  "rewardAlreadyClaimed": "오늘은 이미 보상을 받았어요",
+  "axisRelation": "관계",
+  "axisEmotion": "감정",
+  "axisAction": "행동",
+  "unspentPointsLabel": "미분배 포인트 {points}",
+  "@unspentPointsLabel": {
+    "placeholders": {
+      "points": {
+        "type": "int"
+      }
+    }
+  },
+  "allocatePointPlusOne": "+1",
+  "titleTierLabel": "티어 {tier}",
+  "@titleTierLabel": {
+    "placeholders": {
+      "tier": {
+        "type": "int"
+      }
+    }
+  },
+  "titleStatusLocked": "잠김",
+  "titleStatusAvailable": "구매 가능",
+  "titleStatusOwned": "보유",
+  "titleStatusEquipped": "장착 중",
+  "titleCostHeading": "필요 포인트",
+  "titleCostLine": "{axis}: {need} (보유 {have}) · {status}",
+  "@titleCostLine": {
+    "placeholders": {
+      "axis": {
+        "type": "String"
+      },
+      "need": {
+        "type": "int"
+      },
+      "have": {
+        "type": "int"
+      },
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "titleCostMet": "충족",
+  "titleCostShort": "부족",
+  "titleRequiresHeading": "선행 칭호",
+  "titleRequireLine": "{name} · {status}",
+  "@titleRequireLine": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "titleCannotBuy": "구매 조건을 충족하지 않습니다"
 }

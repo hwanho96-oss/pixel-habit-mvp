@@ -5,6 +5,7 @@ import '../data/shop_items.dart';
 import '../l10n/app_localizations.dart';
 import '../providers/app_state.dart';
 
+/// Shop body inside the character tab (no outer Scaffold).
 class CharacterShopScreen extends StatefulWidget {
   const CharacterShopScreen({super.key});
 
@@ -75,78 +76,59 @@ class _CharacterShopScreenState extends State<CharacterShopScreen>
     final l10n = AppLocalizations.of(context)!;
     final state = context.watch<AppState>();
 
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    l10n.shopName,
-                    style: Theme.of(context).textTheme.titleLarge,
-                    softWrap: true,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    l10n.goldAmount(state.gold),
-                    softWrap: true,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    l10n.shopEquippedSummary,
-                    style: Theme.of(context).textTheme.titleSmall,
-                    softWrap: true,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    _equippedSummary(l10n, state),
-                    style: Theme.of(context).textTheme.bodySmall,
-                    softWrap: true,
-                  ),
-                ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                l10n.shopEquippedSummary,
+                style: Theme.of(context).textTheme.titleSmall,
+                softWrap: true,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
-            ),
-            TabBar(
-              controller: _tabController,
-              isScrollable: true,
-              tabs: [
-                for (final category in _categories)
-                  Tab(
-                    child: Text(
-                      ShopCatalog.categoryLabel(l10n, category),
-                      softWrap: false,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-              ],
-            ),
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  for (final category in _categories)
-                    _ItemList(
-                      items: ShopCatalog.byCategory(category),
-                      ownedIds: state.ownedItemIds,
-                      equippedId: state.equippedId(category),
-                      onAction: _onItemAction,
-                    ),
-                ],
+              const SizedBox(height: 4),
+              Text(
+                _equippedSummary(l10n, state),
+                style: Theme.of(context).textTheme.bodySmall,
+                softWrap: true,
               ),
-            ),
+            ],
+          ),
+        ),
+        TabBar(
+          controller: _tabController,
+          isScrollable: true,
+          tabs: [
+            for (final category in _categories)
+              Tab(
+                child: Text(
+                  ShopCatalog.categoryLabel(l10n, category),
+                  softWrap: false,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
           ],
         ),
-      ),
+        Expanded(
+          child: TabBarView(
+            controller: _tabController,
+            children: [
+              for (final category in _categories)
+                _ItemList(
+                  items: ShopCatalog.byCategory(category),
+                  ownedIds: state.ownedItemIds,
+                  equippedId: state.equippedId(category),
+                  onAction: _onItemAction,
+                ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

@@ -130,5 +130,65 @@
   "itemBgCastle": "Castle",
   "itemPetCat": "Cat",
   "itemPetDog": "Dog",
-  "itemPetDragon": "Dragon"
+  "itemPetDragon": "Dragon",
+  "characterPaneShop": "Shop",
+  "characterPanePersonality": "Personality",
+  "rewardAlreadyClaimed": "You already claimed today's reward",
+  "axisRelation": "Relation",
+  "axisEmotion": "Emotion",
+  "axisAction": "Action",
+  "unspentPointsLabel": "Unspent points {points}",
+  "@unspentPointsLabel": {
+    "placeholders": {
+      "points": {
+        "type": "int"
+      }
+    }
+  },
+  "allocatePointPlusOne": "+1",
+  "titleTierLabel": "Tier {tier}",
+  "@titleTierLabel": {
+    "placeholders": {
+      "tier": {
+        "type": "int"
+      }
+    }
+  },
+  "titleStatusLocked": "Locked",
+  "titleStatusAvailable": "Available",
+  "titleStatusOwned": "Owned",
+  "titleStatusEquipped": "Equipped",
+  "titleCostHeading": "Required points",
+  "titleCostLine": "{axis}: {need} (have {have}) · {status}",
+  "@titleCostLine": {
+    "placeholders": {
+      "axis": {
+        "type": "String"
+      },
+      "need": {
+        "type": "int"
+      },
+      "have": {
+        "type": "int"
+      },
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "titleCostMet": "OK",
+  "titleCostShort": "Short",
+  "titleRequiresHeading": "Prerequisites",
+  "titleRequireLine": "{name} · {status}",
+  "@titleRequireLine": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "titleCannotBuy": "Purchase requirements not met"
 }

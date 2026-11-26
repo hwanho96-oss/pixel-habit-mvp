@@ -96,6 +96,22 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void _showCompleteSnackBar({
+    required CompleteOutcome outcome,
+    required bool welcomeBack,
+    required int gold,
+  }) {
+    if (outcome == CompleteOutcome.none) return;
+    final l10n = AppLocalizations.of(context)!;
+    if (outcome == CompleteOutcome.alreadyRewarded) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.rewardAlreadyClaimed)),
+      );
+      return;
+    }
+    _showPraiseSnackBar(welcomeBack: welcomeBack, gold: gold);
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -118,6 +134,15 @@ class _HomeScreenState extends State<HomeScreen> {
                     adventureLabel:
                         l10n.adventureDaysCount(state.adventureDays),
                     equipped: state.equipped,
+                    equippedTitleName: () {
+                      final id = state.equippedTitleId;
+                      if (id == null) return null;
+                      final title = state.titleById(id);
+                      if (title == null) return null;
+                      return title.localizedName(
+                        Localizations.localeOf(context).languageCode,
+                      );
+                    }(),
                   ),
                 ),
                 Padding(
@@ -175,10 +200,12 @@ class _HomeScreenState extends State<HomeScreen> {
                           onToggleDone: (routine, checked) async {
                             final welcomeBack =
                                 _isAwayTwoOrMoreDays(state.lastCheckDateKey);
-                            await state.toggleRoutineDone(routine.id);
+                            final outcome =
+                                await state.toggleRoutineDone(routine.id);
                             if (!mounted) return;
                             if (checked) {
-                              _showPraiseSnackBar(
+                              _showCompleteSnackBar(
+                                outcome: outcome,
                                 welcomeBack: welcomeBack,
                                 gold: Economy.routineCompleteGold,
                               );
@@ -187,18 +214,17 @@ class _HomeScreenState extends State<HomeScreen> {
                           onToggleChecklist: (routine, itemIndex) async {
                             final welcomeBack =
                                 _isAwayTwoOrMoreDays(state.lastCheckDateKey);
-                            final becameComplete =
+                            final outcome =
                                 await state.toggleRoutineChecklistItem(
                               routine.id,
                               itemIndex,
                             );
                             if (!mounted) return;
-                            if (becameComplete) {
-                              _showPraiseSnackBar(
-                                welcomeBack: welcomeBack,
-                                gold: Economy.routineCompleteGold,
-                              );
-                            }
+                            _showCompleteSnackBar(
+                              outcome: outcome,
+                              welcomeBack: welcomeBack,
+                              gold: Economy.routineCompleteGold,
+                            );
                           },
                           onLongPress: (routine) {
                             _confirmDelete(
@@ -227,10 +253,12 @@ class _HomeScreenState extends State<HomeScreen> {
                           onToggleDone: (todo, checked) async {
                             final welcomeBack =
                                 _isAwayTwoOrMoreDays(state.lastCheckDateKey);
-                            await state.toggleTodoDone(todo.id);
+                            final outcome =
+                                await state.toggleTodoDone(todo.id);
                             if (!mounted) return;
                             if (checked) {
-                              _showPraiseSnackBar(
+                              _showCompleteSnackBar(
+                                outcome: outcome,
                                 welcomeBack: welcomeBack,
                                 gold: Economy.todoCompleteGold,
                               );
@@ -239,18 +267,17 @@ class _HomeScreenState extends State<HomeScreen> {
                           onToggleChecklist: (todo, itemIndex) async {
                             final welcomeBack =
                                 _isAwayTwoOrMoreDays(state.lastCheckDateKey);
-                            final becameComplete =
+                            final outcome =
                                 await state.toggleTodoChecklistItem(
                               todo.id,
                               itemIndex,
                             );
                             if (!mounted) return;
-                            if (becameComplete) {
-                              _showPraiseSnackBar(
-                                welcomeBack: welcomeBack,
-                                gold: Economy.todoCompleteGold,
-                              );
-                            }
+                            _showCompleteSnackBar(
+                              outcome: outcome,
+                              welcomeBack: welcomeBack,
+                              gold: Economy.todoCompleteGold,
+                            );
                           },
                           onLongPress: (todo) {
                             _confirmDelete(
@@ -277,11 +304,13 @@ class _HomeCharacterArea extends StatelessWidget {
     required this.goldLabel,
     required this.adventureLabel,
     required this.equipped,
+    required this.equippedTitleName,
   });
 
   final String goldLabel;
   final String adventureLabel;
   final Map<String, String> equipped;
+  final String? equippedTitleName;
 
   String? _labelFor(AppLocalizations l10n, ShopCategory category) {
     final id = equipped[category.name];
@@ -308,10 +337,29 @@ class _HomeCharacterArea extends StatelessWidget {
       children: [
         ColoredBox(color: bgColor),
         Center(
-          child: Icon(
-            Icons.person,
-            size: 64,
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.person,
+                size: 64,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+              if (equippedTitleName != null) ...[
+                const SizedBox(height: 4),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(
+                    equippedTitleName!,
+                    style: Theme.of(context).textTheme.labelMedium,
+                    softWrap: true,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
+            ],
           ),
         ),
         Positioned(

@@ -130,5 +130,65 @@
   "itemBgCastle": "城",
   "itemPetCat": "猫",
   "itemPetDog": "犬",
-  "itemPetDragon": "ドラゴン"
+  "itemPetDragon": "ドラゴン",
+  "characterPaneShop": "ショップ",
+  "characterPanePersonality": "性格",
+  "rewardAlreadyClaimed": "今日はすでに報酬を受け取りました",
+  "axisRelation": "関係",
+  "axisEmotion": "感情",
+  "axisAction": "行動",
+  "unspentPointsLabel": "未配分ポイント {points}",
+  "@unspentPointsLabel": {
+    "placeholders": {
+      "points": {
+        "type": "int"
+      }
+    }
+  },
+  "allocatePointPlusOne": "+1",
+  "titleTierLabel": "ティア {tier}",
+  "@titleTierLabel": {
+    "placeholders": {
+      "tier": {
+        "type": "int"
+      }
+    }
+  },
+  "titleStatusLocked": "ロック",
+  "titleStatusAvailable": "購入可能",
+  "titleStatusOwned": "所持",
+  "titleStatusEquipped": "装備中",
+  "titleCostHeading": "必要ポイント",
+  "titleCostLine": "{axis}: {need}（所持 {have}）· {status}",
+  "@titleCostLine": {
+    "placeholders": {
+      "axis": {
+        "type": "String"
+      },
+      "need": {
+        "type": "int"
+      },
+      "have": {
+        "type": "int"
+      },
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "titleCostMet": "充足",
+  "titleCostShort": "不足",
+  "titleRequiresHeading": "前提称号",
+  "titleRequireLine": "{name} · {status}",
+  "@titleRequireLine": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "titleCannotBuy": "購入条件を満たしていません"
 }

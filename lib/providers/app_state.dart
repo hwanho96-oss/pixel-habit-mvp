@@ -4,9 +4,19 @@ import '../data/day_clock.dart';
 import '../data/economy.dart';
 import '../data/shop_items.dart';
 import '../data/storage.dart';
+import '../data/title_repository.dart';
 import '../models/completion_record.dart';
+import '../models/reward_record.dart';
 import '../models/routine.dart';
+import '../models/title_def.dart';
 import '../models/todo.dart';
+
+/// Result of toggling a routine/todo to complete (or uncomplete).
+enum CompleteOutcome {
+  none,
+  rewarded,
+  alreadyRewarded,
+}
 
 class AppState extends ChangeNotifier {
   AppState(this._storage);
@@ -17,11 +27,19 @@ class AppState extends ChangeNotifier {
   List<Todo> todos = [];
   List<String> customTags = [];
   List<CompletionRecord> completionLog = [];
+  List<RewardRecord> rewardLog = [];
   int gold = 0;
   int unspentPoints = 0;
   Set<String> ownedItemIds = {};
   /// Category name → equipped item id.
   Map<String, String> equipped = {};
+  /// Axis name → allocated points.
+  Map<String, int> axisPoints = {
+    for (final axis in AxisId.values) axis.name: 0,
+  };
+  List<TitleDef> titles = [];
+  Set<String> ownedTitleIds = {};
+  String? equippedTitleId;
 
   Future<void> load() async {
     routines = await _storage.loadRoutines();
@@ -29,10 +47,84 @@ class AppState extends ChangeNotifier {
     gold = await _storage.loadGold();
     customTags = await _storage.loadCustomTags();
     completionLog = await _storage.loadCompletionLog();
+    rewardLog = await _storage.loadRewardLog();
     unspentPoints = await _storage.loadPoints();
     ownedItemIds = await _storage.loadOwnedItems();
     equipped = await _storage.loadEquipped();
+    final savedAxis = await _storage.loadAxisPoints();
+    axisPoints = {
+      for (final axis in AxisId.values) axis.name: savedAxis[axis.name] ?? 0,
+    };
+    titles = await TitleRepository.load();
+    ownedTitleIds = await _storage.loadOwnedTitles();
+    equippedTitleId = await _storage.loadEquippedTitle();
     notifyListeners();
+  }
+
+  int axisPointOf(AxisId axis) => axisPoints[axis.name] ?? 0;
+
+  TitleDef? titleById(String id) {
+    for (final title in titles) {
+      if (title.id == id) return title;
+    }
+    return null;
+  }
+
+  bool ownsTitle(String id) => ownedTitleIds.contains(id);
+
+  bool meetsTitleRequires(TitleDef title) {
+    return title.requires.every(ownedTitleIds.contains);
+  }
+
+  bool canAffordTitle(TitleDef title) {
+    for (final axis in AxisId.values) {
+      if (axisPointOf(axis) < title.costOf(axis)) return false;
+    }
+    return true;
+  }
+
+  Future<void> allocatePoint(AxisId axis) async {
+    if (unspentPoints <= 0) return;
+    unspentPoints -= 1;
+    _clampPoints();
+    axisPoints = {
+      ...axisPoints,
+      axis.name: axisPointOf(axis) + 1,
+    };
+    notifyListeners();
+    await _persist();
+  }
+
+  /// Buys a title if prerequisites and axis costs are met. Owned titles stay owned.
+  Future<bool> buyTitle(String id) async {
+    final title = titleById(id);
+    if (title == null) return false;
+    if (ownedTitleIds.contains(id)) return false;
+    if (!meetsTitleRequires(title)) return false;
+    if (!canAffordTitle(title)) return false;
+
+    final nextAxis = Map<String, int>.from(axisPoints);
+    for (final axis in AxisId.values) {
+      final cost = title.costOf(axis);
+      if (cost <= 0) continue;
+      nextAxis[axis.name] = (nextAxis[axis.name] ?? 0) - cost;
+    }
+    axisPoints = nextAxis;
+    ownedTitleIds = {...ownedTitleIds, id};
+    notifyListeners();
+    await _persist();
+    return true;
+  }
+
+  Future<void> equipTitle(String id) async {
+    if (!ownedTitleIds.contains(id)) return;
+    if (equippedTitleId == id) {
+      equippedTitleId = null;
+    } else {
+      equippedTitleId = id;
+    }
+    notifyListeners();
+    await _persist();
   }
 
   bool ownsItem(String id) => ownedItemIds.contains(id);
@@ -150,13 +242,18 @@ class AppState extends ChangeNotifier {
     return done.where((i) => i >= 0 && i < length).toList()..sort();
   }
 
-  /// Returns true when the item just became complete (for praise SnackBar).
-  Future<bool> toggleRoutineChecklistItem(String id, int itemIndex) async {
+  /// Outcome when the item just became complete (for SnackBar).
+  Future<CompleteOutcome> toggleRoutineChecklistItem(
+    String id,
+    int itemIndex,
+  ) async {
     final index = routines.indexWhere((r) => r.id == id);
-    if (index < 0) return false;
+    if (index < 0) return CompleteOutcome.none;
 
     final routine = routines[index];
-    if (itemIndex < 0 || itemIndex >= routine.checklist.length) return false;
+    if (itemIndex < 0 || itemIndex >= routine.checklist.length) {
+      return CompleteOutcome.none;
+    }
 
     final today = DayClock.todayKey();
     final doneSet = effectiveRoutineChecklistDone(routine).toSet();
@@ -176,26 +273,30 @@ class AppState extends ChangeNotifier {
     );
 
     if (allChecked && !wasComplete) {
-      await toggleRoutineDone(id);
-      return true;
+      return toggleRoutineDone(id);
     }
     if (!allChecked && wasComplete) {
       await toggleRoutineDone(id);
-      return false;
+      return CompleteOutcome.none;
     }
 
     notifyListeners();
     await _persist();
-    return false;
+    return CompleteOutcome.none;
   }
 
-  /// Returns true when the item just became complete (for praise SnackBar).
-  Future<bool> toggleTodoChecklistItem(String id, int itemIndex) async {
+  /// Outcome when the item just became complete (for SnackBar).
+  Future<CompleteOutcome> toggleTodoChecklistItem(
+    String id,
+    int itemIndex,
+  ) async {
     final index = todos.indexWhere((t) => t.id == id);
-    if (index < 0) return false;
+    if (index < 0) return CompleteOutcome.none;
 
     final todo = todos[index];
-    if (itemIndex < 0 || itemIndex >= todo.checklist.length) return false;
+    if (itemIndex < 0 || itemIndex >= todo.checklist.length) {
+      return CompleteOutcome.none;
+    }
 
     final doneSet = effectiveTodoChecklistDone(todo).toSet();
     if (doneSet.contains(itemIndex)) {
@@ -210,17 +311,16 @@ class AppState extends ChangeNotifier {
     todos[index] = todo.copyWith(checklistDone: nextDone);
 
     if (allChecked && !wasComplete) {
-      await toggleTodoDone(id);
-      return true;
+      return toggleTodoDone(id);
     }
     if (!allChecked && wasComplete) {
       await toggleTodoDone(id);
-      return false;
+      return CompleteOutcome.none;
     }
 
     notifyListeners();
     await _persist();
-    return false;
+    return CompleteOutcome.none;
   }
 
   int get totalCompletions => completionLog.length;
@@ -259,6 +359,18 @@ class AppState extends ChangeNotifier {
         .any((r) => r.itemId == itemId && r.dateKey == dateKey);
   }
 
+  bool _hasRewardFor(String itemId, String dateKey) {
+    return rewardLog.any((r) => r.itemId == itemId && r.dateKey == dateKey);
+  }
+
+  void _addReward(String itemId, String dateKey) {
+    if (_hasRewardFor(itemId, dateKey)) return;
+    rewardLog = [
+      ...rewardLog,
+      RewardRecord(itemId: itemId, dateKey: dateKey),
+    ];
+  }
+
   void _addCompletionRecord({
     required String type,
     required String itemId,
@@ -292,75 +404,90 @@ class AppState extends ChangeNotifier {
       _storage.saveTodos(todos),
       _storage.saveGold(gold),
       _storage.saveCompletionLog(completionLog),
+      _storage.saveRewardLog(rewardLog),
       _storage.savePoints(unspentPoints),
       _storage.saveOwnedItems(ownedItemIds),
       _storage.saveEquipped(equipped),
+      _storage.saveAxisPoints(axisPoints),
+      _storage.saveOwnedTitles(ownedTitleIds),
+      _storage.saveEquippedTitle(equippedTitleId),
     ]);
   }
 
-  Future<void> toggleRoutineDone(String id) async {
+  Future<CompleteOutcome> toggleRoutineDone(String id) async {
     final index = routines.indexWhere((r) => r.id == id);
-    if (index < 0) return;
+    if (index < 0) return CompleteOutcome.none;
 
     final routine = routines[index];
     final done = isRoutineDoneToday(routine);
     final today = DayClock.todayKey();
 
     if (done) {
-      gold -= Economy.routineCompleteGold;
-      _clampGold();
-      unspentPoints -= Economy.completePoint;
-      _clampPoints();
+      // Uncheck: drop completion only — keep gold/points/rewardLog.
       _removeCompletionRecord(routine.id, today);
       routines[index] = routine.copyWith(clearLastDoneDate: true);
-    } else {
-      gold += Economy.routineCompleteGold;
-      unspentPoints += Economy.completePoint;
-      _addCompletionRecord(
-        type: 'routine',
-        itemId: routine.id,
-        title: routine.title,
-        tags: routine.tags,
-      );
-      routines[index] =
-          routine.copyWith(lastDoneDate: today);
+      notifyListeners();
+      await _persist();
+      return CompleteOutcome.none;
     }
 
+    final alreadyRewarded = _hasRewardFor(routine.id, today);
+    if (!alreadyRewarded) {
+      gold += Economy.routineCompleteGold;
+      unspentPoints += Economy.completePoint;
+      _addReward(routine.id, today);
+    }
+    _addCompletionRecord(
+      type: 'routine',
+      itemId: routine.id,
+      title: routine.title,
+      tags: routine.tags,
+    );
+    routines[index] = routine.copyWith(lastDoneDate: today);
     notifyListeners();
     await _persist();
+    return alreadyRewarded
+        ? CompleteOutcome.alreadyRewarded
+        : CompleteOutcome.rewarded;
   }
 
-  Future<void> toggleTodoDone(String id) async {
+  Future<CompleteOutcome> toggleTodoDone(String id) async {
     final index = todos.indexWhere((t) => t.id == id);
-    if (index < 0) return;
+    if (index < 0) return CompleteOutcome.none;
 
     final todo = todos[index];
     final today = DayClock.todayKey();
 
     if (todo.done) {
-      gold -= Economy.todoCompleteGold;
-      _clampGold();
-      unspentPoints -= Economy.completePoint;
-      _clampPoints();
+      // Uncheck: drop completion only — keep gold/points/rewardLog.
       _removeCompletionRecord(todo.id, today);
       todos[index] = todo.copyWith(done: false, clearDoneDate: true);
-    } else {
-      gold += Economy.todoCompleteGold;
-      unspentPoints += Economy.completePoint;
-      _addCompletionRecord(
-        type: 'todo',
-        itemId: todo.id,
-        title: todo.title,
-        tags: todo.tags,
-      );
-      todos[index] = todo.copyWith(
-        done: true,
-        doneDate: today,
-      );
+      notifyListeners();
+      await _persist();
+      return CompleteOutcome.none;
     }
 
+    final alreadyRewarded = _hasRewardFor(todo.id, today);
+    if (!alreadyRewarded) {
+      gold += Economy.todoCompleteGold;
+      unspentPoints += Economy.completePoint;
+      _addReward(todo.id, today);
+    }
+    _addCompletionRecord(
+      type: 'todo',
+      itemId: todo.id,
+      title: todo.title,
+      tags: todo.tags,
+    );
+    todos[index] = todo.copyWith(
+      done: true,
+      doneDate: today,
+    );
     notifyListeners();
     await _persist();
+    return alreadyRewarded
+        ? CompleteOutcome.alreadyRewarded
+        : CompleteOutcome.rewarded;
   }
 
   Future<void> addRoutine(Routine routine) async {

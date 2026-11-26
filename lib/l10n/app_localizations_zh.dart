@@ -260,4 +260,72 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get itemPetDragon => '龙';
+
+  @override
+  String get characterPaneShop => '商店';
+
+  @override
+  String get characterPanePersonality => '性格';
+
+  @override
+  String get rewardAlreadyClaimed => '今天已经领取过奖励了';
+
+  @override
+  String get axisRelation => '关系';
+
+  @override
+  String get axisEmotion => '情感';
+
+  @override
+  String get axisAction => '行动';
+
+  @override
+  String unspentPointsLabel(int points) {
+    return '未分配点数 $points';
+  }
+
+  @override
+  String get allocatePointPlusOne => '+1';
+
+  @override
+  String titleTierLabel(int tier) {
+    return '等级 $tier';
+  }
+
+  @override
+  String get titleStatusLocked => '锁定';
+
+  @override
+  String get titleStatusAvailable => '可购买';
+
+  @override
+  String get titleStatusOwned => '已拥有';
+
+  @override
+  String get titleStatusEquipped => '装备中';
+
+  @override
+  String get titleCostHeading => '所需点数';
+
+  @override
+  String titleCostLine(String axis, int need, int have, String status) {
+    return '$axis: $need（拥有 $have）· $status';
+  }
+
+  @override
+  String get titleCostMet => '满足';
+
+  @override
+  String get titleCostShort => '不足';
+
+  @override
+  String get titleRequiresHeading => '前置称号';
+
+  @override
+  String titleRequireLine(String name, String status) {
+    return '$name · $status';
+  }
+
+  @override
+  String get titleCannotBuy => '未满足购买条件';
 }

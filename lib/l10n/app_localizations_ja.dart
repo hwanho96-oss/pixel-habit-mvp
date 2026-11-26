@@ -260,4 +260,72 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get itemPetDragon => 'ドラゴン';
+
+  @override
+  String get characterPaneShop => 'ショップ';
+
+  @override
+  String get characterPanePersonality => '性格';
+
+  @override
+  String get rewardAlreadyClaimed => '今日はすでに報酬を受け取りました';
+
+  @override
+  String get axisRelation => '関係';
+
+  @override
+  String get axisEmotion => '感情';
+
+  @override
+  String get axisAction => '行動';
+
+  @override
+  String unspentPointsLabel(int points) {
+    return '未配分ポイント $points';
+  }
+
+  @override
+  String get allocatePointPlusOne => '+1';
+
+  @override
+  String titleTierLabel(int tier) {
+    return 'ティア $tier';
+  }
+
+  @override
+  String get titleStatusLocked => 'ロック';
+
+  @override
+  String get titleStatusAvailable => '購入可能';
+
+  @override
+  String get titleStatusOwned => '所持';
+
+  @override
+  String get titleStatusEquipped => '装備中';
+
+  @override
+  String get titleCostHeading => '必要ポイント';
+
+  @override
+  String titleCostLine(String axis, int need, int have, String status) {
+    return '$axis: $need（所持 $have）· $status';
+  }
+
+  @override
+  String get titleCostMet => '充足';
+
+  @override
+  String get titleCostShort => '不足';
+
+  @override
+  String get titleRequiresHeading => '前提称号';
+
+  @override
+  String titleRequireLine(String name, String status) {
+    return '$name · $status';
+  }
+
+  @override
+  String get titleCannotBuy => '購入条件を満たしていません';
 }

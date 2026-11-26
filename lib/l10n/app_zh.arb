@@ -130,5 +130,65 @@
   "itemBgCastle": "城堡",
   "itemPetCat": "猫",
   "itemPetDog": "狗",
-  "itemPetDragon": "龙"
+  "itemPetDragon": "龙",
+  "characterPaneShop": "商店",
+  "characterPanePersonality": "性格",
+  "rewardAlreadyClaimed": "今天已经领取过奖励了",
+  "axisRelation": "关系",
+  "axisEmotion": "情感",
+  "axisAction": "行动",
+  "unspentPointsLabel": "未分配点数 {points}",
+  "@unspentPointsLabel": {
+    "placeholders": {
+      "points": {
+        "type": "int"
+      }
+    }
+  },
+  "allocatePointPlusOne": "+1",
+  "titleTierLabel": "等级 {tier}",
+  "@titleTierLabel": {
+    "placeholders": {
+      "tier": {
+        "type": "int"
+      }
+    }
+  },
+  "titleStatusLocked": "锁定",
+  "titleStatusAvailable": "可购买",
+  "titleStatusOwned": "已拥有",
+  "titleStatusEquipped": "装备中",
+  "titleCostHeading": "所需点数",
+  "titleCostLine": "{axis}: {need}（拥有 {have}）· {status}",
+  "@titleCostLine": {
+    "placeholders": {
+      "axis": {
+        "type": "String"
+      },
+      "need": {
+        "type": "int"
+      },
+      "have": {
+        "type": "int"
+      },
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "titleCostMet": "满足",
+  "titleCostShort": "不足",
+  "titleRequiresHeading": "前置称号",
+  "titleRequireLine": "{name} · {status}",
+  "@titleRequireLine": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "titleCannotBuy": "未满足购买条件"
 }

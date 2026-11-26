@@ -260,4 +260,72 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get itemPetDragon => '드래곤';
+
+  @override
+  String get characterPaneShop => '상점';
+
+  @override
+  String get characterPanePersonality => '성격';
+
+  @override
+  String get rewardAlreadyClaimed => '오늘은 이미 보상을 받았어요';
+
+  @override
+  String get axisRelation => '관계';
+
+  @override
+  String get axisEmotion => '감정';
+
+  @override
+  String get axisAction => '행동';
+
+  @override
+  String unspentPointsLabel(int points) {
+    return '미분배 포인트 $points';
+  }
+
+  @override
+  String get allocatePointPlusOne => '+1';
+
+  @override
+  String titleTierLabel(int tier) {
+    return '티어 $tier';
+  }
+
+  @override
+  String get titleStatusLocked => '잠김';
+
+  @override
+  String get titleStatusAvailable => '구매 가능';
+
+  @override
+  String get titleStatusOwned => '보유';
+
+  @override
+  String get titleStatusEquipped => '장착 중';
+
+  @override
+  String get titleCostHeading => '필요 포인트';
+
+  @override
+  String titleCostLine(String axis, int need, int have, String status) {
+    return '$axis: $need (보유 $have) · $status';
+  }
+
+  @override
+  String get titleCostMet => '충족';
+
+  @override
+  String get titleCostShort => '부족';
+
+  @override
+  String get titleRequiresHeading => '선행 칭호';
+
+  @override
+  String titleRequireLine(String name, String status) {
+    return '$name · $status';
+  }
+
+  @override
+  String get titleCannotBuy => '구매 조건을 충족하지 않습니다';
 }

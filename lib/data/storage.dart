@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/completion_record.dart';
+import '../models/reward_record.dart';
 import '../models/routine.dart';
 import '../models/todo.dart';
 
@@ -15,6 +16,10 @@ class AppStorage {
   static const _pointsKey = 'points_v1';
   static const _ownedItemsKey = 'owned_items_v1';
   static const _equippedKey = 'equipped_v1';
+  static const _rewardLogKey = 'reward_log_v1';
+  static const _axisPointsKey = 'axis_points_v1';
+  static const _ownedTitlesKey = 'owned_titles_v1';
+  static const _equippedTitleKey = 'equipped_title_v1';
 
   Future<List<Routine>> loadRoutines() async {
     final prefs = await SharedPreferences.getInstance();
@@ -120,5 +125,61 @@ class AppStorage {
   Future<void> saveEquipped(Map<String, String> equipped) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_equippedKey, jsonEncode(equipped));
+  }
+
+  Future<List<RewardRecord>> loadRewardLog() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_rewardLogKey);
+    if (raw == null) return [];
+    final list = jsonDecode(raw) as List<dynamic>;
+    return list
+        .map((e) => RewardRecord.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<void> saveRewardLog(List<RewardRecord> records) async {
+    final prefs = await SharedPreferences.getInstance();
+    final encoded = jsonEncode(records.map((e) => e.toJson()).toList());
+    await prefs.setString(_rewardLogKey, encoded);
+  }
+
+  Future<Map<String, int>> loadAxisPoints() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_axisPointsKey);
+    if (raw == null) return {};
+    final map = jsonDecode(raw) as Map<String, dynamic>;
+    return map.map((k, v) => MapEntry(k, (v as num).toInt()));
+  }
+
+  Future<void> saveAxisPoints(Map<String, int> points) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_axisPointsKey, jsonEncode(points));
+  }
+
+  Future<Set<String>> loadOwnedTitles() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_ownedTitlesKey);
+    if (raw == null) return {};
+    final list = jsonDecode(raw) as List<dynamic>;
+    return list.map((e) => e as String).toSet();
+  }
+
+  Future<void> saveOwnedTitles(Set<String> ids) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_ownedTitlesKey, jsonEncode(ids.toList()));
+  }
+
+  Future<String?> loadEquippedTitle() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_equippedTitleKey);
+  }
+
+  Future<void> saveEquippedTitle(String? id) async {
+    final prefs = await SharedPreferences.getInstance();
+    if (id == null) {
+      await prefs.remove(_equippedTitleKey);
+    } else {
+      await prefs.setString(_equippedTitleKey, id);
+    }
   }
 }

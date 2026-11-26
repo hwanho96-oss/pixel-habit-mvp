@@ -581,6 +581,126 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'드래곤'**
   String get itemPetDragon;
+
+  /// No description provided for @characterPaneShop.
+  ///
+  /// In ko, this message translates to:
+  /// **'상점'**
+  String get characterPaneShop;
+
+  /// No description provided for @characterPanePersonality.
+  ///
+  /// In ko, this message translates to:
+  /// **'성격'**
+  String get characterPanePersonality;
+
+  /// No description provided for @rewardAlreadyClaimed.
+  ///
+  /// In ko, this message translates to:
+  /// **'오늘은 이미 보상을 받았어요'**
+  String get rewardAlreadyClaimed;
+
+  /// No description provided for @axisRelation.
+  ///
+  /// In ko, this message translates to:
+  /// **'관계'**
+  String get axisRelation;
+
+  /// No description provided for @axisEmotion.
+  ///
+  /// In ko, this message translates to:
+  /// **'감정'**
+  String get axisEmotion;
+
+  /// No description provided for @axisAction.
+  ///
+  /// In ko, this message translates to:
+  /// **'행동'**
+  String get axisAction;
+
+  /// No description provided for @unspentPointsLabel.
+  ///
+  /// In ko, this message translates to:
+  /// **'미분배 포인트 {points}'**
+  String unspentPointsLabel(int points);
+
+  /// No description provided for @allocatePointPlusOne.
+  ///
+  /// In ko, this message translates to:
+  /// **'+1'**
+  String get allocatePointPlusOne;
+
+  /// No description provided for @titleTierLabel.
+  ///
+  /// In ko, this message translates to:
+  /// **'티어 {tier}'**
+  String titleTierLabel(int tier);
+
+  /// No description provided for @titleStatusLocked.
+  ///
+  /// In ko, this message translates to:
+  /// **'잠김'**
+  String get titleStatusLocked;
+
+  /// No description provided for @titleStatusAvailable.
+  ///
+  /// In ko, this message translates to:
+  /// **'구매 가능'**
+  String get titleStatusAvailable;
+
+  /// No description provided for @titleStatusOwned.
+  ///
+  /// In ko, this message translates to:
+  /// **'보유'**
+  String get titleStatusOwned;
+
+  /// No description provided for @titleStatusEquipped.
+  ///
+  /// In ko, this message translates to:
+  /// **'장착 중'**
+  String get titleStatusEquipped;
+
+  /// No description provided for @titleCostHeading.
+  ///
+  /// In ko, this message translates to:
+  /// **'필요 포인트'**
+  String get titleCostHeading;
+
+  /// No description provided for @titleCostLine.
+  ///
+  /// In ko, this message translates to:
+  /// **'{axis}: {need} (보유 {have}) · {status}'**
+  String titleCostLine(String axis, int need, int have, String status);
+
+  /// No description provided for @titleCostMet.
+  ///
+  /// In ko, this message translates to:
+  /// **'충족'**
+  String get titleCostMet;
+
+  /// No description provided for @titleCostShort.
+  ///
+  /// In ko, this message translates to:
+  /// **'부족'**
+  String get titleCostShort;
+
+  /// No description provided for @titleRequiresHeading.
+  ///
+  /// In ko, this message translates to:
+  /// **'선행 칭호'**
+  String get titleRequiresHeading;
+
+  /// No description provided for @titleRequireLine.
+  ///
+  /// In ko, this message translates to:
+  /// **'{name} · {status}'**
+  String titleRequireLine(String name, String status);
+
+  /// No description provided for @titleCannotBuy.
+  ///
+  /// In ko, this message translates to:
+  /// **'구매 조건을 충족하지 않습니다'**
+  String get titleCannotBuy;
 }
 
 class _AppLocalizationsDelegate

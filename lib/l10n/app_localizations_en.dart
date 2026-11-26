@@ -260,4 +260,72 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get itemPetDragon => 'Dragon';
+
+  @override
+  String get characterPaneShop => 'Shop';
+
+  @override
+  String get characterPanePersonality => 'Personality';
+
+  @override
+  String get rewardAlreadyClaimed => 'You already claimed today\'s reward';
+
+  @override
+  String get axisRelation => 'Relation';
+
+  @override
+  String get axisEmotion => 'Emotion';
+
+  @override
+  String get axisAction => 'Action';
+
+  @override
+  String unspentPointsLabel(int points) {
+    return 'Unspent points $points';
+  }
+
+  @override
+  String get allocatePointPlusOne => '+1';
+
+  @override
+  String titleTierLabel(int tier) {
+    return 'Tier $tier';
+  }
+
+  @override
+  String get titleStatusLocked => 'Locked';
+
+  @override
+  String get titleStatusAvailable => 'Available';
+
+  @override
+  String get titleStatusOwned => 'Owned';
+
+  @override
+  String get titleStatusEquipped => 'Equipped';
+
+  @override
+  String get titleCostHeading => 'Required points';
+
+  @override
+  String titleCostLine(String axis, int need, int have, String status) {
+    return '$axis: $need (have $have) · $status';
+  }
+
+  @override
+  String get titleCostMet => 'OK';
+
+  @override
+  String get titleCostShort => 'Short';
+
+  @override
+  String get titleRequiresHeading => 'Prerequisites';
+
+  @override
+  String titleRequireLine(String name, String status) {
+    return '$name · $status';
+  }
+
+  @override
+  String get titleCannotBuy => 'Purchase requirements not met';
 }

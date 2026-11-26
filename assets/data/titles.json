@@ -1,0 +1,80 @@
+[
+  {
+    "id": "single_relation",
+    "name": {
+      "ko": "관계의 씨앗",
+      "en": "Seed of Relation",
+      "ja": "関係の種",
+      "zh": "关系之种"
+    },
+    "kind": "single",
+    "tier": 1,
+    "cost": { "relation": 3, "emotion": 0, "action": 0 },
+    "requires": []
+  },
+  {
+    "id": "single_emotion",
+    "name": {
+      "ko": "감정의 씨앗",
+      "en": "Seed of Emotion",
+      "ja": "感情の種",
+      "zh": "情感之种"
+    },
+    "kind": "single",
+    "tier": 1,
+    "cost": { "relation": 0, "emotion": 3, "action": 0 },
+    "requires": []
+  },
+  {
+    "id": "single_action",
+    "name": {
+      "ko": "행동의 씨앗",
+      "en": "Seed of Action",
+      "ja": "行動の種",
+      "zh": "行动之种"
+    },
+    "kind": "single",
+    "tier": 1,
+    "cost": { "relation": 0, "emotion": 0, "action": 3 },
+    "requires": []
+  },
+  {
+    "id": "combo_relation_emotion",
+    "name": {
+      "ko": "공감의 다리",
+      "en": "Bridge of Empathy",
+      "ja": "共感の橋",
+      "zh": "共情之桥"
+    },
+    "kind": "combo",
+    "tier": 2,
+    "cost": { "relation": 3, "emotion": 3, "action": 0 },
+    "requires": ["single_relation", "single_emotion"]
+  },
+  {
+    "id": "combo_emotion_action",
+    "name": {
+      "ko": "열정의 날개",
+      "en": "Wings of Passion",
+      "ja": "情熱の翼",
+      "zh": "热情之翼"
+    },
+    "kind": "combo",
+    "tier": 2,
+    "cost": { "relation": 0, "emotion": 3, "action": 3 },
+    "requires": ["single_emotion", "single_action"]
+  },
+  {
+    "id": "final_harmony",
+    "name": {
+      "ko": "조화의 별",
+      "en": "Star of Harmony",
+      "ja": "調和の星",
+      "zh": "和谐之星"
+    },
+    "kind": "final",
+    "tier": 3,
+    "cost": { "relation": 5, "emotion": 5, "action": 5 },
+    "requires": ["combo_relation_emotion", "combo_emotion_action"]
+  }
+]
