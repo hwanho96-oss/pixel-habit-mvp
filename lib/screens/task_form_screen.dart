@@ -3,103 +3,61 @@ import 'package:provider/provider.dart';
 
 import '../data/day_clock.dart';
 import '../l10n/app_localizations.dart';
-import '../models/measure_kind.dart';
-import '../models/routine.dart';
-import '../models/todo.dart';
+import '../models/task.dart';
 import '../providers/app_state.dart';
 import '../widgets/tag_chips.dart';
 import '../widgets/tag_picker_sheet.dart';
 
-enum FormItemType { routine, todo }
+class TaskFormArgs {
+  const TaskFormArgs({this.task});
 
-class ItemFormArgs {
-  const ItemFormArgs({
-    required this.type,
-    this.routine,
-    this.todo,
-  });
-
-  final FormItemType type;
-  final Routine? routine;
-  final Todo? todo;
+  final Task? task;
 }
 
-class ItemFormScreen extends StatefulWidget {
-  const ItemFormScreen({
+class TaskFormScreen extends StatefulWidget {
+  const TaskFormScreen({
     super.key,
-    required this.type,
-    this.initialRoutine,
-    this.initialTodo,
+    this.initialTask,
   });
 
-  final FormItemType type;
-  final Routine? initialRoutine;
-  final Todo? initialTodo;
+  final Task? initialTask;
 
-  factory ItemFormScreen.fromArgs(ItemFormArgs args) {
-    return ItemFormScreen(
-      type: args.type,
-      initialRoutine: args.routine,
-      initialTodo: args.todo,
-    );
+  factory TaskFormScreen.fromArgs(TaskFormArgs args) {
+    return TaskFormScreen(initialTask: args.task);
   }
 
   @override
-  State<ItemFormScreen> createState() => _ItemFormScreenState();
+  State<TaskFormScreen> createState() => _TaskFormScreenState();
 }
 
-class _ItemFormScreenState extends State<ItemFormScreen> {
+class _TaskFormScreenState extends State<TaskFormScreen> {
   late final TextEditingController _titleController;
   late final TextEditingController _checklistController;
   late DateTime _date;
   int? _hour;
   int? _minute;
+  late bool _repeats;
   late Set<int> _weekdays;
   late Set<String> _selectedTagIds;
   late List<String> _checklist;
-  late final TextEditingController _amountController;
-  late final TextEditingController _unitController;
-  MeasureKind _measureKind = MeasureKind.amount;
-  bool _hasMeasure = false;
 
-  bool get _isRoutine => widget.type == FormItemType.routine;
-
-  bool get _isEdit => _isRoutine
-      ? widget.initialRoutine != null
-      : widget.initialTodo != null;
+  bool get _isEdit => widget.initialTask != null;
 
   @override
   void initState() {
     super.initState();
     final now = DayClock.logicalNow();
-    final routine = widget.initialRoutine;
-    final todo = widget.initialTodo;
+    final task = widget.initialTask;
 
-    _titleController = TextEditingController(
-      text: routine?.title ?? todo?.title ?? '',
-    );
+    _titleController = TextEditingController(text: task?.title ?? '');
     _checklistController = TextEditingController();
-    _date = routine?.date ??
-        todo?.date ??
-        DateTime(now.year, now.month, now.day);
-    _hour = routine?.hour ?? todo?.hour;
-    _minute = routine?.minute ?? todo?.minute;
-    _weekdays = {...?routine?.repeatWeekdays};
-    _selectedTagIds = {...?(routine?.tagIds ?? todo?.tagIds)};
-    _checklist = [...?(routine?.checklist ?? todo?.checklist)];
-    final amount = routine?.amount ?? todo?.amount;
-    final unit = routine?.unit ?? todo?.unit;
-    final kind = routine?.kind ?? todo?.kind;
-    _hasMeasure = amount != null || kind != null || (unit != null && unit.isNotEmpty);
-    _measureKind = kind ?? MeasureKind.amount;
-    _amountController = TextEditingController(
-      text: amount == null
-          ? ''
-          : (amount == amount.roundToDouble()
-              ? amount.toInt().toString()
-              : amount.toString()),
-    );
-    _unitController = TextEditingController(text: unit ?? '');
+    _date = task?.date ?? DateTime(now.year, now.month, now.day);
+    _hour = task?.hour;
+    _minute = task?.minute;
+    _repeats = task?.isRepeating ?? false;
+    _weekdays = {...?task?.repeatWeekdays};
+    _selectedTagIds = {...?task?.tagIds};
+    _checklist = [...?task?.checklist];
     _titleController.addListener(() => setState(() {}));
   }
 
@@ -107,8 +65,6 @@ class _ItemFormScreenState extends State<ItemFormScreen> {
   void dispose() {
     _titleController.dispose();
     _checklistController.dispose();
-    _amountController.dispose();
-    _unitController.dispose();
     super.dispose();
   }
 
@@ -121,13 +77,6 @@ class _ItemFormScreenState extends State<ItemFormScreen> {
         l10n.weekdaySat,
         l10n.weekdaySun,
       ];
-
-  String _formTitle(AppLocalizations l10n) {
-    if (_isRoutine) {
-      return _isEdit ? l10n.routineFormTitleEdit : l10n.routineFormTitle;
-    }
-    return _isEdit ? l10n.todoFormTitleEdit : l10n.todoFormTitle;
-  }
 
   Future<void> _pickDate() async {
     final picked = await showDatePicker(
@@ -177,101 +126,48 @@ class _ItemFormScreenState extends State<ItemFormScreen> {
     }
   }
 
-  ({double? amount, String? unit, MeasureKind? kind}) _measureFields() {
-    if (!_hasMeasure) {
-      return (amount: null, unit: null, kind: null);
-    }
-    final raw = _amountController.text.trim();
-    final parsed = raw.isEmpty ? null : double.tryParse(raw);
-    final unit = _measureKind == MeasureKind.amount
-        ? (_unitController.text.trim().isEmpty
-            ? null
-            : _unitController.text.trim())
-        : null;
-    return (
-      amount: parsed,
-      unit: unit,
-      kind: _measureKind,
-    );
+  List<int> _resolvedWeekdays() {
+    if (!_repeats) return const [];
+    if (_weekdays.isEmpty) return const [1, 2, 3, 4, 5, 6, 7];
+    return _weekdays.toList()..sort();
   }
 
   Future<void> _submit() async {
     final title = _titleController.text.trim();
     if (title.isEmpty) return;
 
-    final measure = _measureFields();
-    if (_hasMeasure &&
-        _amountController.text.trim().isNotEmpty &&
-        measure.amount == null) {
-      final l10n = AppLocalizations.of(context)!;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.measureAmountInvalid)),
-      );
-      return;
-    }
-
     final state = context.read<AppState>();
+    final existing = widget.initialTask;
+    final remappedDone = existing == null
+        ? const <int>[]
+        : AppState.remapChecklistDone(
+            previousDone: existing.checklistDone,
+            previousChecklist: existing.checklist,
+            nextChecklist: _checklist,
+          );
+    final weekdays = _resolvedWeekdays();
+    final isRepeating = weekdays.isNotEmpty;
 
-    if (_isRoutine) {
-      final existing = widget.initialRoutine;
-      final remappedDone = existing == null
-          ? const <int>[]
-          : AppState.remapChecklistDone(
-              previousDone: existing.checklistDone,
-              previousChecklist: existing.checklist,
-              nextChecklist: _checklist,
-            );
-      final routine = Routine(
-        id: existing?.id ?? DateTime.now().microsecondsSinceEpoch.toString(),
-        title: title,
-        checklist: _checklist,
-        checklistDone: remappedDone,
-        checklistDateKey: existing?.checklistDateKey,
-        date: _date,
-        hour: _hour,
-        minute: _minute,
-        repeatWeekdays: _weekdays.toList()..sort(),
-        tagIds: _selectedTagIds.toList(),
-        lastDoneDate: existing?.lastDoneDate,
-        amount: measure.amount,
-        unit: measure.unit,
-        kind: measure.kind,
-      );
-      if (_isEdit) {
-        await state.updateRoutine(routine);
-      } else {
-        await state.addRoutine(routine);
-      }
+    final task = Task(
+      id: existing?.id ?? DateTime.now().microsecondsSinceEpoch.toString(),
+      title: title,
+      checklist: _checklist,
+      checklistDone: remappedDone,
+      checklistDateKey: isRepeating ? existing?.checklistDateKey : null,
+      date: _date,
+      hour: _hour,
+      minute: _minute,
+      repeatWeekdays: weekdays,
+      tagIds: _selectedTagIds.toList(),
+      lastDoneDate: isRepeating ? existing?.lastDoneDate : null,
+      done: isRepeating ? false : (existing?.done ?? false),
+      doneDate: isRepeating ? null : existing?.doneDate,
+    );
+
+    if (_isEdit) {
+      await state.updateTask(task);
     } else {
-      final existing = widget.initialTodo;
-      final remappedDone = existing == null
-          ? const <int>[]
-          : AppState.remapChecklistDone(
-              previousDone: existing.checklistDone,
-              previousChecklist: existing.checklist,
-              nextChecklist: _checklist,
-            );
-      final todo = Todo(
-        id: existing?.id ??
-            '${DateTime.now().microsecondsSinceEpoch}_t',
-        title: title,
-        checklist: _checklist,
-        checklistDone: remappedDone,
-        date: _date,
-        hour: _hour,
-        minute: _minute,
-        tagIds: _selectedTagIds.toList(),
-        done: existing?.done ?? false,
-        doneDate: existing?.doneDate,
-        amount: measure.amount,
-        unit: measure.unit,
-        kind: measure.kind,
-      );
-      if (_isEdit) {
-        await state.updateTodo(todo);
-      } else {
-        await state.addTodo(todo);
-      }
+      await state.addTask(task);
     }
 
     if (mounted) Navigator.of(context).pop();
@@ -285,13 +181,11 @@ class _ItemFormScreenState extends State<ItemFormScreen> {
         ? '${_hour!.toString().padLeft(2, '0')}:${_minute!.toString().padLeft(2, '0')}'
         : l10n.routineTimeUnset;
     final weekdayLabels = _weekdayLabels(l10n);
-    final titleHint =
-        _isRoutine ? l10n.routineTitleHint : l10n.todoTitleHint;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          _formTitle(l10n),
+          _isEdit ? l10n.taskFormTitleEdit : l10n.taskFormTitle,
           softWrap: true,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
@@ -317,7 +211,7 @@ class _ItemFormScreenState extends State<ItemFormScreen> {
                 TextField(
                   controller: _titleController,
                   decoration: InputDecoration(
-                    hintText: titleHint,
+                    hintText: l10n.taskTitleHint,
                     border: const OutlineInputBorder(),
                   ),
                 ),
@@ -409,29 +303,30 @@ class _ItemFormScreenState extends State<ItemFormScreen> {
               ],
             ),
           ),
-          if (_isRoutine)
-            _FormCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          l10n.routineSectionRepeat,
-                          softWrap: true,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Flexible(
-                        child: Text(
-                          l10n.routineRepeatEverydayHint,
-                          softWrap: true,
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                      ),
-                    ],
+          _FormCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(
+                    l10n.taskRepeatSwitch,
+                    softWrap: true,
+                  ),
+                  value: _repeats,
+                  onChanged: (v) {
+                    setState(() {
+                      _repeats = v;
+                      if (!v) _weekdays = {};
+                    });
+                  },
+                ),
+                if (_repeats) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    l10n.routineRepeatEverydayHint,
+                    softWrap: true,
+                    style: Theme.of(context).textTheme.bodySmall,
                   ),
                   const SizedBox(height: 8),
                   Wrap(
@@ -459,8 +354,9 @@ class _ItemFormScreenState extends State<ItemFormScreen> {
                     ],
                   ),
                 ],
-              ),
+              ],
             ),
+          ),
           _FormCard(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -489,80 +385,6 @@ class _ItemFormScreenState extends State<ItemFormScreen> {
                         : TagChipsRow(tagIds: _selectedTagIds.toList()),
                   ),
                 ),
-              ],
-            ),
-          ),
-          _FormCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                SwitchListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: Text(
-                    l10n.measureSectionTitle,
-                    softWrap: true,
-                  ),
-                  subtitle: Text(
-                    l10n.measureSectionHint,
-                    softWrap: true,
-                  ),
-                  value: _hasMeasure,
-                  onChanged: (v) => setState(() => _hasMeasure = v),
-                ),
-                if (_hasMeasure) ...[
-                  const SizedBox(height: 8),
-                  SegmentedButton<MeasureKind>(
-                    segments: [
-                      ButtonSegment(
-                        value: MeasureKind.amount,
-                        label: Text(
-                          l10n.measureKindAmount,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      ButtonSegment(
-                        value: MeasureKind.time,
-                        label: Text(
-                          l10n.measureKindTime,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                    selected: {_measureKind},
-                    onSelectionChanged: (next) {
-                      setState(() => _measureKind = next.first);
-                    },
-                    showSelectedIcon: false,
-                  ),
-                  const SizedBox(height: 12),
-                  TextField(
-                    controller: _amountController,
-                    keyboardType:
-                        const TextInputType.numberWithOptions(decimal: true),
-                    decoration: InputDecoration(
-                      labelText: _measureKind == MeasureKind.time
-                          ? l10n.measureAmountMinutesLabel
-                          : l10n.measureAmountLabel,
-                      hintText: _measureKind == MeasureKind.time
-                          ? l10n.measureAmountMinutesHint
-                          : l10n.measureAmountHint,
-                      border: const OutlineInputBorder(),
-                    ),
-                  ),
-                  if (_measureKind == MeasureKind.amount) ...[
-                    const SizedBox(height: 12),
-                    TextField(
-                      controller: _unitController,
-                      decoration: InputDecoration(
-                        labelText: l10n.measureUnitLabel,
-                        hintText: l10n.measureUnitHint,
-                        border: const OutlineInputBorder(),
-                      ),
-                    ),
-                  ],
-                ],
               ],
             ),
           ),

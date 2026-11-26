@@ -1,6 +1,4 @@
-import 'measure_kind.dart';
-
-class Routine {
+class Task {
   final String id;
   final String title;
   final List<String> checklist;
@@ -9,14 +7,16 @@ class Routine {
   final DateTime date;
   final int? hour;
   final int? minute;
+  /// Empty = one-time task. Non-empty = repeats on those weekdays (1=Mon … 7=Sun).
   final List<int> repeatWeekdays;
   final List<String> tagIds;
+  /// For repeating tasks: last completion date key.
   final String? lastDoneDate;
-  final double? amount;
-  final String? unit;
-  final MeasureKind? kind;
+  /// For one-time tasks.
+  final bool done;
+  final String? doneDate;
 
-  const Routine({
+  const Task({
     required this.id,
     required this.title,
     required this.checklist,
@@ -28,12 +28,13 @@ class Routine {
     required this.repeatWeekdays,
     required this.tagIds,
     this.lastDoneDate,
-    this.amount,
-    this.unit,
-    this.kind,
+    this.done = false,
+    this.doneDate,
   });
 
-  Routine copyWith({
+  bool get isRepeating => repeatWeekdays.isNotEmpty;
+
+  Task copyWith({
     String? id,
     String? title,
     List<String>? checklist,
@@ -45,18 +46,15 @@ class Routine {
     List<int>? repeatWeekdays,
     List<String>? tagIds,
     String? lastDoneDate,
-    double? amount,
-    String? unit,
-    MeasureKind? kind,
+    bool? done,
+    String? doneDate,
     bool clearLastDoneDate = false,
     bool clearChecklistDateKey = false,
     bool clearHour = false,
     bool clearMinute = false,
-    bool clearAmount = false,
-    bool clearUnit = false,
-    bool clearKind = false,
+    bool clearDoneDate = false,
   }) {
-    return Routine(
+    return Task(
       id: id ?? this.id,
       title: title ?? this.title,
       checklist: checklist ?? this.checklist,
@@ -71,9 +69,8 @@ class Routine {
       tagIds: tagIds ?? this.tagIds,
       lastDoneDate:
           clearLastDoneDate ? null : (lastDoneDate ?? this.lastDoneDate),
-      amount: clearAmount ? null : (amount ?? this.amount),
-      unit: clearUnit ? null : (unit ?? this.unit),
-      kind: clearKind ? null : (kind ?? this.kind),
+      done: done ?? this.done,
+      doneDate: clearDoneDate ? null : (doneDate ?? this.doneDate),
     );
   }
 
@@ -89,14 +86,13 @@ class Routine {
         'repeatWeekdays': repeatWeekdays,
         'tagIds': tagIds,
         'lastDoneDate': lastDoneDate,
-        'amount': amount,
-        'unit': unit,
-        'kind': measureKindToJson(kind),
+        'done': done,
+        'doneDate': doneDate,
       };
 
-  factory Routine.fromJson(Map<String, dynamic> json) {
+  factory Task.fromJson(Map<String, dynamic> json) {
     final rawTags = json['tagIds'] ?? json['tags'];
-    return Routine(
+    return Task(
       id: json['id'] as String,
       title: json['title'] as String,
       checklist: (json['checklist'] as List<dynamic>? ?? [])
@@ -116,9 +112,61 @@ class Routine {
           .map((e) => e as String)
           .toList(),
       lastDoneDate: json['lastDoneDate'] as String?,
-      amount: (json['amount'] as num?)?.toDouble(),
-      unit: json['unit'] as String?,
-      kind: measureKindFromJson(json['kind'] as String?),
+      done: json['done'] as bool? ?? false,
+      doneDate: json['doneDate'] as String?,
+    );
+  }
+
+  /// Converts a legacy routine. Empty weekdays meant "every day".
+  factory Task.fromRoutineJson(Map<String, dynamic> json) {
+    final weekdays = (json['repeatWeekdays'] as List<dynamic>? ?? [])
+        .map((e) => e as int)
+        .toList();
+    final resolved =
+        weekdays.isEmpty ? <int>[1, 2, 3, 4, 5, 6, 7] : weekdays;
+    final rawTags = json['tagIds'] ?? json['tags'];
+    return Task(
+      id: json['id'] as String,
+      title: json['title'] as String,
+      checklist: (json['checklist'] as List<dynamic>? ?? [])
+          .map((e) => e as String)
+          .toList(),
+      checklistDone: (json['checklistDone'] as List<dynamic>? ?? [])
+          .map((e) => e as int)
+          .toList(),
+      checklistDateKey: json['checklistDateKey'] as String?,
+      date: DateTime.parse(json['date'] as String),
+      hour: json['hour'] as int?,
+      minute: json['minute'] as int?,
+      repeatWeekdays: resolved,
+      tagIds: (rawTags as List<dynamic>? ?? [])
+          .map((e) => e as String)
+          .toList(),
+      lastDoneDate: json['lastDoneDate'] as String?,
+    );
+  }
+
+  /// Converts a legacy one-time todo.
+  factory Task.fromTodoJson(Map<String, dynamic> json) {
+    final rawTags = json['tagIds'] ?? json['tags'];
+    return Task(
+      id: json['id'] as String,
+      title: json['title'] as String,
+      checklist: (json['checklist'] as List<dynamic>? ?? [])
+          .map((e) => e as String)
+          .toList(),
+      checklistDone: (json['checklistDone'] as List<dynamic>? ?? [])
+          .map((e) => e as int)
+          .toList(),
+      date: DateTime.parse(json['date'] as String),
+      hour: json['hour'] as int?,
+      minute: json['minute'] as int?,
+      repeatWeekdays: const [],
+      tagIds: (rawTags as List<dynamic>? ?? [])
+          .map((e) => e as String)
+          .toList(),
+      done: json['done'] as bool? ?? false,
+      doneDate: json['doneDate'] as String?,
     );
   }
 }

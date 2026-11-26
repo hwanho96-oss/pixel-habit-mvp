@@ -38,6 +38,39 @@ class AppLocalizationsJa extends AppLocalizations {
   String get segmentTodo => 'ToDo';
 
   @override
+  String get segmentTasks => 'やること';
+
+  @override
+  String get segmentAnalysis => '分析';
+
+  @override
+  String get filterAll => 'すべて';
+
+  @override
+  String get filterRepeat => '繰り返し';
+
+  @override
+  String get filterOnce => '1回';
+
+  @override
+  String get taskFormTitle => 'やること作成';
+
+  @override
+  String get taskFormTitleEdit => 'やること編集';
+
+  @override
+  String get taskTitleHint => '例: 朝の運動';
+
+  @override
+  String get taskRepeatSwitch => '繰り返し';
+
+  @override
+  String get emptyTasksHint => '+ ボタンで最初のやることを作成しましょう';
+
+  @override
+  String get analysisComingSoon => '準備中';
+
+  @override
   String get deleteConfirmTitle => '削除';
 
   @override

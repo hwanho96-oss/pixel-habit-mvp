@@ -3,13 +3,14 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/completion_record.dart';
-import '../models/result_table.dart';
 import '../models/reward_record.dart';
-import '../models/routine.dart';
 import '../models/tag.dart';
-import '../models/todo.dart';
+import '../models/task.dart';
 
 class AppStorage {
+  static const _tasksKey = 'tasks_v1';
+  static const _tasksMigratedKey = 'tasks_migrated_v1';
+  // Legacy keys — kept for one-time migration; no longer written.
   static const _routinesKey = 'routines_v1';
   static const _todosKey = 'todos_v1';
   static const _goldKey = 'gold_v1';
@@ -22,36 +23,50 @@ class AppStorage {
   static const _rewardLogKey = 'reward_log_v1';
   static const _ownedTitlesKey = 'owned_titles_v1';
   static const _equippedTitleKey = 'equipped_title_v1';
-  static const _resultTablesKey = 'result_tables_v1';
 
-  Future<List<Routine>> loadRoutines() async {
+  Future<List<Task>> loadTasks() async {
     final prefs = await SharedPreferences.getInstance();
-    final raw = prefs.getString(_routinesKey);
+    final migrated = prefs.getBool(_tasksMigratedKey) ?? false;
+
+    if (!migrated) {
+      final tasks = await _migrateRoutinesAndTodos(prefs);
+      await saveTasks(tasks);
+      await prefs.setBool(_tasksMigratedKey, true);
+      return tasks;
+    }
+
+    final raw = prefs.getString(_tasksKey);
     if (raw == null) return [];
     final list = jsonDecode(raw) as List<dynamic>;
-    return list
-        .map((e) => Routine.fromJson(e as Map<String, dynamic>))
-        .toList();
+    return list.map((e) => Task.fromJson(e as Map<String, dynamic>)).toList();
   }
 
-  Future<void> saveRoutines(List<Routine> routines) async {
+  Future<void> saveTasks(List<Task> tasks) async {
     final prefs = await SharedPreferences.getInstance();
-    final encoded = jsonEncode(routines.map((e) => e.toJson()).toList());
-    await prefs.setString(_routinesKey, encoded);
+    final encoded = jsonEncode(tasks.map((e) => e.toJson()).toList());
+    await prefs.setString(_tasksKey, encoded);
   }
 
-  Future<List<Todo>> loadTodos() async {
-    final prefs = await SharedPreferences.getInstance();
-    final raw = prefs.getString(_todosKey);
-    if (raw == null) return [];
-    final list = jsonDecode(raw) as List<dynamic>;
-    return list.map((e) => Todo.fromJson(e as Map<String, dynamic>)).toList();
-  }
+  Future<List<Task>> _migrateRoutinesAndTodos(SharedPreferences prefs) async {
+    final tasks = <Task>[];
 
-  Future<void> saveTodos(List<Todo> todos) async {
-    final prefs = await SharedPreferences.getInstance();
-    final encoded = jsonEncode(todos.map((e) => e.toJson()).toList());
-    await prefs.setString(_todosKey, encoded);
+    final routinesRaw = prefs.getString(_routinesKey);
+    if (routinesRaw != null) {
+      final list = jsonDecode(routinesRaw) as List<dynamic>;
+      for (final e in list) {
+        tasks.add(Task.fromRoutineJson(e as Map<String, dynamic>));
+      }
+    }
+
+    final todosRaw = prefs.getString(_todosKey);
+    if (todosRaw != null) {
+      final list = jsonDecode(todosRaw) as List<dynamic>;
+      for (final e in list) {
+        tasks.add(Task.fromTodoJson(e as Map<String, dynamic>));
+      }
+    }
+
+    return tasks;
   }
 
   Future<int> loadGold() async {
@@ -181,21 +196,5 @@ class AppStorage {
     } else {
       await prefs.setString(_equippedTitleKey, id);
     }
-  }
-
-  Future<List<ResultTable>> loadResultTables() async {
-    final prefs = await SharedPreferences.getInstance();
-    final raw = prefs.getString(_resultTablesKey);
-    if (raw == null) return [];
-    final list = jsonDecode(raw) as List<dynamic>;
-    return list
-        .map((e) => ResultTable.fromJson(e as Map<String, dynamic>))
-        .toList();
-  }
-
-  Future<void> saveResultTables(List<ResultTable> tables) async {
-    final prefs = await SharedPreferences.getInstance();
-    final encoded = jsonEncode(tables.map((e) => e.toJson()).toList());
-    await prefs.setString(_resultTablesKey, encoded);
   }
 }

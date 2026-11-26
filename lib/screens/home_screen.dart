@@ -5,15 +5,16 @@ import 'package:provider/provider.dart';
 import '../data/day_clock.dart';
 import '../data/economy.dart';
 import '../l10n/app_localizations.dart';
-import '../models/routine.dart';
-import '../models/todo.dart';
+import '../models/task.dart';
 import '../providers/app_state.dart';
 import '../ui/layout_config.dart';
 import '../widgets/character_preview.dart';
 import '../widgets/tag_chips.dart';
-import 'routine_form_screen.dart';
+import 'task_form_screen.dart';
 
-enum _HomeSegment { routine, todo }
+enum _HomeSegment { tasks, analysis }
+
+enum _TaskFilter { all, repeat, once }
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -23,7 +24,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  _HomeSegment _segment = _HomeSegment.routine;
+  _HomeSegment _segment = _HomeSegment.tasks;
+  _TaskFilter _filter = _TaskFilter.all;
   final Set<String> _expandedIds = {};
 
   String? _formatTime(int? hour, int? minute) {
@@ -70,10 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _onFabPressed() {
-    final type = _segment == _HomeSegment.routine
-        ? FormItemType.routine
-        : FormItemType.todo;
-    context.push('/item/form', extra: ItemFormArgs(type: type));
+    context.push('/item/form');
   }
 
   bool _isAwayTwoOrMoreDays(String? lastCheckDateKey) {
@@ -113,10 +112,22 @@ class _HomeScreenState extends State<HomeScreen> {
     _showPraiseSnackBar(welcomeBack: welcomeBack, gold: gold);
   }
 
+  List<Task> _filteredTasks(List<Task> source) {
+    switch (_filter) {
+      case _TaskFilter.all:
+        return source;
+      case _TaskFilter.repeat:
+        return source.where((t) => t.isRepeating).toList();
+      case _TaskFilter.once:
+        return source.where((t) => !t.isRepeating).toList();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final state = context.watch<AppState>();
+    final showFab = _segment == _HomeSegment.tasks;
 
     return Scaffold(
       body: SafeArea(
@@ -151,18 +162,18 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: SegmentedButton<_HomeSegment>(
                     segments: [
                       ButtonSegment(
-                        value: _HomeSegment.routine,
+                        value: _HomeSegment.tasks,
                         label: Text(
-                          l10n.segmentRoutine,
+                          l10n.segmentTasks,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           softWrap: false,
                         ),
                       ),
                       ButtonSegment(
-                        value: _HomeSegment.todo,
+                        value: _HomeSegment.analysis,
                         label: Text(
-                          l10n.segmentTodo,
+                          l10n.segmentAnalysis,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           softWrap: false,
@@ -178,113 +189,116 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 8),
                 Expanded(
-                  child: _segment == _HomeSegment.routine
-                      ? _RoutineList(
-                          routines: state.todaysRoutines,
-                          emptyHint: l10n.emptyRoutinesHint,
-                          expandedIds: _expandedIds,
-                          isDone: state.isRoutineDoneToday,
-                          checklistDoneOf:
-                              state.effectiveRoutineChecklistDone,
-                          formatTime: _formatTime,
-                          checklistProgress: l10n.checklistProgress,
-                          onToggleExpand: _toggleExpanded,
-                          onOpen: (routine) {
-                            context.push(
-                              '/item/form',
-                              extra: ItemFormArgs(
-                                type: FormItemType.routine,
-                                routine: routine,
+                  child: _segment == _HomeSegment.tasks
+                      ? Column(
+                          children: [
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Wrap(
+                                  spacing: 8,
+                                  runSpacing: 8,
+                                  children: [
+                                    FilterChip(
+                                      label: Text(l10n.filterAll),
+                                      selected: _filter == _TaskFilter.all,
+                                      onSelected: (_) {
+                                        setState(
+                                          () => _filter = _TaskFilter.all,
+                                        );
+                                      },
+                                    ),
+                                    FilterChip(
+                                      label: Text(l10n.filterRepeat),
+                                      selected: _filter == _TaskFilter.repeat,
+                                      onSelected: (_) {
+                                        setState(
+                                          () => _filter = _TaskFilter.repeat,
+                                        );
+                                      },
+                                    ),
+                                    FilterChip(
+                                      label: Text(l10n.filterOnce),
+                                      selected: _filter == _TaskFilter.once,
+                                      onSelected: (_) {
+                                        setState(
+                                          () => _filter = _TaskFilter.once,
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
                               ),
-                            );
-                          },
-                          onToggleDone: (routine, checked) async {
-                            final welcomeBack =
-                                _isAwayTwoOrMoreDays(state.lastCheckDateKey);
-                            final outcome =
-                                await state.toggleRoutineDone(routine.id);
-                            if (!mounted) return;
-                            if (checked) {
-                              _showCompleteSnackBar(
-                                outcome: outcome,
-                                welcomeBack: welcomeBack,
-                                gold: Economy.routineCompleteGold,
-                              );
-                            }
-                          },
-                          onToggleChecklist: (routine, itemIndex) async {
-                            final welcomeBack =
-                                _isAwayTwoOrMoreDays(state.lastCheckDateKey);
-                            final outcome =
-                                await state.toggleRoutineChecklistItem(
-                              routine.id,
-                              itemIndex,
-                            );
-                            if (!mounted) return;
-                            _showCompleteSnackBar(
-                              outcome: outcome,
-                              welcomeBack: welcomeBack,
-                              gold: Economy.routineCompleteGold,
-                            );
-                          },
-                          onLongPress: (routine) {
-                            _confirmDelete(
-                              onConfirm: () =>
-                                  state.deleteRoutine(routine.id),
-                            );
-                          },
+                            ),
+                            const SizedBox(height: 4),
+                            Expanded(
+                              child: _TaskList(
+                                tasks: _filteredTasks(state.todaysTasks),
+                                emptyHint: l10n.emptyTasksHint,
+                                expandedIds: _expandedIds,
+                                isDone: state.isTaskDoneToday,
+                                checklistDoneOf: state.effectiveChecklistDone,
+                                formatTime: _formatTime,
+                                checklistProgress: l10n.checklistProgress,
+                                onToggleExpand: _toggleExpanded,
+                                onOpen: (task) {
+                                  context.push(
+                                    '/item/form',
+                                    extra: TaskFormArgs(task: task),
+                                  );
+                                },
+                                onToggleDone: (task, checked) async {
+                                  final welcomeBack = _isAwayTwoOrMoreDays(
+                                    state.lastCheckDateKey,
+                                  );
+                                  final outcome =
+                                      await state.toggleTaskDone(task.id);
+                                  if (!mounted) return;
+                                  if (checked) {
+                                    _showCompleteSnackBar(
+                                      outcome: outcome,
+                                      welcomeBack: welcomeBack,
+                                      gold: Economy.taskCompleteGold,
+                                    );
+                                  }
+                                },
+                                onToggleChecklist: (task, itemIndex) async {
+                                  final welcomeBack = _isAwayTwoOrMoreDays(
+                                    state.lastCheckDateKey,
+                                  );
+                                  final outcome =
+                                      await state.toggleChecklistItem(
+                                    task.id,
+                                    itemIndex,
+                                  );
+                                  if (!mounted) return;
+                                  _showCompleteSnackBar(
+                                    outcome: outcome,
+                                    welcomeBack: welcomeBack,
+                                    gold: Economy.taskCompleteGold,
+                                  );
+                                },
+                                onLongPress: (task) {
+                                  _confirmDelete(
+                                    onConfirm: () =>
+                                        state.deleteTask(task.id),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
                         )
-                      : _TodoList(
-                          todos: state.todaysTodos,
-                          emptyHint: l10n.emptyTodosHint,
-                          expandedIds: _expandedIds,
-                          checklistDoneOf: state.effectiveTodoChecklistDone,
-                          formatTime: _formatTime,
-                          checklistProgress: l10n.checklistProgress,
-                          onToggleExpand: _toggleExpanded,
-                          onOpen: (todo) {
-                            context.push(
-                              '/item/form',
-                              extra: ItemFormArgs(
-                                type: FormItemType.todo,
-                                todo: todo,
-                              ),
-                            );
-                          },
-                          onToggleDone: (todo, checked) async {
-                            final welcomeBack =
-                                _isAwayTwoOrMoreDays(state.lastCheckDateKey);
-                            final outcome =
-                                await state.toggleTodoDone(todo.id);
-                            if (!mounted) return;
-                            if (checked) {
-                              _showCompleteSnackBar(
-                                outcome: outcome,
-                                welcomeBack: welcomeBack,
-                                gold: Economy.todoCompleteGold,
-                              );
-                            }
-                          },
-                          onToggleChecklist: (todo, itemIndex) async {
-                            final welcomeBack =
-                                _isAwayTwoOrMoreDays(state.lastCheckDateKey);
-                            final outcome =
-                                await state.toggleTodoChecklistItem(
-                              todo.id,
-                              itemIndex,
-                            );
-                            if (!mounted) return;
-                            _showCompleteSnackBar(
-                              outcome: outcome,
-                              welcomeBack: welcomeBack,
-                              gold: Economy.todoCompleteGold,
-                            );
-                          },
-                          onLongPress: (todo) {
-                            _confirmDelete(
-                              onConfirm: () => state.deleteTodo(todo.id),
-                            );
-                          },
+                      : Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(24),
+                            child: Text(
+                              l10n.analysisComingSoon,
+                              textAlign: TextAlign.center,
+                              softWrap: true,
+                            ),
+                          ),
                         ),
                 ),
               ],
@@ -292,10 +306,12 @@ class _HomeScreenState extends State<HomeScreen> {
           },
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _onFabPressed,
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton: showFab
+          ? FloatingActionButton(
+              onPressed: _onFabPressed,
+              child: const Icon(Icons.add),
+            )
+          : null,
     );
   }
 }
@@ -355,9 +371,9 @@ class _HomeCharacterArea extends StatelessWidget {
   }
 }
 
-class _RoutineList extends StatelessWidget {
-  const _RoutineList({
-    required this.routines,
+class _TaskList extends StatelessWidget {
+  const _TaskList({
+    required this.tasks,
     required this.emptyHint,
     required this.expandedIds,
     required this.isDone,
@@ -371,35 +387,35 @@ class _RoutineList extends StatelessWidget {
     required this.onLongPress,
   });
 
-  final List<Routine> routines;
+  final List<Task> tasks;
   final String emptyHint;
   final Set<String> expandedIds;
-  final bool Function(Routine) isDone;
-  final List<int> Function(Routine) checklistDoneOf;
+  final bool Function(Task) isDone;
+  final List<int> Function(Task) checklistDoneOf;
   final String? Function(int?, int?) formatTime;
   final String Function(int done, int total) checklistProgress;
   final void Function(String id) onToggleExpand;
-  final void Function(Routine routine) onOpen;
-  final void Function(Routine routine, bool checked) onToggleDone;
-  final void Function(Routine routine, int itemIndex) onToggleChecklist;
-  final void Function(Routine routine) onLongPress;
+  final void Function(Task task) onOpen;
+  final void Function(Task task, bool checked) onToggleDone;
+  final void Function(Task task, int itemIndex) onToggleChecklist;
+  final void Function(Task task) onLongPress;
 
   @override
   Widget build(BuildContext context) {
-    if (routines.isEmpty) {
+    if (tasks.isEmpty) {
       return _EmptyHint(text: emptyHint);
     }
 
     return ListView.builder(
       padding: const EdgeInsets.only(bottom: 88),
-      itemCount: routines.length,
+      itemCount: tasks.length,
       itemBuilder: (context, index) {
-        final routine = routines[index];
-        final done = isDone(routine);
-        final doneIndexes = checklistDoneOf(routine);
-        final hasChecklist = routine.checklist.isNotEmpty;
-        final expanded = expandedIds.contains(routine.id);
-        final time = formatTime(routine.hour, routine.minute);
+        final task = tasks[index];
+        final done = isDone(task);
+        final doneIndexes = checklistDoneOf(task);
+        final hasChecklist = task.checklist.isNotEmpty;
+        final expanded = expandedIds.contains(task.id);
+        final time = formatTime(task.hour, task.minute);
 
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -413,21 +429,21 @@ class _RoutineList extends StatelessWidget {
                     value: done,
                     onChanged: hasChecklist
                         ? null
-                        : (value) => onToggleDone(routine, value ?? false),
+                        : (value) => onToggleDone(task, value ?? false),
                   ),
                   Expanded(
                     child: InkWell(
                       onTap: hasChecklist
-                          ? () => onToggleExpand(routine.id)
-                          : () => onOpen(routine),
-                      onLongPress: () => onLongPress(routine),
+                          ? () => onToggleExpand(task.id)
+                          : () => onOpen(task),
+                      onLongPress: () => onLongPress(task),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              routine.title,
+                              task.title,
                               softWrap: true,
                               maxLines: 3,
                               overflow: TextOverflow.ellipsis,
@@ -436,7 +452,7 @@ class _RoutineList extends StatelessWidget {
                               Text(
                                 checklistProgress(
                                   doneIndexes.length,
-                                  routine.checklist.length,
+                                  task.checklist.length,
                                 ),
                                 style: Theme.of(context).textTheme.bodySmall,
                                 softWrap: true,
@@ -449,7 +465,7 @@ class _RoutineList extends StatelessWidget {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
-                            TagChipsRow(tagIds: routine.tagIds),
+                            TagChipsRow(tagIds: task.tagIds),
                           ],
                         ),
                       ),
@@ -457,11 +473,11 @@ class _RoutineList extends StatelessWidget {
                   ),
                   if (hasChecklist) ...[
                     IconButton(
-                      onPressed: () => onOpen(routine),
+                      onPressed: () => onOpen(task),
                       icon: const Icon(Icons.edit_outlined),
                     ),
                     IconButton(
-                      onPressed: () => onToggleExpand(routine.id),
+                      onPressed: () => onToggleExpand(task.id),
                       icon: Icon(
                         expanded ? Icons.expand_less : Icons.expand_more,
                       ),
@@ -471,135 +487,10 @@ class _RoutineList extends StatelessWidget {
               ),
               if (hasChecklist && expanded)
                 _ChecklistItems(
-                  items: routine.checklist,
+                  items: task.checklist,
                   doneIndexes: doneIndexes,
                   onToggle: (itemIndex) =>
-                      onToggleChecklist(routine, itemIndex),
-                ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _TodoList extends StatelessWidget {
-  const _TodoList({
-    required this.todos,
-    required this.emptyHint,
-    required this.expandedIds,
-    required this.checklistDoneOf,
-    required this.formatTime,
-    required this.checklistProgress,
-    required this.onToggleExpand,
-    required this.onOpen,
-    required this.onToggleDone,
-    required this.onToggleChecklist,
-    required this.onLongPress,
-  });
-
-  final List<Todo> todos;
-  final String emptyHint;
-  final Set<String> expandedIds;
-  final List<int> Function(Todo) checklistDoneOf;
-  final String? Function(int?, int?) formatTime;
-  final String Function(int done, int total) checklistProgress;
-  final void Function(String id) onToggleExpand;
-  final void Function(Todo todo) onOpen;
-  final void Function(Todo todo, bool checked) onToggleDone;
-  final void Function(Todo todo, int itemIndex) onToggleChecklist;
-  final void Function(Todo todo) onLongPress;
-
-  @override
-  Widget build(BuildContext context) {
-    if (todos.isEmpty) {
-      return _EmptyHint(text: emptyHint);
-    }
-
-    return ListView.builder(
-      padding: const EdgeInsets.only(bottom: 88),
-      itemCount: todos.length,
-      itemBuilder: (context, index) {
-        final todo = todos[index];
-        final doneIndexes = checklistDoneOf(todo);
-        final hasChecklist = todo.checklist.isNotEmpty;
-        final expanded = expandedIds.contains(todo.id);
-        final time = formatTime(todo.hour, todo.minute);
-
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Checkbox(
-                    value: todo.done,
-                    onChanged: hasChecklist
-                        ? null
-                        : (value) => onToggleDone(todo, value ?? false),
-                  ),
-                  Expanded(
-                    child: InkWell(
-                      onTap: hasChecklist
-                          ? () => onToggleExpand(todo.id)
-                          : () => onOpen(todo),
-                      onLongPress: () => onLongPress(todo),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              todo.title,
-                              softWrap: true,
-                              maxLines: 3,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            if (hasChecklist)
-                              Text(
-                                checklistProgress(
-                                  doneIndexes.length,
-                                  todo.checklist.length,
-                                ),
-                                style: Theme.of(context).textTheme.bodySmall,
-                                softWrap: true,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            if (time != null)
-                              Text(
-                                time,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            TagChipsRow(tagIds: todo.tagIds),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  if (hasChecklist) ...[
-                    IconButton(
-                      onPressed: () => onOpen(todo),
-                      icon: const Icon(Icons.edit_outlined),
-                    ),
-                    IconButton(
-                      onPressed: () => onToggleExpand(todo.id),
-                      icon: Icon(
-                        expanded ? Icons.expand_less : Icons.expand_more,
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-              if (hasChecklist && expanded)
-                _ChecklistItems(
-                  items: todo.checklist,
-                  doneIndexes: doneIndexes,
-                  onToggle: (itemIndex) => onToggleChecklist(todo, itemIndex),
+                      onToggleChecklist(task, itemIndex),
                 ),
             ],
           ),

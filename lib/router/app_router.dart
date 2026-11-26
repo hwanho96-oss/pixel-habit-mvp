@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../models/result_table.dart';
 import '../screens/analysis_screen.dart';
 import '../screens/character_tab_screen.dart';
 import '../screens/home_screen.dart';
 import '../screens/placeholder_screen.dart';
-import '../screens/result_table_form_screen.dart';
-import '../screens/routine_form_screen.dart';
 import '../screens/shell_scaffold.dart';
 import '../screens/tag_create_screen.dart';
+import '../screens/task_form_screen.dart';
 
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -62,23 +60,14 @@ final GoRouter appRouter = GoRouter(
       parentNavigatorKey: rootNavigatorKey,
       path: '/item/form',
       builder: (context, state) {
-        final args = state.extra as ItemFormArgs? ??
-            const ItemFormArgs(type: FormItemType.routine);
-        return ItemFormScreen.fromArgs(args);
+        final args = state.extra as TaskFormArgs? ?? const TaskFormArgs();
+        return TaskFormScreen.fromArgs(args);
       },
     ),
     GoRoute(
       parentNavigatorKey: rootNavigatorKey,
       path: '/tag/create',
       builder: (context, state) => const TagCreateScreen(),
-    ),
-    GoRoute(
-      parentNavigatorKey: rootNavigatorKey,
-      path: '/result-table/form',
-      builder: (context, state) {
-        final initial = state.extra as ResultTable?;
-        return ResultTableFormScreen(initial: initial);
-      },
     ),
   ],
 );

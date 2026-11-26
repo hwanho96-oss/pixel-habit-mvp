@@ -7,15 +7,12 @@ import '../data/storage.dart';
 import '../data/tag_palette.dart';
 import '../data/title_repository.dart';
 import '../models/completion_record.dart';
-import '../models/measure_kind.dart';
-import '../models/result_table.dart';
 import '../models/reward_record.dart';
-import '../models/routine.dart';
 import '../models/tag.dart';
+import '../models/task.dart';
 import '../models/title_def.dart';
-import '../models/todo.dart';
 
-/// Result of toggling a routine/todo to complete (or uncomplete).
+/// Result of toggling a task to complete (or uncomplete).
 enum CompleteOutcome {
   none,
   rewarded,
@@ -27,8 +24,7 @@ class AppState extends ChangeNotifier {
 
   final AppStorage _storage;
 
-  List<Routine> routines = [];
-  List<Todo> todos = [];
+  List<Task> tasks = [];
   List<Tag> tags = [];
   List<CompletionRecord> completionLog = [];
   List<RewardRecord> rewardLog = [];
@@ -40,7 +36,6 @@ class AppState extends ChangeNotifier {
   List<TitleDef> titles = [];
   Set<String> ownedTitleIds = {};
   String? equippedTitleId;
-  List<ResultTable> resultTables = [];
 
   static const String centerTitleId = 'me';
 
@@ -51,7 +46,6 @@ class AppState extends ChangeNotifier {
     unspentPoints = await _storage.loadPoints();
     ownedItemIds = await _storage.loadOwnedItems();
     equipped = await _storage.loadEquipped();
-    resultTables = await _storage.loadResultTables();
     titles = await TitleRepository.load();
     final validIds = titles.map((t) => t.id).toSet();
     final savedOwned = await _storage.loadOwnedTitles();
@@ -90,26 +84,17 @@ class AppState extends ChangeNotifier {
       tagsDirty = true;
     }
 
-    routines = await _storage.loadRoutines();
-    todos = await _storage.loadTodos();
-    final routinesMigrated = _migrateItemTagIds(routines.map((r) => r.tagIds));
-    final todosMigrated = _migrateItemTagIds(todos.map((t) => t.tagIds));
+    tasks = await _storage.loadTasks();
+    final tasksMigrated = _migrateItemTagIds(tasks.map((t) => t.tagIds));
     var itemsDirty = false;
-    if (routinesMigrated.dirty) {
-      routines = [
-        for (var i = 0; i < routines.length; i++)
-          routines[i].copyWith(tagIds: routinesMigrated.ids[i]),
+    if (tasksMigrated.dirty) {
+      tasks = [
+        for (var i = 0; i < tasks.length; i++)
+          tasks[i].copyWith(tagIds: tasksMigrated.ids[i]),
       ];
       itemsDirty = true;
     }
-    if (todosMigrated.dirty) {
-      todos = [
-        for (var i = 0; i < todos.length; i++)
-          todos[i].copyWith(tagIds: todosMigrated.ids[i]),
-      ];
-      itemsDirty = true;
-    }
-    if (routinesMigrated.tagsDirty || todosMigrated.tagsDirty) {
+    if (tasksMigrated.tagsDirty) {
       tagsDirty = true;
     }
 
@@ -117,8 +102,7 @@ class AppState extends ChangeNotifier {
       _storage.saveOwnedTitles(ownedTitleIds),
       _storage.saveEquippedTitle(equippedTitleId),
       if (tagsDirty) _storage.saveTags(tags),
-      if (itemsDirty) _storage.saveRoutines(routines),
-      if (itemsDirty) _storage.saveTodos(todos),
+      if (itemsDirty) _storage.saveTasks(tasks),
     ]);
     notifyListeners();
   }
@@ -210,14 +194,8 @@ class AppState extends ChangeNotifier {
       if (tag.parentId == id) toRemove.add(tag.id);
     }
     tags = tags.where((t) => !toRemove.contains(t.id)).toList();
-    routines = [
-      for (final r in routines)
-        r.copyWith(
-          tagIds: r.tagIds.where((tid) => !toRemove.contains(tid)).toList(),
-        ),
-    ];
-    todos = [
-      for (final t in todos)
+    tasks = [
+      for (final t in tasks)
         t.copyWith(
           tagIds: t.tagIds.where((tid) => !toRemove.contains(tid)).toList(),
         ),
@@ -225,8 +203,7 @@ class AppState extends ChangeNotifier {
     notifyListeners();
     await Future.wait([
       _storage.saveTags(tags),
-      _storage.saveRoutines(routines),
-      _storage.saveTodos(todos),
+      _storage.saveTasks(tasks),
     ]);
   }
 
@@ -341,37 +318,36 @@ class AppState extends ChangeNotifier {
     await _persist();
   }
 
-  /// Empty [repeatWeekdays] means every day. Future start dates are excluded.
-  List<Routine> get todaysRoutines {
+  /// Tasks visible on the home "할 일" list for the logical today.
+  List<Task> get todaysTasks {
     final weekday = DayClock.logicalNow().weekday;
-    return routines.where((r) {
-      if (DayClock.isAfterToday(r.date)) return false;
-      if (r.repeatWeekdays.isEmpty) return true;
-      return r.repeatWeekdays.contains(weekday);
-    }).toList();
-  }
-
-  /// Incomplete on/before today (carry-over), or completed today.
-  List<Todo> get todaysTodos {
     final today = DayClock.todayKey();
-    return todos.where((t) {
+    return tasks.where((t) {
+      if (DayClock.isAfterToday(t.date)) return false;
+      if (t.isRepeating) {
+        return t.repeatWeekdays.contains(weekday);
+      }
       if (t.doneDate == today) return true;
       if (!t.done && DayClock.isOnOrBeforeToday(t.date)) return true;
       return false;
     }).toList();
   }
 
-  bool isRoutineDoneToday(Routine routine) =>
-      routine.lastDoneDate == DayClock.todayKey();
-
-  /// Routine checklist resets each logical day via [Routine.checklistDateKey].
-  List<int> effectiveRoutineChecklistDone(Routine routine) {
-    if (routine.checklistDateKey != DayClock.todayKey()) return const [];
-    return _validChecklistDone(routine.checklistDone, routine.checklist.length);
+  bool isTaskDoneToday(Task task) {
+    if (task.isRepeating) {
+      return task.lastDoneDate == DayClock.todayKey();
+    }
+    return task.done;
   }
 
-  List<int> effectiveTodoChecklistDone(Todo todo) =>
-      _validChecklistDone(todo.checklistDone, todo.checklist.length);
+  /// Repeating checklist resets each logical day via [Task.checklistDateKey].
+  List<int> effectiveChecklistDone(Task task) {
+    if (task.isRepeating) {
+      if (task.checklistDateKey != DayClock.todayKey()) return const [];
+      return _validChecklistDone(task.checklistDone, task.checklist.length);
+    }
+    return _validChecklistDone(task.checklistDone, task.checklist.length);
+  }
 
   List<int> _validChecklistDone(List<int> done, int length) {
     return done.where((i) => i >= 0 && i < length).toList()..sort();
@@ -414,78 +390,43 @@ class AppState extends ChangeNotifier {
   }
 
   /// Outcome when the item just became complete (for SnackBar).
-  Future<CompleteOutcome> toggleRoutineChecklistItem(
+  Future<CompleteOutcome> toggleChecklistItem(
     String id,
     int itemIndex,
   ) async {
-    final index = routines.indexWhere((r) => r.id == id);
+    final index = tasks.indexWhere((t) => t.id == id);
     if (index < 0) return CompleteOutcome.none;
 
-    final routine = routines[index];
-    if (itemIndex < 0 || itemIndex >= routine.checklist.length) {
+    final task = tasks[index];
+    if (itemIndex < 0 || itemIndex >= task.checklist.length) {
       return CompleteOutcome.none;
     }
 
     final today = DayClock.todayKey();
-    final doneSet = effectiveRoutineChecklistDone(routine).toSet();
+    final doneSet = effectiveChecklistDone(task).toSet();
     if (doneSet.contains(itemIndex)) {
       doneSet.remove(itemIndex);
     } else {
       doneSet.add(itemIndex);
     }
     final nextDone = doneSet.toList()..sort();
-    final wasComplete = isRoutineDoneToday(routine);
-    final allChecked =
-        _isAllChecklistChecked(routine.checklist, nextDone);
+    final wasComplete = isTaskDoneToday(task);
+    final allChecked = _isAllChecklistChecked(task.checklist, nextDone);
 
-    routines[index] = routine.copyWith(
-      checklistDone: nextDone,
-      checklistDateKey: today,
-    );
-
-    if (allChecked && !wasComplete) {
-      return toggleRoutineDone(id);
-    }
-    if (!allChecked && wasComplete) {
-      await toggleRoutineDone(id);
-      return CompleteOutcome.none;
-    }
-
-    notifyListeners();
-    await _persist();
-    return CompleteOutcome.none;
-  }
-
-  /// Outcome when the item just became complete (for SnackBar).
-  Future<CompleteOutcome> toggleTodoChecklistItem(
-    String id,
-    int itemIndex,
-  ) async {
-    final index = todos.indexWhere((t) => t.id == id);
-    if (index < 0) return CompleteOutcome.none;
-
-    final todo = todos[index];
-    if (itemIndex < 0 || itemIndex >= todo.checklist.length) {
-      return CompleteOutcome.none;
-    }
-
-    final doneSet = effectiveTodoChecklistDone(todo).toSet();
-    if (doneSet.contains(itemIndex)) {
-      doneSet.remove(itemIndex);
+    if (task.isRepeating) {
+      tasks[index] = task.copyWith(
+        checklistDone: nextDone,
+        checklistDateKey: today,
+      );
     } else {
-      doneSet.add(itemIndex);
+      tasks[index] = task.copyWith(checklistDone: nextDone);
     }
-    final nextDone = doneSet.toList()..sort();
-    final wasComplete = todo.done;
-    final allChecked = _isAllChecklistChecked(todo.checklist, nextDone);
-
-    todos[index] = todo.copyWith(checklistDone: nextDone);
 
     if (allChecked && !wasComplete) {
-      return toggleTodoDone(id);
+      return toggleTaskDone(id);
     }
     if (!allChecked && wasComplete) {
-      await toggleTodoDone(id);
+      await toggleTaskDone(id);
       return CompleteOutcome.none;
     }
 
@@ -543,33 +484,23 @@ class AppState extends ChangeNotifier {
   }
 
   void _addCompletionRecord({
-    required String type,
     required String itemId,
     required String title,
     required List<String> tagIds,
-    double? amount,
-    String? unit,
-    MeasureKind? kind,
   }) {
     final dateKey = DayClock.todayKey();
     if (_hasRecordFor(itemId, dateKey)) return;
-
-    // Empty measure → count as 1 amount-unit completion.
-    final resolvedAmount = amount ?? 1.0;
-    final resolvedKind = kind ?? MeasureKind.amount;
 
     completionLog = [
       ...completionLog,
       CompletionRecord(
         id: DateTime.now().microsecondsSinceEpoch.toString(),
-        type: type,
+        type: 'task',
         itemId: itemId,
         title: title,
         dateKey: dateKey,
         tagIds: List<String>.from(tagIds),
-        amount: resolvedAmount,
-        unit: unit,
-        kind: resolvedKind,
+        amount: 1.0,
       ),
     ];
   }
@@ -582,8 +513,7 @@ class AppState extends ChangeNotifier {
 
   Future<void> _persist() async {
     await Future.wait([
-      _storage.saveRoutines(routines),
-      _storage.saveTodos(todos),
+      _storage.saveTasks(tasks),
       _storage.saveTags(tags),
       _storage.saveGold(gold),
       _storage.saveCompletionLog(completionLog),
@@ -593,234 +523,76 @@ class AppState extends ChangeNotifier {
       _storage.saveEquipped(equipped),
       _storage.saveOwnedTitles(ownedTitleIds),
       _storage.saveEquippedTitle(equippedTitleId),
-      _storage.saveResultTables(resultTables),
     ]);
   }
 
-  Future<CompleteOutcome> toggleRoutineDone(String id) async {
-    final index = routines.indexWhere((r) => r.id == id);
+  Future<CompleteOutcome> toggleTaskDone(String id) async {
+    final index = tasks.indexWhere((t) => t.id == id);
     if (index < 0) return CompleteOutcome.none;
 
-    final routine = routines[index];
-    final done = isRoutineDoneToday(routine);
+    final task = tasks[index];
     final today = DayClock.todayKey();
+    final done = isTaskDoneToday(task);
 
     if (done) {
       // Uncheck: drop completion only — keep gold/points/rewardLog.
-      _removeCompletionRecord(routine.id, today);
-      routines[index] = routine.copyWith(clearLastDoneDate: true);
-      notifyListeners();
-      await _persist();
-      return CompleteOutcome.none;
-    }
-
-    final alreadyRewarded = _hasRewardFor(routine.id, today);
-    if (!alreadyRewarded) {
-      gold += Economy.routineCompleteGold;
-      unspentPoints += Economy.completePoint;
-      _addReward(routine.id, today);
-    }
-    _addCompletionRecord(
-      type: 'routine',
-      itemId: routine.id,
-      title: routine.title,
-      tagIds: routine.tagIds,
-      amount: routine.amount,
-      unit: routine.unit,
-      kind: routine.kind,
-    );
-    routines[index] = routine.copyWith(lastDoneDate: today);
-    notifyListeners();
-    await _persist();
-    return alreadyRewarded
-        ? CompleteOutcome.alreadyRewarded
-        : CompleteOutcome.rewarded;
-  }
-
-  Future<CompleteOutcome> toggleTodoDone(String id) async {
-    final index = todos.indexWhere((t) => t.id == id);
-    if (index < 0) return CompleteOutcome.none;
-
-    final todo = todos[index];
-    final today = DayClock.todayKey();
-
-    if (todo.done) {
-      // Uncheck: drop completion only — keep gold/points/rewardLog.
-      _removeCompletionRecord(todo.id, today);
-      todos[index] = todo.copyWith(done: false, clearDoneDate: true);
-      notifyListeners();
-      await _persist();
-      return CompleteOutcome.none;
-    }
-
-    final alreadyRewarded = _hasRewardFor(todo.id, today);
-    if (!alreadyRewarded) {
-      gold += Economy.todoCompleteGold;
-      unspentPoints += Economy.completePoint;
-      _addReward(todo.id, today);
-    }
-    _addCompletionRecord(
-      type: 'todo',
-      itemId: todo.id,
-      title: todo.title,
-      tagIds: todo.tagIds,
-      amount: todo.amount,
-      unit: todo.unit,
-      kind: todo.kind,
-    );
-    todos[index] = todo.copyWith(
-      done: true,
-      doneDate: today,
-    );
-    notifyListeners();
-    await _persist();
-    return alreadyRewarded
-        ? CompleteOutcome.alreadyRewarded
-        : CompleteOutcome.rewarded;
-  }
-
-  Future<bool> addResultTable(ResultTable table) async {
-    if (resultTables.length >= maxResultTables) return false;
-    resultTables = [...resultTables, table];
-    notifyListeners();
-    await _storage.saveResultTables(resultTables);
-    return true;
-  }
-
-  Future<void> updateResultTable(ResultTable table) async {
-    final index = resultTables.indexWhere((t) => t.id == table.id);
-    if (index < 0) return;
-    resultTables = [...resultTables];
-    resultTables[index] = table;
-    notifyListeners();
-    await _storage.saveResultTables(resultTables);
-  }
-
-  Future<void> deleteResultTable(String id) async {
-    resultTables = resultTables.where((t) => t.id != id).toList();
-    notifyListeners();
-    await _storage.saveResultTables(resultTables);
-  }
-
-  /// Tag ids that count for [table], expanding main tags to their subs.
-  Set<String> expandedTagIdsFor(ResultTable table) {
-    final result = <String>{...table.tagIds};
-    for (final id in table.tagIds) {
-      final tag = tagById(id);
-      if (tag == null || !tag.isMain) continue;
-      for (final sub in subTagsOf(id)) {
-        result.add(sub.id);
-      }
-    }
-    return result;
-  }
-
-  bool _dateKeyInPeriod(String dateKey, ResultPeriod period) {
-    if (period == ResultPeriod.month) {
-      return dateKey.startsWith(DayClock.monthKey());
-    }
-    final mondayKey = DayClock.weekKey();
-    final monday = DateTime.parse(mondayKey);
-    final sunday = monday.add(const Duration(days: 6));
-    final sundayKey = DayClock.keyFromDate(sunday);
-    return dateKey.compareTo(mondayKey) >= 0 &&
-        dateKey.compareTo(sundayKey) <= 0;
-  }
-
-  List<CompletionRecord> _matchingRecords(ResultTable table) {
-    final expanded = expandedTagIdsFor(table);
-    return completionLog.where((r) {
-      if (r.kind != table.kind) return false;
-      if (!_dateKeyInPeriod(r.dateKey, table.period)) return false;
-      return r.tagIds.any(expanded.contains);
-    }).toList();
-  }
-
-  /// Per-tag totals for a result table (subs preferred over mains).
-  Map<String, double> resultTableTagTotals(ResultTable table) {
-    final expanded = expandedTagIdsFor(table);
-    final totals = <String, double>{};
-    for (final record in _matchingRecords(table)) {
-      final value = record.amount ?? 1.0;
-      final key = _breakdownTagId(record.tagIds, expanded);
-      if (key == null) continue;
-      totals[key] = (totals[key] ?? 0) + value;
-    }
-    return totals;
-  }
-
-  double resultTableTotal(ResultTable table) {
-    return _matchingRecords(table).fold<double>(
-      0,
-      (sum, r) => sum + (r.amount ?? 1.0),
-    );
-  }
-
-  String? _breakdownTagId(List<String> recordTags, Set<String> expanded) {
-    final candidates =
-        recordTags.where(expanded.contains).map(tagById).whereType<Tag>();
-    Tag? sub;
-    Tag? main;
-    for (final tag in candidates) {
-      if (!tag.isMain) {
-        sub ??= tag;
+      _removeCompletionRecord(task.id, today);
+      if (task.isRepeating) {
+        tasks[index] = task.copyWith(clearLastDoneDate: true);
       } else {
-        main ??= tag;
+        tasks[index] = task.copyWith(done: false, clearDoneDate: true);
       }
+      notifyListeners();
+      await _persist();
+      return CompleteOutcome.none;
     }
-    return (sub ?? main)?.id;
+
+    final alreadyRewarded = _hasRewardFor(task.id, today);
+    if (!alreadyRewarded) {
+      gold += Economy.taskCompleteGold;
+      unspentPoints += Economy.completePoint;
+      _addReward(task.id, today);
+    }
+    _addCompletionRecord(
+      itemId: task.id,
+      title: task.title,
+      tagIds: task.tagIds,
+    );
+    if (task.isRepeating) {
+      tasks[index] = task.copyWith(lastDoneDate: today);
+    } else {
+      tasks[index] = task.copyWith(done: true, doneDate: today);
+    }
+    notifyListeners();
+    await _persist();
+    return alreadyRewarded
+        ? CompleteOutcome.alreadyRewarded
+        : CompleteOutcome.rewarded;
   }
 
-  Future<void> addRoutine(Routine routine) async {
-    routines = [...routines, routine];
+  Future<void> addTask(Task task) async {
+    tasks = [...tasks, task];
     notifyListeners();
     await _persist();
   }
 
-  Future<void> updateRoutine(Routine routine) async {
-    final index = routines.indexWhere((r) => r.id == routine.id);
+  Future<void> updateTask(Task task) async {
+    final index = tasks.indexWhere((t) => t.id == task.id);
     if (index < 0) return;
-    final previous = routines[index];
+    final previous = tasks[index];
     final remapped = remapChecklistDone(
       previousDone: previous.checklistDone,
       previousChecklist: previous.checklist,
-      nextChecklist: routine.checklist,
+      nextChecklist: task.checklist,
     );
-    routines = [...routines];
-    routines[index] = routine.copyWith(checklistDone: remapped);
+    tasks = [...tasks];
+    tasks[index] = task.copyWith(checklistDone: remapped);
     notifyListeners();
     await _persist();
   }
 
-  Future<void> addTodo(Todo todo) async {
-    todos = [...todos, todo];
-    notifyListeners();
-    await _persist();
-  }
-
-  Future<void> updateTodo(Todo todo) async {
-    final index = todos.indexWhere((t) => t.id == todo.id);
-    if (index < 0) return;
-    final previous = todos[index];
-    final remapped = remapChecklistDone(
-      previousDone: previous.checklistDone,
-      previousChecklist: previous.checklist,
-      nextChecklist: todo.checklist,
-    );
-    todos = [...todos];
-    todos[index] = todo.copyWith(checklistDone: remapped);
-    notifyListeners();
-    await _persist();
-  }
-
-  Future<void> deleteRoutine(String id) async {
-    routines = routines.where((r) => r.id != id).toList();
-    notifyListeners();
-    await _persist();
-  }
-
-  Future<void> deleteTodo(String id) async {
-    todos = todos.where((t) => t.id != id).toList();
+  Future<void> deleteTask(String id) async {
+    tasks = tasks.where((t) => t.id != id).toList();
     notifyListeners();
     await _persist();
   }

@@ -38,6 +38,39 @@ class AppLocalizationsEn extends AppLocalizations {
   String get segmentTodo => 'Todo';
 
   @override
+  String get segmentTasks => 'Tasks';
+
+  @override
+  String get segmentAnalysis => 'Analytics';
+
+  @override
+  String get filterAll => 'All';
+
+  @override
+  String get filterRepeat => 'Repeating';
+
+  @override
+  String get filterOnce => 'One-time';
+
+  @override
+  String get taskFormTitle => 'Create task';
+
+  @override
+  String get taskFormTitleEdit => 'Edit task';
+
+  @override
+  String get taskTitleHint => 'e.g. Morning workout';
+
+  @override
+  String get taskRepeatSwitch => 'Repeat';
+
+  @override
+  String get emptyTasksHint => 'Tap + to create your first task';
+
+  @override
+  String get analysisComingSoon => 'Coming soon';
+
+  @override
   String get deleteConfirmTitle => 'Delete';
 
   @override

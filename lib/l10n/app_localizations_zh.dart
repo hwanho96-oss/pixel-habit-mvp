@@ -38,6 +38,39 @@ class AppLocalizationsZh extends AppLocalizations {
   String get segmentTodo => '待办';
 
   @override
+  String get segmentTasks => '任务';
+
+  @override
+  String get segmentAnalysis => '分析';
+
+  @override
+  String get filterAll => '全部';
+
+  @override
+  String get filterRepeat => '重复';
+
+  @override
+  String get filterOnce => '单次';
+
+  @override
+  String get taskFormTitle => '创建任务';
+
+  @override
+  String get taskFormTitleEdit => '编辑任务';
+
+  @override
+  String get taskTitleHint => '例如：晨练';
+
+  @override
+  String get taskRepeatSwitch => '重复';
+
+  @override
+  String get emptyTasksHint => '点 + 创建第一个任务';
+
+  @override
+  String get analysisComingSoon => '准备中';
+
+  @override
   String get deleteConfirmTitle => '删除';
 
   @override

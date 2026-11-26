@@ -38,6 +38,39 @@ class AppLocalizationsKo extends AppLocalizations {
   String get segmentTodo => '투두';
 
   @override
+  String get segmentTasks => '할 일';
+
+  @override
+  String get segmentAnalysis => '분석';
+
+  @override
+  String get filterAll => '전체';
+
+  @override
+  String get filterRepeat => '반복';
+
+  @override
+  String get filterOnce => '1회';
+
+  @override
+  String get taskFormTitle => '할 일 작성하기';
+
+  @override
+  String get taskFormTitleEdit => '할 일 수정하기';
+
+  @override
+  String get taskTitleHint => '예: 아침 운동';
+
+  @override
+  String get taskRepeatSwitch => '반복';
+
+  @override
+  String get emptyTasksHint => '+ 버튼으로 첫 할 일을 만들어 보세요';
+
+  @override
+  String get analysisComingSoon => '준비 중';
+
+  @override
   String get deleteConfirmTitle => '삭제';
 
   @override

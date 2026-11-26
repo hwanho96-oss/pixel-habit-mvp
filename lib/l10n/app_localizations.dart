@@ -150,6 +150,72 @@ abstract class AppLocalizations {
   /// **'투두'**
   String get segmentTodo;
 
+  /// No description provided for @segmentTasks.
+  ///
+  /// In ko, this message translates to:
+  /// **'할 일'**
+  String get segmentTasks;
+
+  /// No description provided for @segmentAnalysis.
+  ///
+  /// In ko, this message translates to:
+  /// **'분석'**
+  String get segmentAnalysis;
+
+  /// No description provided for @filterAll.
+  ///
+  /// In ko, this message translates to:
+  /// **'전체'**
+  String get filterAll;
+
+  /// No description provided for @filterRepeat.
+  ///
+  /// In ko, this message translates to:
+  /// **'반복'**
+  String get filterRepeat;
+
+  /// No description provided for @filterOnce.
+  ///
+  /// In ko, this message translates to:
+  /// **'1회'**
+  String get filterOnce;
+
+  /// No description provided for @taskFormTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'할 일 작성하기'**
+  String get taskFormTitle;
+
+  /// No description provided for @taskFormTitleEdit.
+  ///
+  /// In ko, this message translates to:
+  /// **'할 일 수정하기'**
+  String get taskFormTitleEdit;
+
+  /// No description provided for @taskTitleHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'예: 아침 운동'**
+  String get taskTitleHint;
+
+  /// No description provided for @taskRepeatSwitch.
+  ///
+  /// In ko, this message translates to:
+  /// **'반복'**
+  String get taskRepeatSwitch;
+
+  /// No description provided for @emptyTasksHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'+ 버튼으로 첫 할 일을 만들어 보세요'**
+  String get emptyTasksHint;
+
+  /// No description provided for @analysisComingSoon.
+  ///
+  /// In ko, this message translates to:
+  /// **'준비 중'**
+  String get analysisComingSoon;
+
   /// No description provided for @deleteConfirmTitle.
   ///
   /// In ko, this message translates to:
